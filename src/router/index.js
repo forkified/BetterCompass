@@ -3,7 +3,7 @@ import VueRouter from "vue-router"
 
 Vue.use(VueRouter)
 
-const routes = [
+export const routes = [
   {
     path: "/",
     name: "Dashboard",
@@ -17,10 +17,12 @@ const routes = [
   },
   {
     path: "/activity/:id",
+    meta: { sitemap: { ignoreRoute: true } },
     redirect: "/activity/instance/:id/dashboard"
   },
   {
     path: "/activity/:type/:id",
+    meta: { sitemap: { ignoreRoute: true } },
     name: "Activity",
     redirect: "/activity/:type/:id/dashboard",
     children: [
@@ -96,6 +98,7 @@ const routes = [
   },
   {
     path: "/user/:id",
+    meta: { sitemap: { ignoreRoute: true } },
     name: "User",
     redirect: "/user/:id/dashboard",
     children: [
@@ -181,7 +184,8 @@ const routes = [
     children: [
       {
         path: ":id",
-        name: "Communications",
+        meta: { sitemap: { ignoreRoute: true } },
+        name: "Communications Chat",
         component: () =>
           import(
             /* webpackChunkName: "communicationsChat" */ "../views/Communications/CommunicationsChat"
@@ -212,11 +216,3 @@ const routes = [
       import(/* webpackChunkName: "notFound" */ "../views/NotFound")
   }
 ]
-
-const router = new VueRouter({
-  mode: "history",
-  base: process.env.BASE_URL,
-  routes
-})
-
-export default router

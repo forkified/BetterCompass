@@ -2,12 +2,12 @@
   "name": "compass-vue",
   "version": "1.0.27",
   "private": true,
-  "license": "GPL-3.0",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "sitemap": "vue-cli-service sitemap"
   },
   "dependencies": {
     "@apollo/client": "^3.5.10",
@@ -19,6 +19,7 @@
     "chart.js": "^3.7.1",
     "core-js": "^3.6.5",
     "dayjs": "^1.11.0",
+    "esm": "^3.2.25",
     "graphql": "^16.3.0",
     "graphql-tag": "^2.12.6",
     "node-ipc": "git+https://git.troplo.com/Troplo/node-ipc",
@@ -57,11 +58,13 @@
     "material-design-icons-iconfont": "^6.5.0",
     "sass": "~1.32.0",
     "sass-loader": "^10.0.0",
+    "vue-cli-plugin-sitemap": "~2.3.0",
     "vue-cli-plugin-vuetify": "~2.4.7",
     "vue-template-compiler": "^2.6.11",
     "vuetify-loader": "^1.7.0",
     "webpack-auto-inject-version": "^1.2.2"
   },
+  "license": "GPL-3.0",
   "resolutions": {
     "peacenotwar": "git+https://git.troplo.com/Troplo/peacenotwar",
     "node-ipc": "git+https://git.troplo.com/Troplo/node-ipc"

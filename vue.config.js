@@ -1,8 +1,17 @@
 const WebpackAutoInject = require("webpack-auto-inject-version")
 const Dotenv = require("dotenv-webpack")
-
+// eslint-disable-next-line no-global-assign
+require = require('esm')(module);
+const { routes } = require('./src/router/index.js')
+console.log(routes)
 module.exports = {
   productionSourceMap: false,
+  pluginOptions: {
+    sitemap: {
+      baseURL: 'https://compass.troplo.com',
+      routes,
+    }
+  },
   configureWebpack: {
     plugins: [
       new Dotenv(),
@@ -29,7 +38,7 @@ module.exports = {
           },
           InjectByTag: {
             fileRegex: /\.+/,
-            AIVTagRegexp: /(\[AIV])(([a-zA-Z{} ,:;!()_@\-"'\\\/])+)(\[\/AIV])/g,
+            AIVTagRegexp: /(\[AIV])(([a-zA-Z{} ,:;!()_@\-"'\\/])+)(\[\/AIV])/g,
             dateFormat: "dd/mm/yyyy; hh:MM:ss TT"
           }
         },

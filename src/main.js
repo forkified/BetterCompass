@@ -1,6 +1,7 @@
 import Vue from "vue"
 import App from "./App.vue"
-import router from "./router"
+import Router from "vue-router"
+import {routes} from "./router"
 import store from "./store"
 import vuetify from "./plugins/vuetify"
 import axios from "axios"
@@ -18,6 +19,12 @@ const cache = new InMemoryCache()
 import VueMatomo from "vue-matomo"
 import * as Sentry from "@sentry/vue"
 import { BrowserTracing } from "@sentry/tracing"
+import VueRouter from "vue-router"
+const router = new VueRouter({
+  mode: "history",
+  base: process.env.BASE_URL,
+  routes
+})
 Sentry.init({
   Vue,
   dsn: process.env.VUE_APP_SENTRY_DSN,
