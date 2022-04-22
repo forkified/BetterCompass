@@ -1,4 +1,4 @@
-module.exports = function (vuex) {
+export default function (vuex) {
   return function (res, ignorePathErrorCb) {
     let errors = []
 

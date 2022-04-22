@@ -3,6 +3,8 @@ import VueRouter from "vue-router"
 
 Vue.use(VueRouter)
 
+// the .vue file extension is required for Vite
+
 const routes = [
   {
     path: "/",
@@ -29,7 +31,7 @@ const routes = [
         name: "Activity Dashboard",
         component: () =>
           import(
-            /* webpackChunkName: "activityDashboard" */ "../views/Activity/ActivityDashboard"
+            /* webpackChunkName: "activityDashboard" */ "../views/Activity/ActivityDashboard.vue"
           )
       },
       {
@@ -37,7 +39,7 @@ const routes = [
         name: "Activity Roll",
         component: () =>
           import(
-            /* webpackChunkName: "activityRoll" */ "../views/Activity/ActivityRoll"
+            /* webpackChunkName: "activityRoll" */ "../views/Activity/ActivityRoll.vue"
           )
       },
       {
@@ -45,7 +47,7 @@ const routes = [
         name: "Activity Discussions",
         component: () =>
           import(
-            /* webpackChunkName: "activityDiscussions" */ "../views/Activity/ActivityDiscussions"
+            /* webpackChunkName: "activityDiscussions" */ "../views/Activity/ActivityDiscussions.vue"
           )
       },
       {
@@ -53,7 +55,7 @@ const routes = [
         name: "Activity Schedule",
         component: () =>
           import(
-            /* webpackChunkName: "activitySchedule" */ "../views/Activity/ActivitySchedule"
+            /* webpackChunkName: "activitySchedule" */ "../views/Activity/ActivitySchedule.vue"
           )
       },
       {
@@ -61,7 +63,7 @@ const routes = [
         name: "Activity Sessions",
         component: () =>
           import(
-            /* webpackChunkName: "activitySessions" */ "../views/Activity/ActivitySessions"
+            /* webpackChunkName: "activitySessions" */ "../views/Activity/ActivitySessions.vue"
           )
       },
       {
@@ -69,7 +71,7 @@ const routes = [
         name: "Activity Settings",
         component: () =>
           import(
-            /* webpackChunkName: "activitySettings" */ "../views/Activity/ActivitySettings"
+            /* webpackChunkName: "activitySettings" */ "../views/Activity/ActivitySettings.vue"
           )
       },
       {
@@ -77,7 +79,7 @@ const routes = [
         name: "Activity Tasks",
         component: () =>
           import(
-            /* webpackChunkName: "activityTasks" */ "../views/Activity/ActivityTasks"
+            /* webpackChunkName: "activityTasks" */ "../views/Activity/ActivityTasks.vue"
           )
       },
       {
@@ -85,7 +87,7 @@ const routes = [
         name: "Resources",
         component: () =>
           import(
-            /* webpackChunkName: "activityTasks" */ "../views/Activity/ActivityResources"
+            /* webpackChunkName: "activityTasks" */ "../views/Activity/ActivityResources.vue"
           )
       }
     ],
@@ -104,7 +106,7 @@ const routes = [
         name: "User Dashboard",
         component: () =>
           import(
-            /* webpackChunkName: "userDashboard" */ "../views/User/UserDashboard"
+            /* webpackChunkName: "userDashboard" */ "../views/User/UserDashboard.vue"
           )
       },
       {
@@ -112,7 +114,7 @@ const routes = [
         name: "User Analytics",
         component: () =>
           import(
-            /* webpackChunkName: "userAnalytics" */ "../views/User/UserAnalytics"
+            /* webpackChunkName: "userAnalytics" */ "../views/User/UserAnalytics.vue"
           )
       },
       {
@@ -120,7 +122,7 @@ const routes = [
         name: "User Attendance",
         component: () =>
           import(
-            /* webpackChunkName: "userAttendance" */ "../views/User/UserAttendance"
+            /* webpackChunkName: "userAttendance" */ "../views/User/UserAttendance.vue"
           )
       },
       {
@@ -128,21 +130,23 @@ const routes = [
         name: "User Reports",
         component: () =>
           import(
-            /* webpackChunkName: "userReports" */ "../views/User/UserReports"
+            /* webpackChunkName: "userReports" */ "../views/User/UserReports.vue"
           )
       },
       {
         path: "tasks",
         name: "User Tasks",
         component: () =>
-          import(/* webpackChunkName: "userTasks" */ "../views/User/UserTasks")
+          import(
+            /* webpackChunkName: "userTasks" */ "../views/User/UserTasks.vue"
+          )
       },
       {
         path: "events",
         name: "User Events",
         component: () =>
           import(
-            /* webpackChunkName: "userEvents" */ "../views/User/UserEvents"
+            /* webpackChunkName: "userEvents" */ "../views/User/UserEvents.vue"
           )
       },
       {
@@ -150,7 +154,7 @@ const routes = [
         name: "BetterCompass Settings",
         component: () =>
           import(
-            /* webpackChunkName: "userSettings" */ "../views/User/UserSettings"
+            /* webpackChunkName: "userSettings" */ "../views/User/UserSettings.vue"
           )
       },
       {
@@ -158,7 +162,7 @@ const routes = [
         name: "CompassScore",
         component: () =>
           import(
-            /* webpackChunkName: "userScore" */ "../views/User/UserCompassScore"
+            /* webpackChunkName: "userScore" */ "../views/User/UserCompassScore.vue"
           )
       }
     ],
@@ -175,7 +179,7 @@ const routes = [
         name: "User Dashboard",
         component: () =>
           import(
-            /* webpackChunkName: "userDashboard" */ "../views/User/UserDashboard"
+            /* webpackChunkName: "userDashboard" */ "../views/User/UserDashboard.vue"
           )
       },
       {
@@ -183,7 +187,7 @@ const routes = [
         name: "User Analytics",
         component: () =>
           import(
-            /* webpackChunkName: "userAnalytics" */ "../views/User/UserAnalytics"
+            /* webpackChunkName: "userAnalytics" */ "../views/User/UserAnalytics.vue"
           )
       },
       {
@@ -191,7 +195,7 @@ const routes = [
         name: "User Attendance",
         component: () =>
           import(
-            /* webpackChunkName: "userAttendance" */ "../views/User/UserAttendance"
+            /* webpackChunkName: "userAttendance" */ "../views/User/UserAttendance.vue"
           )
       },
       {
@@ -199,21 +203,23 @@ const routes = [
         name: "User Reports",
         component: () =>
           import(
-            /* webpackChunkName: "userReports" */ "../views/User/UserReports"
+            /* webpackChunkName: "userReports" */ "../views/User/UserReports.vue"
           )
       },
       {
         path: "tasks",
         name: "User Tasks",
         component: () =>
-          import(/* webpackChunkName: "userTasks" */ "../views/User/UserTasks")
+          import(
+            /* webpackChunkName: "userTasks" */ "../views/User/UserTasks.vue"
+          )
       },
       {
         path: "events",
         name: "User Events",
         component: () =>
           import(
-            /* webpackChunkName: "userEvents" */ "../views/User/UserEvents"
+            /* webpackChunkName: "userEvents" */ "../views/User/UserEvents.vue"
           )
       },
       {
@@ -221,7 +227,7 @@ const routes = [
         name: "BetterCompass Settings",
         component: () =>
           import(
-            /* webpackChunkName: "userSettings" */ "../views/User/UserSettings"
+            /* webpackChunkName: "userSettings" */ "../views/User/UserSettings.vue"
           )
       },
       {
@@ -229,7 +235,7 @@ const routes = [
         name: "CompassScore",
         component: () =>
           import(
-            /* webpackChunkName: "userScore" */ "../views/User/UserCompassScore"
+            /* webpackChunkName: "userScore" */ "../views/User/UserCompassScore.vue"
           )
       }
     ],
@@ -246,7 +252,7 @@ const routes = [
         name: "School Resources",
         component: () =>
           import(
-            /* webpackChunkName: "schoolResources" */ "../views/School/SchoolResources"
+            /* webpackChunkName: "schoolResources" */ "../views/School/SchoolResources.vue"
           )
       },
       {
@@ -254,7 +260,7 @@ const routes = [
         name: "School Staff",
         component: () =>
           import(
-            /* webpackChunkName: "schoolStaff" */ "../views/School/SchoolStaff"
+            /* webpackChunkName: "schoolStaff" */ "../views/School/SchoolStaff.vue"
           )
       },
       {
@@ -262,20 +268,20 @@ const routes = [
         name: "School Subjects",
         component: () =>
           import(
-            /* webpackChunkName: "schoolSubjects" */ "../views/School/SchoolSubjects"
-            )
+            /* webpackChunkName: "schoolSubjects" */ "../views/School/SchoolSubjects.vue"
+          )
       },
       {
         path: "classes",
         name: "School Classes",
         component: () =>
           import(
-            /* webpackChunkName: "schoolClasses" */ "../views/School/SchoolClasses"
-            )
-      },
+            /* webpackChunkName: "schoolClasses" */ "../views/School/SchoolClasses.vue"
+          )
+      }
     ],
     component: () =>
-      import(/* webpackChunkName: "school" */ "../views/School/School")
+      import(/* webpackChunkName: "school" */ "../views/School/School.vue")
   },
   {
     path: "/communications",
@@ -287,13 +293,13 @@ const routes = [
         name: "Communications",
         component: () =>
           import(
-            /* webpackChunkName: "communicationsChat" */ "../views/Communications/CommunicationsChat"
+            /* webpackChunkName: "communicationsChat" */ "../views/Communications/CommunicationsChat.vue"
           )
       }
     ],
     component: () =>
       import(
-        /* webpackChunkName: "communications" */ "../views/Communications/Communications"
+        /* webpackChunkName: "communications" */ "../views/Communications/Communications.vue"
       )
   },
   {
@@ -312,19 +318,19 @@ const routes = [
     path: "/everything",
     name: "Everything",
     component: () =>
-      import(/* webpackChunkName: "everything" */ "../views/Everything")
+      import(/* webpackChunkName: "everything" */ "../views/Everything.vue")
   },
   {
     path: "*",
     name: "Not Found",
     component: () =>
-      import(/* webpackChunkName: "notFound" */ "../views/NotFound")
+      import(/* webpackChunkName: "notFound" */ "../views/NotFound.vue")
   }
 ]
 
 const router = new VueRouter({
   mode: "history",
-  base: process.env.BASE_URL,
+  base: import.meta.env.BASE_URL,
   routes
 })
 

@@ -13,9 +13,9 @@ export default new Vuex.Store({
     calendar: [],
     calendars: [],
     versioning: {
-      date: process.env.VUE_APP_BUILD_DATE,
-      version: process.env.VUE_APP_VERSION,
-      release: process.env.RELEASE
+      date: import.meta.env.VITE_APP_BUILD_DATE,
+      version: import.meta.env.VITE_APP_VERSION,
+      release: import.meta.env.RELEASE
     },
     site: {
       release: "stable",

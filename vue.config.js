@@ -2,10 +2,10 @@ const WebpackAutoInject = require("webpack-auto-inject-version-next")
 const Dotenv = require("dotenv-webpack")
 const SentryPlugin = require("@sentry/webpack-plugin")
 let plugins
-if (process.env.NODE_ENV === "production") {
+if (import.meta.env.NODE_ENV === "production") {
   plugins = [
     new SentryPlugin({
-      release: process.env.RELEASE,
+      release: import.meta.env.RELEASE,
       include: "./dist"
     }),
     new Dotenv(),

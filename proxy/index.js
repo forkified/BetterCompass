@@ -61,7 +61,8 @@ app.get("/api/v1/state", async (req, res) => {
       res.json({
         release: process.env.RELEASE,
         loading: true,
-        notification: "You are using a critically outdated version of BetterCompass, you must update to continue.",
+        notification:
+          "You are using a critically outdated version of BetterCompass, you must update to continue.",
         latestVersion: require("../package.json").version
       })
     } else {
@@ -134,7 +135,7 @@ app.get("/api/v1/weather", (req, res) => {
         res.json({ success: false })
       })
   } catch {
-    res.status(500).json({success: false})
+    res.status(500).json({ success: false })
   }
 })
 
