@@ -39,7 +39,7 @@
           <v-tab to="settings" v-if="user.userId === $store.state.user.userId">
             BetterCompass
           </v-tab>
-          <v-tab to="subjects"> Subjects </v-tab>
+          <v-tab to="subjects"> Classes </v-tab>
           <v-tab to="identity" v-if="!permissionError">CompassIdentity</v-tab>
           <v-tab to="score" v-if="compassScore"> Compass Score </v-tab>
         </v-tabs>

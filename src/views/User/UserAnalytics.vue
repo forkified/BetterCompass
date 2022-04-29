@@ -1,45 +1,43 @@
 <template>
   <div>
-    <v-container>
-      <v-card color="card" class="rounded-xl">
-        <v-toolbar color="toolbar">
-          <v-toolbar-title>Analytics</v-toolbar-title>
-          <v-spacer></v-spacer>
-          <v-toolbar-title>
-            <v-select
-              :items="computeCycles"
-              item-value="cycleIds"
-              item-text="name"
-              v-model="selectedCycle"
-              solo
-              hide-details
-              single-line
-              placeholder="Cycle"
-            ></v-select>
-          </v-toolbar-title>
-        </v-toolbar>
-        <v-container>
-          <v-data-table
-            :item-class="getClassesForItem"
-            :loading="loading"
-            no-data-text="Please select a cycle."
-            :items="cycle"
-            :headers="headers"
-            :style="
-              'background-color: ' +
-              $vuetify.theme.themes[$vuetify.theme.dark ? 'dark' : 'light'].card
-            "
-          >
-          </v-data-table>
-          <small
-            >Scores apart from providing the raw score will not be provided on
-            BetterCompass due to the complexity of supporting multiple
-            providers, and their unique scoring methods (Example: NAPLAN band
-            colors will not be shown).</small
-          >
-        </v-container>
-      </v-card>
-    </v-container>
+    <v-card color="card" class="rounded-xl">
+      <v-toolbar color="toolbar">
+        <v-toolbar-title>Analytics</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-toolbar-title>
+          <v-select
+            :items="computeCycles"
+            item-value="cycleIds"
+            item-text="name"
+            v-model="selectedCycle"
+            solo
+            hide-details
+            single-line
+            placeholder="Cycle"
+          ></v-select>
+        </v-toolbar-title>
+      </v-toolbar>
+      <v-container>
+        <v-data-table
+          :item-class="getClassesForItem"
+          :loading="loading"
+          no-data-text="Please select a cycle."
+          :items="cycle"
+          :headers="headers"
+          :style="
+            'background-color: ' +
+            $vuetify.theme.themes[$vuetify.theme.dark ? 'dark' : 'light'].card
+          "
+        >
+        </v-data-table>
+        <small
+          >Scores apart from providing the raw score will not be provided on
+          BetterCompass due to the complexity of supporting multiple providers,
+          and their unique scoring methods (Example: NAPLAN band colors will not
+          be shown).</small
+        >
+      </v-container>
+    </v-card>
   </div>
 </template>
 

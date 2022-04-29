@@ -1,3 +1,4 @@
+<!-- this is a joke feature -->
 <template>
   <div>
     <v-dialog v-model="scoreDialog" max-width="600px">
@@ -28,221 +29,219 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-container>
-      <v-card color="card" class="rounded-xl">
-        <v-toolbar color="toolbar">
-          <v-toolbar-title> CompassScore</v-toolbar-title>
-        </v-toolbar>
-        <v-container class="justify-center text-center">
-          <h1 style="font-size: 50px" class="troplo-title">CompassScore</h1>
-          <p>The Score that Grades you More™</p>
-        </v-container>
-        <v-container>
-          <v-row>
-            <v-col md="6">
-              <v-card outlined color="card">
-                <v-list-item three-line>
-                  <v-list-item-content>
-                    <div class="text-overline">AT A GLANCE</div>
-                    <v-list-item-title class="text-h5 mb-1">
-                      An accurate representation of your current & future
-                      education.
-                    </v-list-item-title>
-                    <v-list-item-subtitle
-                      >With a single number, CompassScore can accurately predict
-                      whether you're going to fail.</v-list-item-subtitle
-                    >
-                  </v-list-item-content>
-
-                  <v-list-item-avatar tile size="80">
-                    <v-icon style="font-size: 80px">mdi-speedometer</v-icon>
-                  </v-list-item-avatar>
-                </v-list-item>
-
-                <v-card-actions>
-                  <v-btn
-                    outlined
-                    rounded
-                    text
-                    @click="getScore"
-                    :loading="loading"
+    <v-card color="card" class="rounded-xl">
+      <v-toolbar color="toolbar">
+        <v-toolbar-title> CompassScore</v-toolbar-title>
+      </v-toolbar>
+      <v-container class="justify-center text-center">
+        <h1 style="font-size: 50px" class="troplo-title">CompassScore</h1>
+        <p>The Score that Grades you More™</p>
+      </v-container>
+      <v-container>
+        <v-row>
+          <v-col md="6">
+            <v-card outlined color="card">
+              <v-list-item three-line>
+                <v-list-item-content>
+                  <div class="text-overline">AT A GLANCE</div>
+                  <v-list-item-title class="text-h5 mb-1">
+                    An accurate representation of your current & future
+                    education.
+                  </v-list-item-title>
+                  <v-list-item-subtitle
+                    >With a single number, CompassScore can accurately predict
+                    whether you're going to fail.</v-list-item-subtitle
                   >
-                    Get your score
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-col>
-            <v-col md="6">
-              <v-card outlined color="card">
-                <v-list-item three-line>
-                  <v-list-item-content>
-                    <div class="text-overline">INFORMATION</div>
-                    <v-list-item-title class="text-h5 mb-1">
-                      Over 3,000 database entries are used to calculate your
-                      score.
-                    </v-list-item-title>
-                    <v-list-item-subtitle
-                      >Our vigorous data collection process ensures that we have
-                      the most accurate data.</v-list-item-subtitle
-                    >
-                  </v-list-item-content>
+                </v-list-item-content>
 
-                  <v-list-item-avatar tile size="80">
-                    <v-icon style="font-size: 80px">mdi-information</v-icon>
-                  </v-list-item-avatar>
-                </v-list-item>
+                <v-list-item-avatar tile size="80">
+                  <v-icon style="font-size: 80px">mdi-speedometer</v-icon>
+                </v-list-item-avatar>
+              </v-list-item>
 
-                <v-card-actions>
-                  <v-btn
-                    outlined
-                    rounded
-                    text
-                    @click="getScore"
-                    :loading="loading"
+              <v-card-actions>
+                <v-btn
+                  outlined
+                  rounded
+                  text
+                  @click="getScore"
+                  :loading="loading"
+                >
+                  Get your score
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-col>
+          <v-col md="6">
+            <v-card outlined color="card">
+              <v-list-item three-line>
+                <v-list-item-content>
+                  <div class="text-overline">INFORMATION</div>
+                  <v-list-item-title class="text-h5 mb-1">
+                    Over 3,000 database entries are used to calculate your
+                    score.
+                  </v-list-item-title>
+                  <v-list-item-subtitle
+                    >Our vigorous data collection process ensures that we have
+                    the most accurate data.</v-list-item-subtitle
                   >
-                    Get your score
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col md="6">
-              <v-card outlined color="card">
-                <v-list-item three-line>
-                  <v-list-item-content>
-                    <div class="text-overline">FAQ</div>
-                    <v-list-item-title class="text-h5 mb-1">
-                      Is this arbitrary?
-                    </v-list-item-title>
-                    <v-list-item-subtitle>
-                      No. CompassScore uses mathematical models, and advanced
-                      mathematical techniques to calculate your score to provide
-                      a realistic representation of your future education.
-                    </v-list-item-subtitle>
-                  </v-list-item-content>
+                </v-list-item-content>
 
-                  <v-list-item-avatar tile size="80">
-                    <v-icon style="font-size: 80px">mdi-calculator</v-icon>
-                  </v-list-item-avatar>
-                </v-list-item>
+                <v-list-item-avatar tile size="80">
+                  <v-icon style="font-size: 80px">mdi-information</v-icon>
+                </v-list-item-avatar>
+              </v-list-item>
 
-                <v-card-actions>
-                  <v-btn
-                    outlined
-                    rounded
-                    text
-                    @click="getScore"
-                    :loading="loading"
-                  >
-                    Get your score
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-col>
-            <v-col md="6">
-              <v-card outlined color="card">
-                <v-list-item three-line>
-                  <v-list-item-content>
-                    <div class="text-overline">FAQ</div>
-                    <v-list-item-title class="text-h5 mb-1">
-                      How secure is this?
-                    </v-list-item-title>
-                    <v-list-item-subtitle>
-                      We retain backups for 7 years, and we ensure your session
-                      expires after 3 days, <b>or more</b>.<br />
-                      We are also PCI DSS Level 1 Compliant, despite using
-                      Cloudflare's Flexible SSL which is not PCI DSS complaint.
-                    </v-list-item-subtitle>
-                  </v-list-item-content>
+              <v-card-actions>
+                <v-btn
+                  outlined
+                  rounded
+                  text
+                  @click="getScore"
+                  :loading="loading"
+                >
+                  Get your score
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col md="6">
+            <v-card outlined color="card">
+              <v-list-item three-line>
+                <v-list-item-content>
+                  <div class="text-overline">FAQ</div>
+                  <v-list-item-title class="text-h5 mb-1">
+                    Is this arbitrary?
+                  </v-list-item-title>
+                  <v-list-item-subtitle>
+                    No. CompassScore uses mathematical models, and advanced
+                    mathematical techniques to calculate your score to provide a
+                    realistic representation of your future education.
+                  </v-list-item-subtitle>
+                </v-list-item-content>
 
-                  <v-list-item-avatar tile size="80">
-                    <v-icon style="font-size: 80px">mdi-lock</v-icon>
-                  </v-list-item-avatar>
-                </v-list-item>
+                <v-list-item-avatar tile size="80">
+                  <v-icon style="font-size: 80px">mdi-calculator</v-icon>
+                </v-list-item-avatar>
+              </v-list-item>
 
-                <v-card-actions>
-                  <v-btn
-                    outlined
-                    rounded
-                    text
-                    @click="getScore"
-                    :loading="loading"
-                  >
-                    Get your score
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col md="6">
-              <v-card outlined color="card">
-                <v-list-item three-line>
-                  <v-list-item-content>
-                    <div class="text-overline">FAQ</div>
-                    <v-list-item-title class="text-h5 mb-1">
-                      Can I get more than 100%?
-                    </v-list-item-title>
-                    <v-list-item-subtitle>
-                      Yes, the score is out of 110%, because we believe that
-                      100% is too low for top-grade students.
-                    </v-list-item-subtitle>
-                  </v-list-item-content>
+              <v-card-actions>
+                <v-btn
+                  outlined
+                  rounded
+                  text
+                  @click="getScore"
+                  :loading="loading"
+                >
+                  Get your score
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-col>
+          <v-col md="6">
+            <v-card outlined color="card">
+              <v-list-item three-line>
+                <v-list-item-content>
+                  <div class="text-overline">FAQ</div>
+                  <v-list-item-title class="text-h5 mb-1">
+                    How secure is this?
+                  </v-list-item-title>
+                  <v-list-item-subtitle>
+                    We retain backups for 7 years, and we ensure your session
+                    expires after 3 days, <b>or more</b>.<br />
+                    We are also PCI DSS Level 1 Compliant, despite using
+                    Cloudflare's Flexible SSL which is not PCI DSS complaint.
+                  </v-list-item-subtitle>
+                </v-list-item-content>
 
-                  <v-list-item-avatar tile size="80">
-                    <v-icon style="font-size: 80px">mdi-counter</v-icon>
-                  </v-list-item-avatar>
-                </v-list-item>
+                <v-list-item-avatar tile size="80">
+                  <v-icon style="font-size: 80px">mdi-lock</v-icon>
+                </v-list-item-avatar>
+              </v-list-item>
 
-                <v-card-actions>
-                  <v-btn
-                    outlined
-                    rounded
-                    text
-                    @click="getScore"
-                    :loading="loading"
-                  >
-                    Get your score
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-col>
-            <v-col md="6">
-              <v-card outlined color="card">
-                <v-list-item three-line>
-                  <v-list-item-content>
-                    <div class="text-overline">FAQ</div>
-                    <v-list-item-title class="text-h5 mb-1">
-                      If I get 110%, can I put this on my resume or CV?
-                    </v-list-item-title>
-                    <v-list-item-subtitle>
-                      Yes, you can put this on your resume, but not your CV.
-                    </v-list-item-subtitle>
-                  </v-list-item-content>
+              <v-card-actions>
+                <v-btn
+                  outlined
+                  rounded
+                  text
+                  @click="getScore"
+                  :loading="loading"
+                >
+                  Get your score
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col md="6">
+            <v-card outlined color="card">
+              <v-list-item three-line>
+                <v-list-item-content>
+                  <div class="text-overline">FAQ</div>
+                  <v-list-item-title class="text-h5 mb-1">
+                    Can I get more than 100%?
+                  </v-list-item-title>
+                  <v-list-item-subtitle>
+                    Yes, the score is out of 110%, because we believe that 100%
+                    is too low for top-grade students.
+                  </v-list-item-subtitle>
+                </v-list-item-content>
 
-                  <v-list-item-avatar tile size="80">
-                    <v-icon style="font-size: 80px">mdi-file-account</v-icon>
-                  </v-list-item-avatar>
-                </v-list-item>
+                <v-list-item-avatar tile size="80">
+                  <v-icon style="font-size: 80px">mdi-counter</v-icon>
+                </v-list-item-avatar>
+              </v-list-item>
 
-                <v-card-actions>
-                  <v-btn
-                    outlined
-                    rounded
-                    text
-                    @click="getScore"
-                    :loading="loading"
-                  >
-                    Get your score
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-col>
-          </v-row>
-        </v-container>
-      </v-card>
-    </v-container>
+              <v-card-actions>
+                <v-btn
+                  outlined
+                  rounded
+                  text
+                  @click="getScore"
+                  :loading="loading"
+                >
+                  Get your score
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-col>
+          <v-col md="6">
+            <v-card outlined color="card">
+              <v-list-item three-line>
+                <v-list-item-content>
+                  <div class="text-overline">FAQ</div>
+                  <v-list-item-title class="text-h5 mb-1">
+                    If I get 110%, can I put this on my resume or CV?
+                  </v-list-item-title>
+                  <v-list-item-subtitle>
+                    Yes, you can put this on your resume, but not your CV.
+                  </v-list-item-subtitle>
+                </v-list-item-content>
+
+                <v-list-item-avatar tile size="80">
+                  <v-icon style="font-size: 80px">mdi-file-account</v-icon>
+                </v-list-item-avatar>
+              </v-list-item>
+
+              <v-card-actions>
+                <v-btn
+                  outlined
+                  rounded
+                  text
+                  @click="getScore"
+                  :loading="loading"
+                >
+                  Get your score
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-card>
   </div>
 </template>
 
