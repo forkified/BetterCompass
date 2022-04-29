@@ -91,6 +91,44 @@ router.get("/users", auth, async (req, res, next) => {
   }
 })
 
+router.get("/themes", auth, async (req, res, next) => {
+  try {
+    const themes = await Theme.findAndCountAll({
+      include: [
+        {
+          model: User,
+          as: "user"
+        },
+        {
+          model: User,
+          as: "users"
+        }
+      ]
+    })
+    res.json(themes)
+  } catch (err) {
+    return next(err)
+  }
+})
+
+router.put("/themes/apply", auth, async (req, res, next) => {
+  try {
+    await User.update(
+      {
+        themeId: req.body.themeId
+      },
+      {
+        where: {
+          id: req.user.id
+        }
+      }
+    )
+    res.sendStatus(204)
+  } catch (err) {
+    return next(err)
+  }
+})
+
 router.get("/feedback", auth, async (req, res, next) => {
   try {
     const feedback = await Feedback.findAndCountAll({

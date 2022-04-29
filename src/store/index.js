@@ -339,6 +339,10 @@ export default new Vuex.Store({
               )
               .then((res) => {
                 context.commit("setSubjects", res.data.d.data)
+                localStorage.setItem(
+                  "subjectsCache",
+                  JSON.stringify(res.data.d.data)
+                )
               })
               .catch(() => {})
             context.commit("setLoading", false)

@@ -12,6 +12,9 @@ module.exports = (sequelize, DataTypes) => {
       Theme.belongsTo(models.User, {
         as: "user"
       })
+      Theme.hasMany(models.User, {
+        as: "users"
+      })
     }
   }
   Theme.init(

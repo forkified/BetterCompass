@@ -1501,7 +1501,7 @@
                 color="card"
                 class="rounded-xl mb-3"
                 elevation="7"
-                v-if="item.name === 'home.learningTasks' && $store.state.online"
+                v-if="item.name === 'home.learningTasks'"
               >
                 <v-overlay v-if="loading.learningTasks" absolute>
                   <v-progress-circular
@@ -2103,7 +2103,7 @@ export default {
       loading: {
         calendar: false,
         tasks: true,
-        learningTasks: true
+        learningTasks: false
       },
       learningTaskAlert: false,
       tasks: [],
@@ -2444,12 +2444,26 @@ export default {
       })
     },
     getCategories() {
+      if (JSON.parse(localStorage.getItem("categoriesCache"))) {
+        this.categories = JSON.parse(localStorage.getItem("categoriesCache"))
+        if (JSON.parse(localStorage.getItem("learningTasksCache"))) {
+          this.learningTasks = JSON.parse(
+            localStorage.getItem("learningTasksCache")
+          )
+          this.computeLearningTasks.forEach((item) => {
+            if (this.getStatus(item).status === "pendingLate") {
+              this.overDueLearningTasks++
+            }
+          })
+        }
+      }
       this.axios
         .post("/Services/LearningTasks.svc/GetAllTaskCategories", {
           start: 0
         })
         .then((res) => {
           this.categories = res.data.d
+          localStorage.setItem("categoriesCache", JSON.stringify(res.data.d))
         })
     },
     getCategory(item) {
@@ -2612,7 +2626,7 @@ export default {
         }
       ]
       // only supports single rubric for now, no lesson plan for multiple available.
-      if (task.rubricWikiNodeIds) {
+      if (task.rubricWikiNodeIds && this.$store.state.online) {
         this.loading.learningTasks = true
         this.axios
           .post("/Services/Rubrics.svc/GetRubric", {
@@ -2649,6 +2663,11 @@ export default {
             this.dialog = true
           })
       } else {
+        if (!this.$store.state.online) {
+          this.$toast.info(
+            "This learning task has a rubric, which cannot be loaded when offline."
+          )
+        }
         this.dialog = true
       }
     },
@@ -3062,7 +3081,9 @@ export default {
       }
     },
     getLearningTasks() {
-      this.loading.learningTasks = true
+      if (!JSON.parse(localStorage.getItem("learningTasksCache"))) {
+        this.loading.learningTasks = true
+      }
       this.axios
         .post("/Services/LearningTasks.svc/GetAllLearningTasksByUserId", {
           forceTaskId: 0,
@@ -3085,7 +3106,10 @@ export default {
                 : "No due date"
             }
           })
-
+          localStorage.setItem(
+            "learningTasksCache",
+            JSON.stringify(this.learningTasks)
+          )
           this.computeLearningTasks.forEach((item) => {
             if (this.getStatus(item).status === "pendingLate") {
               this.overDueLearningTasks++

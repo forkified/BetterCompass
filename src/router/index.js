@@ -374,6 +374,14 @@ const routes = [
           import(
             /* webpackChunkName: "adminFeedback" */ "../views/Admin/AdminFeedback.vue"
           )
+      },
+      {
+        path: "themes",
+        name: "Themes",
+        component: () =>
+          import(
+            /* webpackChunkName: "adminThemes" */ "../views/Admin/AdminThemes.vue"
+          )
       }
     ],
     component: () =>

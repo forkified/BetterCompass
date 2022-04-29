@@ -1,14 +1,14 @@
 <template>
   <div>
     <v-toolbar color="toolbar">
-      <v-toolbar-title>Users ({{ users.count }})</v-toolbar-title>
+      <v-toolbar-title>Themes ({{ themes.count }})</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn @click="getUsers" icon>
+      <v-btn @click="getThemes" icon>
         <v-icon>mdi-refresh</v-icon>
       </v-btn>
     </v-toolbar>
     <v-data-table
-      :items="users.rows"
+      :items="themes.rows"
       :headers="headers"
       :items-per-page="20"
       :style="
@@ -16,6 +16,9 @@
         $vuetify.theme.themes[$vuetify.theme.dark ? 'dark' : 'light'].card
       "
     >
+      <template v-slot:item.actions="{ item }">
+        <v-btn text color="primary" @click="applyTheme(item)"> Apply </v-btn>
+      </template>
     </v-data-table>
   </div>
 </template>
@@ -24,30 +27,26 @@
 import AjaxErrorHandler from "@/lib/errorHandler"
 
 export default {
-  name: "AdminUsers",
+  name: "AdminThemes",
   data() {
     return {
-      users: [],
+      themes: [],
       headers: [
         {
           text: "ID",
           value: "id"
         },
         {
+          text: "Name",
+          value: "name"
+        },
+        {
           text: "Compass User ID",
-          value: "compassUserId"
+          value: "user.id"
         },
         {
           text: "Sussi Auth ID",
-          value: "sussiId"
-        },
-        {
-          text: "Username",
-          value: "displayCode"
-        },
-        {
-          text: "Instance",
-          value: "instance"
+          value: "user.sussiId"
         },
         {
           text: "Created At",
@@ -59,22 +58,36 @@ export default {
         },
         {
           text: "Base Theme",
-          value: "theme"
+          value: "theme.primaryType"
         },
         {
-          text: "Theme",
-          value: "themeObject.name"
+          text: "Users Count",
+          value: "users.length"
+        },
+        {
+          text: "Actions",
+          value: "actions"
         }
       ]
     }
   },
   methods: {
-    getUsers() {
+    applyTheme(theme) {
       this.axios
-        .get("/api/v1/admin/users")
+        .put("/api/v1/admin/themes/apply", {
+          themeId: theme.id
+        })
+        .then(async () => {
+          await this.$store.dispatch("getUserInfo")
+          this.$toast.success("Theme applied successfully")
+        })
+    },
+    getThemes() {
+      this.axios
+        .get("/api/v1/admin/themes")
         .then((res) => {
-          this.users = res.data
-          this.users.rows = res.data.rows.map((user) => {
+          this.themes = res.data
+          this.themes.rows = res.data.rows.map((user) => {
             return {
               ...user,
               createdAt: this.$date(user.createdAt).format(
@@ -92,7 +105,7 @@ export default {
     }
   },
   mounted() {
-    this.getUsers()
+    this.getThemes()
   }
 }
 </script>

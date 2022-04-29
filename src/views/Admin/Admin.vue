@@ -21,6 +21,10 @@
             <v-icon>mdi-bug</v-icon>&nbsp;
             <span>Feedback</span>
           </v-tab>
+          <v-tab to="/admin/themes">
+            <v-icon>mdi-brush</v-icon>&nbsp;
+            <span>Themes</span>
+          </v-tab>
         </v-tabs>
         <router-view :admin="admin" :metrics="metrics"></router-view>
       </v-card>

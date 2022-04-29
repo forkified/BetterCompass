@@ -419,6 +419,12 @@ export default {
         user.bcUser.themeObject.theme.dark.primary = user.bcUser.accentColor
         user.bcUser.themeObject.theme.light.primary = user.bcUser.accentColor
       }
+      if (JSON.parse(localStorage.getItem("subjectsCache"))) {
+        this.$store.commit(
+          "setSubjects",
+          JSON.parse(localStorage.getItem("subjectsCache"))
+        )
+      }
       Vuetify.framework.theme.themes.dark = dark
       Vuetify.framework.theme.themes.light = light
       Vuetify.framework.theme.themes.name = name
