@@ -1139,76 +1139,163 @@
                   >
                   <v-spacer></v-spacer>
                 </v-toolbar>
+                <v-tabs background-color="card" fixed-tabs v-model="newsTab">
+                  <v-tab>News for {{ $store.state.user.firstName }}</v-tab>
+                  <v-tab v-if="parentNews">Parent News</v-tab>
+                  <v-tab-item
+                    :style="
+                      'background-color: ' +
+                      $vuetify.theme.themes[
+                        $vuetify.theme.dark ? 'dark' : 'light'
+                      ].card
+                    "
+                  >
+                    <v-card
+                      v-for="item in news"
+                      :key="item.id"
+                      class="rounded-xl mx-2 ma-3"
+                      dense
+                      elevation="3"
+                      text
+                      color="card"
+                    >
+                      <v-toolbar color="toolbar">
+                        <v-avatar
+                          @click="$router.push('/user/' + item.UserId)"
+                          style="cursor: pointer"
+                          large
+                          class="mr-3"
+                        >
+                          <img
+                            :src="$store.state.school.fqdn + item.UserImageUrl"
+                          />
+                        </v-avatar>
+                        <v-toolbar-title>
+                          {{ item.Title }}
+                          <div class="subheading subtitle-1">
+                            Created by:
+                            <span
+                              @click="$router.push('/user/' + item.UserId)"
+                              style="cursor: pointer"
+                              >{{ item.UserName }}</span
+                            >, on
+                            {{
+                              $date(item.PostDateTime).format(
+                                "dddd, MMMM Do YYYY, hh:mm A"
+                              )
+                            }}
+                          </div>
+                        </v-toolbar-title>
+                      </v-toolbar>
+                      <v-container>
+                        <div>
+                          <div
+                            class="text-block"
+                            style="white-space: pre-line"
+                            v-html="item.Content1"
+                          ></div>
+                          <v-card-actions class="justify-center">
+                            <v-chip
+                              v-for="attachment in item.Attachments"
+                              :key="attachment.id"
+                              :href="
+                                attachment.UiLink +
+                                '&compassInstance=' +
+                                $store.state.school.instance
+                              "
+                              download
+                              color="calendarNormalActivity"
+                              dark
+                            >
+                              <v-icon>mdi-download</v-icon>
+                              {{ attachment.Name }}
+                            </v-chip>
+                          </v-card-actions>
+                        </div>
+                      </v-container>
+                    </v-card>
+                  </v-tab-item>
+                  <v-tab-item
+                    v-if="parentNews"
+                    :style="
+                      'background-color: ' +
+                      $vuetify.theme.themes[
+                        $vuetify.theme.dark ? 'dark' : 'light'
+                      ].card
+                    "
+                  >
+                    <v-card
+                      v-for="item in parentNews"
+                      :key="item.id"
+                      class="rounded-xl mx-2 ma-3"
+                      dense
+                      elevation="3"
+                      text
+                      color="card"
+                    >
+                      <v-toolbar color="toolbar">
+                        <v-avatar
+                          @click="$router.push('/user/' + item.UserId)"
+                          style="cursor: pointer"
+                          large
+                          class="mr-3"
+                        >
+                          <img
+                            :src="$store.state.school.fqdn + item.UserImageUrl"
+                          />
+                        </v-avatar>
+                        <v-toolbar-title>
+                          {{ item.Title }}
+                          <div class="subheading subtitle-1">
+                            Created by:
+                            <span
+                              @click="$router.push('/user/' + item.UserId)"
+                              style="cursor: pointer"
+                              >{{ item.UserName }}</span
+                            >, on
+                            {{
+                              $date(item.PostDateTime).format(
+                                "dddd, MMMM Do YYYY, hh:mm A"
+                              )
+                            }}
+                          </div>
+                        </v-toolbar-title>
+                      </v-toolbar>
+                      <v-container>
+                        <div>
+                          <div
+                            class="text-block"
+                            style="white-space: pre-line"
+                            v-html="item.Content1"
+                          ></div>
+                          <v-card-actions class="justify-center">
+                            <v-chip
+                              v-for="attachment in item.Attachments"
+                              :key="attachment.id"
+                              :href="
+                                attachment.UiLink +
+                                '&compassInstance=' +
+                                $store.state.school.instance
+                              "
+                              download
+                              color="calendarNormalActivity"
+                              dark
+                            >
+                              <v-icon>mdi-download</v-icon>
+                              {{ attachment.Name }}
+                            </v-chip>
+                          </v-card-actions>
+                        </div>
+                      </v-container>
+                    </v-card>
+                  </v-tab-item>
+                </v-tabs>
                 <v-card-text
                   class="text-center justify-center"
                   v-if="!news.length"
                 >
                   There are no news items to display.
                 </v-card-text>
-                <v-card
-                  v-for="item in news"
-                  :key="item.id"
-                  class="rounded-xl mx-2 ma-3"
-                  dense
-                  elevation="3"
-                  text
-                  color="card"
-                >
-                  <v-toolbar color="toolbar">
-                    <v-avatar
-                      @click="$router.push('/user/' + item.UserId)"
-                      style="cursor: pointer"
-                      large
-                      class="mr-3"
-                    >
-                      <img
-                        :src="$store.state.school.fqdn + item.UserImageUrl"
-                      />
-                    </v-avatar>
-                    <v-toolbar-title>
-                      {{ item.Title }}
-                      <div class="subheading subtitle-1">
-                        Created by:
-                        <span
-                          @click="$router.push('/user/' + item.UserId)"
-                          style="cursor: pointer"
-                          >{{ item.UserName }}</span
-                        >, on
-                        {{
-                          $date(item.PostDateTime).format(
-                            "dddd, MMMM Do YYYY, hh:mm A"
-                          )
-                        }}
-                      </div>
-                    </v-toolbar-title>
-                  </v-toolbar>
-                  <v-container>
-                    <div>
-                      <div
-                        class="text-block"
-                        style="white-space: pre-line"
-                        v-html="item.Content1"
-                      ></div>
-                      <v-card-actions class="justify-center">
-                        <v-chip
-                          v-for="attachment in item.Attachments"
-                          :key="attachment.id"
-                          :href="
-                            attachment.UiLink +
-                            '&compassInstance=' +
-                            $store.state.school.instance
-                          "
-                          download
-                          color="calendarNormalActivity"
-                          dark
-                        >
-                          <v-icon>mdi-download</v-icon>
-                          {{ attachment.Name }}
-                        </v-chip>
-                      </v-card-actions>
-                    </div>
-                  </v-container>
-                </v-card>
               </v-card>
               <v-card
                 :color="color(item)"
@@ -2116,6 +2203,8 @@ export default {
       events: [],
       focus: this.$date().format(),
       news: [],
+      newsTab: 0,
+      parentNews: null,
       user: {},
       weather: {},
       score: null
@@ -3285,6 +3374,12 @@ export default {
         .then((res) => {
           this.news = res.data.d.data
         })
+      this.axios
+        .get("/api/v1/parentLink/newsFeed")
+        .then((res) => {
+          this.parentNews = res.data.d.data
+        })
+        .catch(() => {})
     }
   },
   mounted() {

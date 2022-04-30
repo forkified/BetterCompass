@@ -41,6 +41,9 @@ module.exports = function (req, res, next) {
                 req.query.compassInstance ||
                 "devices"
             },
+            attributes: {
+              exclude: ["totp"]
+            },
             include: [
               {
                 model: Theme,

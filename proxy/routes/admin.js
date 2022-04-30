@@ -40,6 +40,9 @@ router.get("/metrics", auth, async (req, res, next) => {
     const registrationStats = await User.findAll({
       where: {
         createdAt: createdAt
+      },
+      attributes: {
+        exclude: ["totp"]
       }
     })
 
@@ -97,7 +100,10 @@ router.get("/themes", auth, async (req, res, next) => {
       include: [
         {
           model: User,
-          as: "user"
+          as: "user",
+          attributes: {
+            exclude: ["totp"]
+          }
         },
         {
           model: User,

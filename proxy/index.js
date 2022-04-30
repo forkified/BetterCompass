@@ -62,6 +62,7 @@ app.use("/api/v1/user", require("./routes/user.js"))
 app.use("/api/v1/themes", require("./routes/theme.js"))
 app.use("/api/v1/communications", require("./routes/communications.js"))
 app.use("/api/v1/admin", require("./routes/admin.js"))
+app.use("/api/v1/parentLink", require("./routes/parentlink.js"))
 app.get("/api/v1/state", async (req, res) => {
   try {
     if (semver.lte(req.query.v, "1.0.88")) {

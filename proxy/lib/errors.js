@@ -6,7 +6,8 @@ let Errors = {
     "You have to opt in to BetterCompass Accounts to do that.",
     401
   ],
-  invalidUserOrPassword: ["Invalid username or password.", 401]
+  invalidUserOrPassword: ["Invalid username or password.", 401],
+  parentLinkIneligible: ["Your school does not support ParentLink.", 401]
 }
 
 function processErrors(errorName) {

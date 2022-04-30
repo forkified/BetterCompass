@@ -246,6 +246,7 @@ router.put("/settings/:type", auth, async (req, res, next) => {
       } else {
         throw Errors.invalidParameter("Theme", "Invalid theme specified")
       }
+    } else if (req.params.type === "totpStatus") {
     } else {
       throw Errors.invalidParameter("Settings type", "Invalid settings type")
     }

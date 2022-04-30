@@ -194,6 +194,29 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: false
+      },
+      totp: {
+        type: DataTypes.TEXT,
+        allowNull: true
+      },
+      totpEnabled: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+      },
+      emailDirectLogin: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+      },
+      email: {
+        type: DataTypes.STRING,
+        allowNull: true
+      },
+      bcSessions: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
       }
     },
     {

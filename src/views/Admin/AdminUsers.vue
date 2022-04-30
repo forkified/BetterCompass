@@ -87,7 +87,7 @@ export default {
           })
         })
         .catch((e) => {
-          AjaxErrorHandler(e)
+          AjaxErrorHandler(this.$store)(e)
         })
     }
   },

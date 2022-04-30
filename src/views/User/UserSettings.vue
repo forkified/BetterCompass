@@ -1,5 +1,23 @@
 <template>
   <div>
+    <v-dialog v-model="totp.dialog" max-width="750px">
+      <v-card color="card">
+        <v-toolbar color="toolbar">
+          <v-toolbar-title> 2 Factor Authentication </v-toolbar-title>
+        </v-toolbar>
+        <v-container v-if="totp.dialogType === 'enable'">
+          <v-alert type="info" text>
+            Enabling 2FA will require you to enter a 6 digit code from your
+            chosen authenticator app such as Authy, Bitwarden, or Google
+            Authenticator on login.
+            <br />
+            Ensure that your authenticator app is safely secured, and cannot be
+            accessed by anyone else, and that you don't loose it.
+          </v-alert>
+          <code>{{ totp.secret }}</code>
+        </v-container>
+      </v-card>
+    </v-dialog>
     <v-dialog v-model="createTheme" max-width="950px">
       <v-card color="card">
         <v-toolbar color="toolbar">
@@ -264,6 +282,21 @@
         Your settings (including themes) now synchronize throughout all of your
         devices.
       </v-alert>
+      <template v-if="$store.state.site.release === 'dev'">
+        <v-card-title>Security</v-card-title>
+        <h4 class="ml-4">2 Factor Authentication</h4>
+        <v-card-text>
+          2 Factor Authentication will only affect your BetterCompass account,
+          not your Compass account.
+          <v-switch
+            inset
+            label="2-Factor Authentication"
+            v-model="totp.enabled"
+            @change="totpDialog"
+          >
+          </v-switch>
+        </v-card-text>
+      </template>
       <v-card-title>Website Settings</v-card-title>
       <v-card-text>
         <v-text-field
@@ -540,7 +573,16 @@ export default {
       name: "",
       creatorType: "create",
       themes: [],
-      interval: null
+      interval: null,
+      totp: {
+        secret: "",
+        code: "",
+        dialog: false,
+        dialogType: "enable",
+        loading: false,
+        enabled: false,
+        password: ""
+      }
     }
   },
   computed: {
@@ -576,14 +618,32 @@ export default {
     }
   },
   methods: {
-    /*determineColor(color) {
-      const hexCode = color.charAt(0) === "#" ? color.substr(1, 6) : color
-      const hexR = parseInt(hexCode.substr(0, 2), 16)
-      const hexG = parseInt(hexCode.substr(2, 2), 16)
-      const hexB = parseInt(hexCode.substr(4, 2), 16)
-      const contrastRatio = (hexR + hexG + hexB) / (255 * 3)
-      return contrastRatio >= 0.7 ? "black" : "white"
-    },*/
+    totpDialog() {
+      this.totp.loading = true
+      const status = this.totp.enabled
+      this.axios
+        .post("/api/v1/user/settings/totpStatus", {
+          password: this.totp.password
+        })
+        .then((res) => {
+          if (res.data.enabled === false) {
+            this.totp.loading = false
+            this.totp.enabled = false
+            this.totp.dialog = true
+            this.totp.dialogType = "enable"
+            this.totp.secret = res.data.secret
+          } else {
+            this.totp.loading = false
+            this.totp.enabled = true
+            this.totp.dialog = true
+            this.totp.dialogType = "disable"
+          }
+        })
+        .catch((e) => {
+          this.totp.enabled = status
+          AjaxErrorHandler(this.$store)(e)
+        })
+    },
     friendlyName(index) {
       if (index === "calendarNormalActivity") {
         return "Standard Class"
