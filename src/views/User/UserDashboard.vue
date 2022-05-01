@@ -58,6 +58,11 @@
                     <b>Configure parent linking in BetterCompass settings.</b
                     ><br
                   /></template>
+                  <template v-if="$store.state.user.id === user.userId">
+                    BetterCompass ID:
+                    <b>{{ $store.state.user.bcUser.id }}</b>
+                    <br
+                  /></template>
                   <template v-if="user.userEmail">
                     Email: <b>{{ user.userEmail }}</b>
                     <br />
