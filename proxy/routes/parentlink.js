@@ -11,7 +11,8 @@ router.get("/newsFeed", auth, async (req, res, next) => {
       (instance) =>
         (instance.instance === req.user.instance &&
           instance.intendedFor.includes(req.user.id)) ||
-        (instance.instance === req.user.instance && instance.intendedFor === [])
+        (instance.instance === req.user.instance &&
+          !instance.intendedFor.length)
     )
     if (!parentLinkInstance) {
       throw Errors.parentLinkIneligible
