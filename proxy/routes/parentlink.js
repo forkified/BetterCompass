@@ -10,9 +10,8 @@ router.get("/newsFeed", auth, async (req, res, next) => {
     const parentLinkInstance = parentLink.find(
       (instance) =>
         (instance.instance === req.user.instance &&
-          instance.intendedFor === req.user.id) ||
-        (instance.instance === req.user.instance &&
-          instance.intendedFor === null)
+          instance.intendedFor.includes(req.user.id)) ||
+        (instance.instance === req.user.instance && instance.intendedFor === [])
     )
     if (!parentLinkInstance) {
       throw Errors.parentLinkIneligible

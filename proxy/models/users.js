@@ -217,6 +217,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: false
+      },
+      lastSeenAt: {
+        type: DataTypes.DATE,
+        allowNull: true
       }
     },
     {

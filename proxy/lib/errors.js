@@ -7,7 +7,9 @@ let Errors = {
     401
   ],
   invalidUserOrPassword: ["Invalid username or password.", 401],
-  parentLinkIneligible: ["Your school does not support ParentLink.", 401]
+  parentLinkIneligible: ["Your school does not support ParentLink.", 401],
+  invalidTotp: ["Invalid 2FA code.", 401],
+  invalidCredentials: ["Invalid username or password.", 401]
 }
 
 function processErrors(errorName) {

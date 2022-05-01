@@ -330,6 +330,18 @@
                 <v-list-item-title>My Profile</v-list-item-title>
               </v-list-item>
 
+              <v-list-item
+                :to="'/settings'"
+                v-if="$store.state.online"
+                :color="active('/settings')"
+              >
+                <v-list-item-icon>
+                  <v-icon>mdi-cog</v-icon>
+                </v-list-item-icon>
+
+                <v-list-item-title>Settings</v-list-item-title>
+              </v-list-item>
+
               <v-list-group
                 prepend-icon="mdi-pen"
                 v-if="$store.state.online"
@@ -423,7 +435,11 @@
 
                 <v-list-item-title>Everything</v-list-item-title>
               </v-list-item>
-              <v-list-item to="/admin" v-if="$store.state.user.bcUser.admin">
+              <v-list-item
+                to="/admin"
+                v-if="$store.state.user.bcUser.admin"
+                :color="active('/admin')"
+              >
                 <v-list-item-icon>
                   <v-icon>mdi-gavel</v-icon>
                 </v-list-item-icon>

@@ -64,6 +64,10 @@ export default {
         {
           text: "Theme",
           value: "themeObject.name"
+        },
+        {
+          text: "Last Seen At",
+          value: "lastSeenAt"
         }
       ]
     }
@@ -81,6 +85,9 @@ export default {
                 "YYYY/MM/DD HH:mm:ss"
               ),
               updatedAt: this.$date(user.updatedAt).format(
+                "YYYY/MM/DD HH:mm:ss"
+              ),
+              lastSeenAt: this.$date(user.lastSeenAt).format(
                 "YYYY/MM/DD HH:mm:ss"
               )
             }

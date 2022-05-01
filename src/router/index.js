@@ -148,6 +148,7 @@ const routes = [
       {
         path: "settings",
         name: "BetterCompass Settings",
+        redirect: "/settings",
         component: () =>
           import(
             /* webpackChunkName: "userSettings" */ "../views/User/UserSettings"
@@ -235,6 +236,7 @@ const routes = [
       {
         path: "settings",
         name: "BetterCompass Settings",
+        redirect: "/settings",
         component: () =>
           import(
             /* webpackChunkName: "userSettings" */ "../views/User/UserSettings"
@@ -345,6 +347,30 @@ const routes = [
     name: "Everything",
     component: () =>
       import(/* webpackChunkName: "everything" */ "../views/Everything")
+  },
+  {
+    path: "/settings",
+    redirect: "/settings/site",
+    children: [
+      {
+        path: "site",
+        name: "Website Settings",
+        component: () =>
+          import(
+            /* webpackChunkName: "settingsSite" */ "../views/Settings/SettingsSite"
+          )
+      },
+      {
+        path: "appearance",
+        name: "Appearance Settings",
+        component: () =>
+          import(
+            /* webpackChunkName: "settingsAppearance" */ "../views/Settings/SettingsAppearance"
+          )
+      }
+    ],
+    component: () =>
+      import(/* webpackChunkName: "settings" */ "../views/Settings/Settings")
   },
   {
     path: "/admin",

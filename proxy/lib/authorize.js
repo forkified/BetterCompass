@@ -52,6 +52,9 @@ module.exports = function (req, res, next) {
             ]
           })
           if (user) {
+            await user.update({
+              lastSeenAt: new Date().toISOString()
+            })
             req.user = user
             next()
           } else {
