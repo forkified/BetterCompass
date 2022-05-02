@@ -185,6 +185,11 @@ babylon@^6.18.0:
   resolved "https://registry.yarnpkg.com/babylon/-/babylon-6.18.0.tgz#af2f3b88fa6f5c1e4c634d1a0f8eac4f55b395e3"
   integrity sha512-q/UEjfGJ2Cm3oKV71DJz9d25TPnq5rhBVL2Q4fA5wcC3jcrdn7+SssEybFIxwAvvP+YCsCYNKughoF33GxgycQ==
 
+base32.js@0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/base32.js/-/base32.js-0.0.1.tgz#d045736a57b1f6c139f0c7df42518a84e91bb2ba"
+  integrity sha1-0EVzalex9sE58MffQlGKhOkbsro=
+
 bcrypt-pbkdf@^1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/bcrypt-pbkdf/-/bcrypt-pbkdf-1.0.2.tgz#a4301d389b6a43f9b67ff3ca11a3f6637e360e9e"
@@ -1287,6 +1292,13 @@ source-map@~0.6.0:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.6.1.tgz#74722af32e9614e9c287a8d0bbde48b5e2f1a263"
   integrity sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==
+
+speakeasy@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/speakeasy/-/speakeasy-2.0.0.tgz#85c91a071b09a5cb8642590d983566165f57613a"
+  integrity sha1-hckaBxsJpcuGQlkNmDVmFl9XYTo=
+  dependencies:
+    base32.js "0.0.1"
 
 sshpk@^1.7.0:
   version "1.17.0"
