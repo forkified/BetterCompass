@@ -23,7 +23,21 @@ router.get("/", auth, async (req, res, next) => {
     res.json({
       users: await User.count(),
       themes: await Theme.count(),
-      feedback: await Feedback.count()
+      feedback: await Feedback.count(),
+      usersToday: await User.count({
+        where: {
+          lastSeenAt: {
+            [Op.gte]: dayjs().startOf("day").toDate()
+          }
+        }
+      }),
+      usersThisWeek: await User.count({
+        where: {
+          lastSeenAt: {
+            [Op.gte]: dayjs().startOf("week").toDate()
+          }
+        }
+      })
     })
   } catch (err) {
     return next(err)
@@ -59,7 +73,20 @@ router.get("/metrics", auth, async (req, res, next) => {
     },
     {})
 
-    const graph = {
+    const activeUsersGraphInterim = registrationStats.reduce(function (
+      result,
+      user
+    ) {
+      let day = dayjs(user.lastSeenAt).format("YYYY-MM-DD")
+      if (!result[day]) {
+        result[day] = 0
+      }
+      result[day]++
+      return result
+    },
+    {})
+
+    const usersGraph = {
       labels: Object.keys(registrationGraphInterim),
       datasets: [
         {
@@ -72,7 +99,23 @@ router.get("/metrics", auth, async (req, res, next) => {
       ]
     }
 
-    res.json(graph)
+    const activeUsersGraph = {
+      labels: Object.keys(activeUsersGraphInterim),
+      datasets: [
+        {
+          data: Object.values(activeUsersGraphInterim),
+          label: "Active Users",
+          borderColor: "#3e95cd",
+          pointBackgroundColor: "#FFFFFF",
+          backgroundColor: "transparent"
+        }
+      ]
+    }
+
+    res.json({
+      users: usersGraph,
+      activeUsers: activeUsersGraph
+    })
   } catch (err) {
     return next(err)
   }
