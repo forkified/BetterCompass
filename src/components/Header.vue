@@ -542,8 +542,8 @@ export default {
             id: 8,
             name: "Logout",
             click() {
-              this.$store.dispatch("logout")
               this.$router.push("/login")
+              this.$store.dispatch("logout")
             },
             color: "#c53030",
             icon: "mdi-settings"
@@ -686,8 +686,8 @@ export default {
           id: 8,
           name: "Logout",
           click() {
-            this.$store.dispatch("logout")
             this.$router.push("/login")
+            this.$store.dispatch("logout")
           },
           color: "#c53030",
           icon: "mdi-settings"

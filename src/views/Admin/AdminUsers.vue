@@ -16,6 +16,9 @@
         $vuetify.theme.themes[$vuetify.theme.dark ? 'dark' : 'light'].card
       "
     >
+      <template v-slot:item.index="{ index }">
+        {{ index }}
+      </template>
     </v-data-table>
   </div>
 </template>
@@ -29,6 +32,11 @@ export default {
     return {
       users: [],
       headers: [
+        {
+          text: "Index",
+          value: "index",
+          sortable: false
+        },
         {
           text: "ID",
           value: "id"

@@ -6,6 +6,7 @@ const axios = require("axios")
 const { User, Session, Theme } = require("../models")
 const cryptoRandomString = require("crypto-random-string")
 const { Op } = require("sequelize")
+const speakeasy = require("speakeasy")
 
 router.post("/login", (req, res, next) => {
   try {
@@ -179,9 +180,11 @@ router.get("/", auth, (req, res, next) => {
   }
 })
 
-router.post("/logout", auth, (req, res, next) => {
+router.post("/logout", (req, res, next) => {
   try {
     res.clearCookie("ASP.NET_SessionId")
+    res.clearCookie("ASP.NET_SessionId")
+
     res.clearCookie("cpssid_" + req.header("compassSchoolId"))
     res.clearCookie("cpsdid")
     res.sendStatus(204)
@@ -191,6 +194,40 @@ router.post("/logout", auth, (req, res, next) => {
 })
 
 router.put("/settings/:type", auth, async (req, res, next) => {
+  async function checkPassword(password) {
+    return new Promise((resolve, reject) => {
+      axios
+        .post(
+          "http://localhost:23994/services/admin.svc/GetApiKey",
+          {
+            password: password,
+            schoolId: req.body.schoolId,
+            sussiId: req.user.sussiId
+          },
+          {
+            headers: {
+              compassInstance:
+                req.header("compassInstance") ||
+                req.query.compassInstance ||
+                "devices"
+            }
+          }
+        )
+        .then((resp) => {
+          if (resp.data.d) {
+            resolve(true)
+            return true
+          } else {
+            resolve(false)
+            return false
+          }
+        })
+        .catch((e) => {
+          reject(e)
+          return false
+        })
+    })
+  }
   try {
     if (req.params.type === "full") {
       await User.update(
@@ -246,11 +283,96 @@ router.put("/settings/:type", auth, async (req, res, next) => {
       } else {
         throw Errors.invalidParameter("Theme", "Invalid theme specified")
       }
-    } else if (req.params.type === "totpStatus") {
+    } else if (req.params.type === "totp") {
+      if (req.user.totpEnabled && req.body.code) {
+        res.json({ enabled: true })
+      } else if (!req.user.totpEnabled && req.body.password) {
+        const match = await checkPassword(req.body.password)
+        if (match) {
+          const token = speakeasy.generateSecret({
+            name: "BetterCompass - " + req.user.username,
+            issuer: "BetterCompass"
+          })
+          await User.update(
+            {
+              totp: token.base32
+            },
+            {
+              where: {
+                id: req.user.id
+              }
+            }
+          )
+          res.json({ secret: token.base32, enabled: false })
+        } else {
+          throw Errors.invalidCredentials
+        }
+      } else {
+        throw Errors.invalidParameter("Password or Code")
+      }
+    } else if (req.params.type === "totpConfirm") {
+      const user = await User.findOne({
+        where: {
+          id: req.user.id
+        }
+      })
+      if (user.totp) {
+        const verified = speakeasy.totp.verify({
+          secret: user.totp,
+          encoding: "base32",
+          token: req.body.code
+        })
+        if (verified) {
+          await User.update(
+            {
+              totpEnabled: true
+            },
+            {
+              where: {
+                id: req.user.id
+              }
+            }
+          )
+          res.sendStatus(204)
+        } else {
+          throw Errors.invalidTotp
+        }
+      } else {
+        throw Errors.unknown
+      }
+    } else if (req.params.type === "bcSessionsEnable") {
+      const match = await checkPassword(req.body.password)
+      if (match) {
+        await User.update(
+          {
+            bcSessionsEnabled: true
+          },
+          {
+            where: {
+              id: req.user.id
+            }
+          }
+        )
+        const session = await Session.create({
+          session:
+            "BETTERCOMPASS-" +
+            cryptoRandomString({
+              length: 64
+            }),
+          compassUserId: req.user.compassUserId,
+          sussiId: req.user.sussiId,
+          instance: req.user.instance,
+          other: {},
+          userId: req.user.id
+        })
+      } else {
+        throw Errors.invalidCredentials
+      }
     } else {
       throw Errors.invalidParameter("Settings type", "Invalid settings type")
     }
   } catch (e) {
+    console.log(e)
     next(e)
   }
 })
