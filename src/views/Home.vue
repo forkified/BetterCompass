@@ -76,7 +76,6 @@
           <v-btn text small fab @click="changeDay('subtract')">
             <v-icon>mdi-arrow-left</v-icon>
           </v-btn>
-          &nbsp;
           <v-menu
             ref="menu"
             :close-on-content-click="false"
@@ -875,7 +874,6 @@
                   <v-btn text small fab @click="changeDay('subtract')">
                     <v-icon>mdi-arrow-left</v-icon>
                   </v-btn>
-                  &nbsp;
                   <v-menu
                     ref="menu"
                     :close-on-content-click="false"
