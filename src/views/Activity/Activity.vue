@@ -118,6 +118,7 @@ export default {
                 `<a href="/Services/FileAssets.svc/DownloadFile?`,
                 `<a href="/Services/FileAssets.svc/DownloadFile?compassInstance=${this.$store.state.school.instance}&`
               )
+              .replaceAll(`<a href="h`, `<a target="_blank" href="h`)
           })
           .catch(() => {
             this.lessonPlan =

@@ -1390,6 +1390,9 @@
                       You can now see your Medical Record in User Profile if you
                       have one recorded on Compass.
                     </li>
+                    <li>
+                      External links on Lesson Plans now open in a new tab.
+                    </li>
                   </ul>
                   <small
                     >BetterCompass version
