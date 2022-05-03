@@ -98,7 +98,7 @@
             >
             </v-date-picker>
           </v-menu>
-          <v-btn text fab @click="calendarSettings.dialog = true">
+          <v-btn text small fab @click="calendarSettings.dialog = true">
             <v-icon>mdi-cog</v-icon>
           </v-btn>
           <v-spacer></v-spacer>
@@ -897,7 +897,7 @@
                     >
                     </v-date-picker>
                   </v-menu>
-                  <v-btn text fab @click="calendarSettings.dialog = true">
+                  <v-btn text fab small @click="calendarSettings.dialog = true">
                     <v-icon>mdi-cog</v-icon>
                   </v-btn>
                   <v-spacer></v-spacer>
