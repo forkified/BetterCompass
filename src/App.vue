@@ -449,6 +449,10 @@ export default {
     }
     this.getThemes()
     this.$store.dispatch("getState")
+    this.$store.dispatch("checkAuth").catch(() => {
+      this.$store.dispatch("logout")
+      this.$router.push("/login")
+    })
     this.$store
       .dispatch("getUserInfo")
       .then(() => {

@@ -31,6 +31,7 @@ const compassRouter = function (req) {
   }
 }
 app.use(function (req, res, next) {
+  res.clearCookie("cpssid_" + req.header("compassSchoolId"))
   res.header("Access-Control-Allow-Origin", process.env.HOSTNAME)
   res.header("Access-Control-Allow-Methods", "*")
   res.header(
@@ -40,6 +41,81 @@ app.use(function (req, res, next) {
   next()
 })
 
+// these are overrides to avoid Set-Cookie headers being sent to the client which can break logging out of BetterCompass in case of session expiration, or manual logout.
+app.post(
+  "/services/admin.svc/GetSchoolName",
+  bodyParser.json({ limit: "15mb" }),
+  bodyParser.urlencoded({ extended: true }),
+  async (req, res, next) => {
+    try {
+      axios
+        .post(
+          "https://devices.compass.education/services/admin.svc/GetSchoolName",
+          {
+            keyword: req.body.keyword
+          }
+        )
+        .then((resp) => {
+          res.json(resp.data)
+        })
+        .catch((e) => {
+          res.status(500).json(e.response.data)
+        })
+    } catch (e) {
+      next(e)
+    }
+  }
+)
+
+app.post(
+  "/services/admin.svc/GetSchoolDetailBasic",
+  bodyParser.json({ limit: "15mb" }),
+  bodyParser.urlencoded({ extended: true }),
+  async (req, res, next) => {
+    try {
+      axios
+        .post(
+          "https://devices.compass.education/services/admin.svc/GetSchoolDetailBasic",
+          {
+            schoolName: req.body.schoolName
+          }
+        )
+        .then((resp) => {
+          res.json(resp.data)
+        })
+        .catch((e) => {
+          res.status(500).json(e.response.data)
+        })
+    } catch (e) {
+      next(e)
+    }
+  }
+)
+
+app.post(
+  "/services/mobile.svc/TestAuth",
+  bodyParser.json({ limit: "15mb" }),
+  bodyParser.urlencoded({ extended: true }),
+  async (req, res, next) => {
+    try {
+      axios
+        .post(`${compassRouter(req)}/services/mobile.svc/TestAuth`, "", {
+          headers: {
+            Cookie: req.header("Cookie") || "",
+            compassInstance: req.header("compassInstance") || "devices"
+          }
+        })
+        .then((resp) => {
+          res.json(resp.data)
+        })
+        .catch((e) => {
+          res.status(500).json(e.response?.data)
+        })
+    } catch (e) {
+      next(e)
+    }
+  }
+)
 app.use(
   "/Assets/Scripts/Lib/ckeditor/plugins/smiley/images",
   express.static(path.join(__dirname, "./assets/smiley"))

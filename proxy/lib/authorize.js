@@ -17,7 +17,6 @@ module.exports = function (req, res, next) {
         },
         {
           headers: {
-            CompassApiKey: req.header("CompassApiKey") || "",
             compassInstance:
               req.header("compassInstance") ||
               req.query.compassInstance ||

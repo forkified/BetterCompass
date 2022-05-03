@@ -1,5 +1,5 @@
 <template>
-  <div class="home" v-if="$store.state.user.bcUser">
+  <div class="home" v-if="$store.state.user?.bcUser?.id">
     <v-dialog v-model="bookmarks.dialog" max-width="700px">
       <v-card color="card">
         <v-toolbar color="toolbar">
@@ -1357,154 +1357,39 @@
                   <v-spacer></v-spacer>
                 </v-toolbar>
                 <v-container>
-                  <v-card-title> 08/04/2022 - 28/04/2022 </v-card-title>
+                  <v-card-title> 29/04/2022 - 03/05/2022 </v-card-title>
                   <ul>
                     <li>
-                      Upcoming Events now shows the proper content description,
-                      and title.
+                      Fixed where you don't get logged out when your Compass
+                      session expires (causes infinite load on uncached pages).
+                    </li>
+                    <li>Fixed logout.</li>
+                    <li>
+                      Set Remember Me to true as default option for login.
                     </li>
                     <li>
-                      Improved the theme editor to allow for custom colors, and
-                      a hex input.
-                    </li>
-                    <li>Improved login flow & registration.</li>
-                    <li>
-                      Fixed bug where new users would have a default preset of
-                      no calendars enabled, if you still cannot see your
-                      calendars, click the Settings icon on the calendar and
-                      enable all.
+                      Settings is now its own dedicated page to allow for extra
+                      options in the future.
                     </li>
                     <li>
-                      You can now select what particular calendars show on your
-                      homepage calendar with the cog/settings icon located on
-                      the calendar card which replaces minimize header events.
+                      You can now see your assigned CompassIdentity ID cards in
+                      User Profile.
                     </li>
                     <li>
-                      You can now customize your homepage/dashboard with the use
-                      of widgets that you can add, remove, and move.
+                      You can now see your BetterCompass ID in User Profile.
                     </li>
                     <li>
-                      The calendar is cached to the state to avoid unnecessary
-                      reloading of the calendar after page initialization.
+                      You can now see your historical, and current
+                      classes/subjects in User Profile.
                     </li>
                     <li>
-                      The calendar (2 weeks) and some user data now gets stored
-                      locally so BetterCompass can be used offline in a limited
-                      fashion on the PWA app.
+                      Improved Upcoming Events to show some event types
+                      correctly that weren't previously.
                     </li>
                     <li>
-                      You can now navigate the calendar on the homepage with the
-                      arrow keys.
+                      You can now see your Medical Record in User Profile if you
+                      have one recorded on Compass.
                     </li>
-                    <li>
-                      The progression report graph no longer appears on mobile,
-                      and the colors will not be the same for multiple classes.
-                    </li>
-                    <li>
-                      You can now expand the calendar view to make it easier to
-                      see the weekly view on lower resolution devices.
-                    </li>
-                    <li>You can now view what staff attend your school.</li>
-                    <li>
-                      There is now a learning task widget so you can view
-                      relevant learning tasks, and submit them if
-                      pending/overdue.
-                    </li>
-                    <li>
-                      Using the learning task dialog, you can now see the
-                      creation date of the learning task.
-                    </li>
-                    <li>
-                      You can see learning task submissions as a parent, or when
-                      the learning task would otherwise be in an "expired" or
-                      disabled state, also applies for feedback.
-                    </li>
-                    <li>
-                      You can now change the profile picture shown on your
-                      profile (only visible to you).
-                    </li>
-                    <li>
-                      The icon in the top right corner now shows your profile
-                      picture, this may encourage you to change it.
-                    </li>
-                    <li>
-                      Fixed BetterCompass bug where the Learning Tasks do not
-                      show a due date.
-                    </li>
-                    <li>
-                      Fixed a bug where events that should be shown as a header
-                      event, were shown as a normal event.
-                    </li>
-                    <li>
-                      Fixed bug where header events extending longer than a day
-                      wouldn't continue to the next day.
-                    </li>
-                    <li>
-                      Adding a task to an unknown activity will no longer break
-                      tasks.
-                    </li>
-                    <li>
-                      You can now hide tasks that are irrelevant (older than 10
-                      weeks if pending, or 2 weeks if submitted).
-                    </li>
-                    <li>
-                      Rows per page on tables throughout BetterCompass now
-                      persist.
-                    </li>
-                    <li>
-                      Attendance calendar now shows the AM/PM status when you
-                      hover over it.
-                    </li>
-                    <li>
-                      The chronicle no longer infinitely loads when viewing a
-                      staff account when you do not have access to view it.
-                    </li>
-                    <li>
-                      The learning task results no longer include irrelevant
-                      grading scheme options.
-                    </li>
-                    <li>
-                      Fixed an inconsistency in the homepage where the spacing
-                      was different at the top of the screen.
-                    </li>
-                    <li>
-                      Redesigned news widget to match the chronicles feed to
-                      improve on consistency.
-                    </li>
-                    <li>Cards now have toolbars to improve consistency.</li>
-                    <li>
-                      More optimizations to make BetterCompass more consistent.
-                    </li>
-                    <li>Fixed progress reports infinite load due to graph.</li>
-                    <li>
-                      You can now log-out of BetterCompass using the account
-                      dropdown menu in the navigation bar.
-                    </li>
-                    <li>There is now a bookmarks widget.</li>
-                    <li>There is now a chronicles widget.</li>
-                    <li>
-                      Fixed a bug where you couldn't update tasks that don't
-                      have a due date.
-                    </li>
-                    <li>
-                      Redesigned the subject/class roll to match the other
-                      pages.
-                    </li>
-                    <li>
-                      You can now change your academic group (year) for learning
-                      tasks.
-                    </li>
-                    <li>
-                      Hidden tasks are now always shown for learning tasks.
-                    </li>
-                    <li>
-                      You can now see your school's subjects and respective
-                      classes that run for the subjects on the School Subjects
-                      page.
-                    </li>
-                    <li>You can now see your Chronicle Summary.</li>
-                    <li>You can now see CompassIdentity card information.</li>
-                    <li>Additional Performance & Bug fixes.</li>
                   </ul>
                   <small
                     >BetterCompass version

@@ -6,6 +6,37 @@
           <v-toolbar-title>BetterCompass Changelog</v-toolbar-title>
         </v-toolbar>
         <v-container>
+          <v-card-title> 29/04/2022 - 03/05/2022 </v-card-title>
+          <ul>
+            <li>
+              Fixed where you don't get logged out when your Compass session
+              expires (causes infinite load on uncached pages).
+            </li>
+            <li>Fixed logout.</li>
+            <li>Set Remember Me to true as default option for login.</li>
+            <li>
+              Settings is now its own dedicated page to allow for extra options
+              in the future.
+            </li>
+            <li>
+              You can now see your assigned CompassIdentity ID cards in User
+              Profile.
+            </li>
+            <li>You can now see your BetterCompass ID in User Profile.</li>
+            <li>
+              You can now see your historical, and current classes/subjects in
+              User Profile.
+            </li>
+            <li>
+              Improved Upcoming Events to show some event types correctly that
+              weren't previously.
+            </li>
+            <li>
+              You can now see your Medical Record in User Profile if you have
+              one recorded on Compass.
+            </li>
+          </ul>
+
           <v-card-title> 08/04/2022 - 28/04/2022 </v-card-title>
           <ul>
             <li>

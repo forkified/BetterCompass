@@ -99,12 +99,34 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    checkAuth(context) {
+      return new Promise((resolve, reject) => {
+        Vue.axios
+          .post("/services/mobile.svc/TestAuth", "")
+          .then((res) => {
+            if (res.data.d.success) {
+              resolve(true)
+            } else {
+              reject(false)
+              context.dispatch("logout")
+            }
+          })
+          .catch((e) => {
+            if (e?.response?.data?.Message) {
+              reject(false)
+              context.dispatch("logout")
+            } else {
+              resolve(true)
+            }
+          })
+      })
+    },
     logout(context) {
       Vue.axios
         .post("/api/v1/user/logout")
         .then(() => {
           context.commit("setToken", null)
-          context.commit("setCalendar", null)
+          context.commit("setCalendar", [])
           context.commit("setCalendars", [])
           context.commit("setEditMode", false)
           context.commit("setCalendarInit", false)

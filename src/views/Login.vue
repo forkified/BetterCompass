@@ -220,7 +220,7 @@ export default {
   name: "Login",
   data() {
     return {
-      rememberMe: false,
+      rememberMe: true,
       usageDisclaimer: false,
       privacyPolicy: false,
       tokenInfo: false,
