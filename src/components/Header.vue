@@ -265,14 +265,19 @@
       color="dark"
       floating
     >
-      <v-list-item v-if="runningInPWA" class="text-center justify-center">
-        <v-btn text icon small class="mr-3" @click="navigate('back')">
+      <v-row
+        align="center"
+        justify="center"
+        class="mt-3"
+        v-if="runningInPWA && !$vuetify.breakpoint.mobile"
+      >
+        <v-btn text icon small class="mx-3" @click="navigate('back')">
           <v-icon>mdi-arrow-left</v-icon>
         </v-btn>
-        <v-btn text icon small class="ml-3" @click="navigate('forward')">
+        <v-btn text icon small class="mx-3" @click="navigate('forward')">
           <v-icon>mdi-arrow-right</v-icon>
         </v-btn>
-      </v-list-item>
+      </v-row>
       <v-list-item v-if="$vuetify.breakpoint.mobile">
         <v-list-item-content>
           <v-list-item-title class="text-h6">
