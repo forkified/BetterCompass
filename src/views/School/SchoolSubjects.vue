@@ -36,11 +36,17 @@
           <v-progress-circular indeterminate size="64"></v-progress-circular>
         </v-overlay>
         <v-toolbar color="toolbar">
-          <v-toolbar-title> Subjects ({{ subjects.length }}) </v-toolbar-title>
+          <v-toolbar-title> Subjects ({{ results.length }}) </v-toolbar-title>
         </v-toolbar>
         <v-container>
+          <v-text-field
+            v-model="search"
+            label="Search"
+            placeholder="YR 10 ENGLISH"
+            class="mx-6"
+          ></v-text-field>
           <v-card
-            v-for="(subject, index) in subjects"
+            v-for="(subject, index) in results"
             :key="subject.id"
             class="mb-3"
             color="card"
@@ -73,7 +79,19 @@ export default {
       loading: true,
       dialog: false,
       selectedSubject: {},
-      staff: []
+      staff: [],
+      search: ""
+    }
+  },
+  computed: {
+    results() {
+      if (this.search) {
+        return this.subjects.filter((subject) => {
+          return subject.name.toLowerCase().includes(this.search.toLowerCase())
+        })
+      } else {
+        return this.subjects
+      }
     }
   },
   methods: {

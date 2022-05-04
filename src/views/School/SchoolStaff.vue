@@ -3,11 +3,17 @@
     <v-container>
       <v-card color="card" elevation="7" class="rounded-xl">
         <v-toolbar color="toolbar">
-          <v-toolbar-title> Staff ({{ staff.length }}) </v-toolbar-title>
+          <v-toolbar-title> Staff ({{ results.length }}) </v-toolbar-title>
         </v-toolbar>
         <v-container>
+          <v-text-field
+            v-model="search"
+            label="Search"
+            placeholder="John DOE"
+            class="mx-6"
+          ></v-text-field>
           <v-card
-            v-for="user in staff"
+            v-for="user in results"
             :key="user.id"
             class="mb-3"
             @click="$router.push('/user/' + user.id)"
@@ -47,7 +53,19 @@ export default {
   name: "SchoolStaff",
   data() {
     return {
-      staff: []
+      staff: [],
+      search: ""
+    }
+  },
+  computed: {
+    results() {
+      if (this.search) {
+        return this.staff.filter((staff) => {
+          return staff.nif.toLowerCase().includes(this.search.toLowerCase())
+        })
+      } else {
+        return this.staff
+      }
     }
   },
   methods: {
