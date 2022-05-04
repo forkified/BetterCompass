@@ -265,6 +265,14 @@
       color="dark"
       floating
     >
+      <v-list-item v-if="runningInPWA" class="text-center justify-center">
+        <v-btn text icon small class="mr-3" @click="navigate('back')">
+          <v-icon>mdi-arrow-left</v-icon>
+        </v-btn>
+        <v-btn text icon small class="ml-3" @click="navigate('forward')">
+          <v-icon>mdi-arrow-right</v-icon>
+        </v-btn>
+      </v-list-item>
       <v-list-item v-if="$vuetify.breakpoint.mobile">
         <v-list-item-content>
           <v-list-item-title class="text-h6">
@@ -586,6 +594,12 @@ export default {
     }
   },
   computed: {
+    runningInPWA() {
+      return (
+        window.matchMedia("(display-mode: standalone)").matches ||
+        window.navigator.standalone
+      )
+    },
     debugModeEnabled() {
       if (localStorage.getItem("debugModeEnabled")) {
         return JSON.parse(localStorage.getItem("debugModeEnabled"))
@@ -602,6 +616,13 @@ export default {
     }
   },
   methods: {
+    navigate(type) {
+      if (type === "back") {
+        this.$router.back()
+      } else {
+        this.$router.forward()
+      }
+    },
     goToRoute() {
       this.$router.push(this.route.value)
       this.route.modal = false

@@ -544,7 +544,11 @@
         <v-toolbar color="toolbar">
           <v-toolbar-title>Everything</v-toolbar-title>
         </v-toolbar>
-        <v-text-field label="Search Everything..." v-model="search">
+        <v-text-field
+          class="mx-3"
+          label="Search Everything..."
+          v-model="search"
+        >
         </v-text-field>
         <v-data-table
           :items="computedItems"
@@ -1015,6 +1019,24 @@ export default {
       }
     },
     fetchEverything() {
+      this.axios
+        .post("/Services/UserInclusion.svc/GetThinClasses", {})
+        .then((res) => {
+          this.items.push(
+            ...res.data.d.map((item) => {
+              return {
+                name: item.name,
+                type: "Class",
+                createdAt: "N/A",
+                updatedAt: "N/A",
+                description: "N/A",
+                class: "N/A",
+                status: "N/A",
+                route: "/activity/" + item.id
+              }
+            })
+          )
+        })
       this.axios
         .post("/Services/User.svc/GetAllStaff", {
           start: 0

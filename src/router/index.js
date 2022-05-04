@@ -148,11 +148,7 @@ const routes = [
       {
         path: "settings",
         name: "BetterCompass Settings",
-        redirect: "/settings",
-        component: () =>
-          import(
-            /* webpackChunkName: "userSettings" */ "../views/User/UserSettings"
-          )
+        redirect: "/settings"
       },
       {
         path: "score",
