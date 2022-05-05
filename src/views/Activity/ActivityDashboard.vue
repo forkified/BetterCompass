@@ -124,7 +124,7 @@
               <h3>Teacher</h3>
               <h1>
                 <router-link
-                  :to="'/user/' + activity.managers[0].ManagerUserId"
+                  :to="'/user/' + getTeacherId"
                   style="text-decoration: none; color: inherit"
                 >
                   <v-avatar large class="mr-3">
@@ -388,6 +388,13 @@ export default {
         }
       })
       return tasks
+    },
+    getTeacherId() {
+      if (this.activity.managers[0].CoveringUserId) {
+        return this.activity.managers[0].CoveringUserId
+      } else {
+        return this.activity.managers[0].ManagerUserId
+      }
     },
     getTeacherPhoto() {
       if (this.activity.managers[0].CoveringPhotoPath) {
