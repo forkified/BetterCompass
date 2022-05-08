@@ -394,6 +394,8 @@ export default {
     })
     Vue.axios.defaults.headers.common["CompassAPIKey"] =
       localStorage.getItem("apiKey")
+    Vue.axios.defaults.headers.common["Authorization"] =
+      localStorage.getItem("bcToken")
     document.title = this.$route.name
       ? this.$route.name + " - BetterCompass"
       : "BetterCompass"

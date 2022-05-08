@@ -10,7 +10,7 @@ const { createProxyMiddleware } = require("http-proxy-middleware")
 const cookieParser = require("cookie-parser")
 app.use(cookieParser())
 app.set("trust proxy", true)
-const { Feedback } = require("./models")
+const { Feedback, Session } = require("./models")
 const auth = require("./lib/authorize.js")
 const semver = require("semver")
 const path = require("path")
@@ -21,7 +21,6 @@ const compassRouter = function (req) {
     req.query.compassInstance ||
     req.query.forceInstance ||
     "devices"
-  console.log("Request from instance: " + instance)
   // this is to avoid the ability to proxy non Compass sites through the proxy.
   if (instance.match(/^[a-zA-Z0-9-]+$/)) {
     return "https://" + instance + ".compass.education"
@@ -31,14 +30,32 @@ const compassRouter = function (req) {
   }
 }
 app.use(function (req, res, next) {
-  res.clearCookie("cpssid_" + req.header("compassSchoolId"))
-  res.header("Access-Control-Allow-Origin", process.env.HOSTNAME)
-  res.header("Access-Control-Allow-Methods", "*")
-  res.header(
-    "Access-Control-Allow-Headers",
-    req.header("access-control-request-headers")
-  )
-  next()
+  if (req.header("Authorization")) {
+    Session.findOne({
+      where: {
+        session: req.header("Authorization")
+      }
+    })
+      .then((session) => {
+        if (session) {
+          req.headers.test = "test"
+          req.headers.cookie = `ASP.NET_SessionId=${session.compassSession}`
+        }
+        next()
+      })
+      .catch(() => {
+        next()
+      })
+  } else {
+    res.clearCookie("cpssid_" + req.header("compassSchoolId"))
+    res.header("Access-Control-Allow-Origin", process.env.HOSTNAME)
+    res.header("Access-Control-Allow-Methods", "*")
+    res.header(
+      "Access-Control-Allow-Headers",
+      req.header("access-control-request-headers")
+    )
+    next()
+  }
 })
 
 // these are overrides to avoid Set-Cookie headers being sent to the client which can break logging out of BetterCompass in case of session expiration, or manual logout.

@@ -10,6 +10,18 @@
         <v-tabs background-color="transparent">
           <v-tab to="/settings/site"> General </v-tab>
           <v-tab to="/settings/appearance"> Appearance </v-tab>
+          <v-tab
+            to="/settings/security"
+            v-if="$store.state.user.bcUser.bcSessions"
+          >
+            Security
+          </v-tab>
+          <v-tab
+            to="/settings/sessions"
+            v-if="$store.state.user.bcUser.bcSessions"
+          >
+            Sessions
+          </v-tab>
         </v-tabs>
         <router-view> </router-view>
         <div class="mx-4">

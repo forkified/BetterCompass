@@ -129,7 +129,10 @@ router.get("/users", auth, async (req, res, next) => {
           model: Theme,
           as: "themeObject"
         }
-      ]
+      ],
+      attributes: {
+        exclude: ["totp", "compassSession", "password"]
+      }
     })
     res.json(users)
   } catch (err) {

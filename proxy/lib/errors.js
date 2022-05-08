@@ -11,7 +11,7 @@ let Errors = {
   invalidTotp: ["Invalid 2FA code.", 401],
   invalidCredentials: ["Invalid username or password.", 401],
   bcSessionsForced: [
-    "You are attempting to login as a user that enforces BetterCompass Sessions.\nBetterCompass functionality is disabled for this session instance.",
+    "You are attempting to login as a user that enforces BetterCompass Sessions.\nBetterCompass extended functionality is disabled for this session instance.",
     401
   ]
 }

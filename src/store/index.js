@@ -104,7 +104,7 @@ export default new Vuex.Store({
         Vue.axios
           .post("/services/mobile.svc/TestAuth", "")
           .then((res) => {
-            if (res.data.d.success) {
+            if (res.data?.d?.success) {
               resolve(true)
             } else {
               reject(false)
@@ -144,6 +144,7 @@ export default new Vuex.Store({
           localStorage.removeItem("userCache")
           localStorage.removeItem("categoriesCache")
           Vue.axios.defaults.headers.common["CompassAPIKey"] = null
+          Vue.axios.defaults.headers.common["Authorization"] = null
           context.commit("setUser", {
             bcUser: null,
             loggedIn: false
@@ -321,6 +322,8 @@ export default new Vuex.Store({
         localStorage.getItem("schoolId")
       Vue.axios.defaults.headers.common["compassUserId"] =
         localStorage.getItem("userId")
+      Vue.axios.defaults.headers.common["Authorization"] =
+        localStorage.getItem("bcToken")
       return new Promise((resolve, reject) => {
         Vue.axios
           .get("/api/v1/user")
@@ -379,6 +382,9 @@ export default new Vuex.Store({
             resolve(res.data)
           })
           .catch((e) => {
+            if (e?.response?.data?.errors[0]?.name === "bcSessionsForced") {
+              Vue.$toast.error(e.response.data.errors[0].message)
+            }
             if (JSON.parse(localStorage.getItem("userCache"))?.bcUser.id) {
               const user = JSON.parse(localStorage.getItem("userCache"))
               const name = user.bcUser.themeObject.id
