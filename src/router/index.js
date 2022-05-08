@@ -363,6 +363,22 @@ const routes = [
           import(
             /* webpackChunkName: "settingsAppearance" */ "../views/Settings/SettingsAppearance"
           )
+      },
+      {
+        path: "security",
+        name: "Security Settings",
+        component: () =>
+          import(
+            /* webpackChunkName: "settingsAppearance" */ "../views/Settings/SettingsSecurity"
+          )
+      },
+      {
+        path: "sessions",
+        name: "Session Settings",
+        component: () =>
+          import(
+            /* webpackChunkName: "settingsSessions" */ "../views/Settings/SettingsSessions"
+          )
       }
     ],
     component: () =>

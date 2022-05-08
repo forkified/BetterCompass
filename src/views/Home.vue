@@ -1475,6 +1475,11 @@
                 class="rounded-xl mb-3"
                 elevation="7"
                 v-if="item.name === 'home.learningTasks'"
+                style="
+                  white-space: pre-line !important;
+                  overflow-wrap: anywhere !important;
+                  display: inline-block;
+                "
               >
                 <v-overlay v-if="loading.learningTasks" absolute>
                   <v-progress-circular
@@ -2772,7 +2777,7 @@ export default {
     getLearningSchemes() {
       this.axios
         .get(
-          "/Services/ReferenceDataCache.svc/GetGradingSchemesForLearningTasks"
+          "/Services/ReferenceDataCache.svc/GetGradingSchemesForLearningTasks?page=1&start=0&limit=1000"
         )
         .then((res) => {
           this.gradingSchemes = res.data.d

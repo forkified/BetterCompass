@@ -19,7 +19,10 @@ module.exports = (sequelize, DataTypes) => {
       compassUserId: DataTypes.BIGINT,
       sussiId: DataTypes.STRING,
       other: DataTypes.JSON,
-      instance: DataTypes.STRING
+      instance: DataTypes.STRING,
+      userId: DataTypes.BIGINT,
+      compassSession: DataTypes.STRING,
+      expiredAt: DataTypes.DATE
     },
     {
       sequelize,

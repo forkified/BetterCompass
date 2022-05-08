@@ -22,14 +22,7 @@
           >
           <v-card-title>How can I obtain it?</v-card-title>
           <ul>
-            <li>
-              Please login to normal Compass, (eg.
-              {{
-                $store.state.school.instance
-                  ? $store.state.school.instance + ".compass.education"
-                  : "school.compass.education"
-              }}) using SSO.
-            </li>
+            <li>Please login to normal Compass using SSO.</li>
             <li>
               On the page, press CTRL + SHIFT + I to open up DevTools, and head
               over to the "Application" tab.
@@ -112,6 +105,28 @@
           user experience. The full privacy policy for Matomo can be viewed
           <a href="https://matomo.org/privacy-policy/" target="_blank">here</a
           >.<br /><br />
+        </v-container>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="totpDialog" max-width="500px">
+      <v-card color="card">
+        <v-toolbar color="toolbar">
+          <v-toolbar-title> Two-Factor Authentication </v-toolbar-title>
+        </v-toolbar>
+        <v-container>
+          <v-card-text
+            >You are seeing this because you have enabled Two-Factor
+            Authentication on BetterCompass.<br />
+            Please check your phone, or authenticator app to obtain the 6 digit
+            code and enter it here.</v-card-text
+          >
+          <v-otp-input
+            length="6"
+            @keyup.enter="doLogin()"
+            @finish="doLogin()"
+            v-model="totp"
+            :disabled="loading"
+          ></v-otp-input>
         </v-container>
       </v-card>
     </v-dialog>
@@ -215,6 +230,7 @@
 
 <script>
 import Vue from "vue"
+import AjaxErrorHandler from "@/lib/errorHandler"
 
 export default {
   name: "Login",
@@ -227,6 +243,8 @@ export default {
       token: "",
       username: "",
       password: "",
+      totp: "",
+      totpDialog: false,
       school: {
         id: "",
         name: "",
@@ -306,26 +324,48 @@ export default {
             password: this.password,
             username: this.username,
             schoolId: this.$store.state.school.id,
-            rememberMe: this.rememberMe
+            rememberMe: this.rememberMe,
+            instance: this.$store.state.school.instance,
+            totp: this.totp
           })
           .then(async (res) => {
             if (!res.data.success) {
               this.$toast.error("Invalid username or password.")
               this.loading = false
             } else {
-              localStorage.setItem("userId", res.data.userId)
-              this.loading = false
-              localStorage.setItem("apiKey", res.data.token)
-              Vue.axios.defaults.headers.common["CompassAPIKey"] =
-                localStorage.getItem("apiKey")
-              this.$store.commit("setToken", res.data.token)
-              await this.$store.dispatch("getUserInfo")
-              this.$router.push("/")
+              this.totpDialog = false
+              if (!res.data.bcSessions) {
+                localStorage.setItem("userId", res.data.userId)
+                this.loading = false
+                localStorage.setItem("apiKey", res.data.token)
+                Vue.axios.defaults.headers.common["CompassAPIKey"] =
+                  localStorage.getItem("apiKey")
+                this.$store.commit("setToken", res.data.token)
+                await this.$store.dispatch("getUserInfo")
+                this.$router.push("/")
+              } else {
+                localStorage.setItem("userId", res.data.userId)
+                localStorage.setItem("bcToken", res.data.bcToken)
+                Vue.axios.defaults.headers.common["Authorization"] =
+                  res.data.bcToken
+                this.$store.commit("setToken", res.data.bcToken)
+                await this.$store.dispatch("getUserInfo")
+                this.$router.push("/")
+                this.loading = false
+              }
             }
           })
-          .catch(() => {
-            this.$toast.error("Invalid username or password.")
-            this.loading = false
+          .catch((e) => {
+            if (
+              e?.response?.data?.errors[0]?.name === "invalidTotp" &&
+              !this.totpDialog
+            ) {
+              this.totpDialog = true
+              this.loading = false
+            } else {
+              AjaxErrorHandler(this.$store)(e)
+              this.loading = false
+            }
           })
       } else {
         this.axios

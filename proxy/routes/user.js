@@ -7,96 +7,169 @@ const { User, Session, Theme } = require("../models")
 const cryptoRandomString = require("crypto-random-string")
 const { Op } = require("sequelize")
 const speakeasy = require("speakeasy")
+const argon2 = require("argon2")
+const whois = require("node-xwhois")
 
-router.post("/login", (req, res, next) => {
-  try {
-    axios
-      .post(
-        "http://localhost:23994/services/admin.svc/AuthenticateUserCredentials",
-        {
-          schoolId: req.body.schoolId,
-          username: req.body.username,
-          password: req.body.password
-        },
-        {
-          headers: {
-            compassInstance:
-              req.header("compassInstance") ||
-              req.query.compassInstance ||
-              "devices"
-          },
-          withCredentials: true
+router.post("/login", async (req, res, next) => {
+  async function checkPassword(password, hash) {
+    try {
+      return await argon2.verify(hash, password)
+    } catch {
+      console.log("Error")
+      return false
+    }
+  }
+  async function generateSession(user) {
+    try {
+      const bgp = await whois
+        .bgpInfo(req.headers["x-real-ip"] || req.ip)
+        .catch(() => {})
+      const session = await Session.create({
+        userId: user.id,
+        instance: req.body.instance || "",
+        session: "BETTERCOMPASS-" + cryptoRandomString({ length: 128 }),
+        compassUserId: user.compassUserId,
+        sussiId: user.sussiId,
+        expiredAt: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30),
+        compassSession: user.compassSession,
+        other: {
+          ipRange: bgp?.prefix,
+          country: bgp?.country_code,
+          name: bgp?.name,
+          asn: bgp?.as
         }
-      )
-      .then((response) => {
-        axios
-          .post(
-            "http://localhost:23994/services/admin.svc/GetApiKey",
-            {
-              password: req.body.password,
-              schoolId: req.body.schoolId,
-              sussiId: req.body.username
-            },
-            {
-              headers: {
-                compassInstance:
-                  req.header("compassInstance") ||
-                  req.query.compassInstance ||
-                  "devices"
-              }
-            }
-          )
-          .then((response2) => {
-            if (!response.data.d.success) {
-              res.status(401)
-              res.json({
-                errors: [
-                  {
-                    name: "invalidUserOrPassword",
-                    message: "Invalid Invalid username or password.",
-                    status: 401
-                  }
-                ]
-              })
-            } else {
-              if (req.body.rememberMe) {
-                res.cookie(
-                  "ASP.NET_SessionId",
-                  response.headers["set-cookie"][0].split(";")[0].split("=")[1],
-                  {
-                    maxAge: 1000 * 60 * 60 * 24 * 365,
-                    httpOnly: true,
-                    secure: true,
-                    domain: process.env.HOSTNAME,
-                    sameSite: "strict"
-                  }
-                )
-              } else {
-                res.cookie(
-                  "ASP.NET_SessionId",
-                  response.headers["set-cookie"][0].split(";")[0].split("=")[1],
-                  {
-                    httpOnly: true,
-                    secure: true,
-                    domain: process.env.HOSTNAME,
-                    sameSite: "strict"
-                  }
-                )
-              }
-              res.json({
-                success: true,
-                cookieToken: response.headers["set-cookie"][0]
-                  .split(";")[0]
-                  .split("=")[1],
-                token: response2.data.d,
-                userId: response.data.d?.roles[0].userId
-              })
-            }
-          })
-          .catch((e) => {
-            console.log(e)
-          })
       })
+      res.json({
+        bcToken: session.session,
+        bcSessions: true,
+        success: true,
+        userId: user.compassUserId,
+        bcUserId: user.id
+      })
+    } catch (e) {
+      console.log(e)
+      return false
+    }
+  }
+  try {
+    const user = await User.findOne({
+      where: {
+        sussiId: req.body.username,
+        instance: req.body.instance || ""
+      }
+    })
+    if (user?.bcSessions) {
+      if (await checkPassword(req.body.password, user.password)) {
+        if (user.totpEnabled) {
+          const verified = speakeasy.totp.verify({
+            secret: user.totp,
+            encoding: "base32",
+            token: req.body.totp || ""
+          })
+          if (verified) {
+            await generateSession(user)
+          } else {
+            throw Errors.invalidTotp
+          }
+        } else {
+          await generateSession(user)
+        }
+      } else {
+        throw Errors.invalidCredentials
+      }
+    } else {
+      axios
+        .post(
+          "http://localhost:23994/services/admin.svc/AuthenticateUserCredentials",
+          {
+            schoolId: req.body.schoolId,
+            username: req.body.username,
+            password: req.body.password
+          },
+          {
+            headers: {
+              compassInstance:
+                req.header("compassInstance") ||
+                req.query.compassInstance ||
+                "devices"
+            },
+            withCredentials: true
+          }
+        )
+        .then((response) => {
+          axios
+            .post(
+              "http://localhost:23994/services/admin.svc/GetApiKey",
+              {
+                password: req.body.password,
+                schoolId: req.body.schoolId,
+                sussiId: req.body.username
+              },
+              {
+                headers: {
+                  compassInstance:
+                    req.header("compassInstance") ||
+                    req.query.compassInstance ||
+                    "devices"
+                }
+              }
+            )
+            .then((response2) => {
+              if (!response.data.d.success) {
+                res.status(401)
+                res.json({
+                  errors: [
+                    {
+                      name: "invalidUserOrPassword",
+                      message: "Invalid Invalid username or password.",
+                      status: 401
+                    }
+                  ]
+                })
+              } else {
+                if (req.body.rememberMe) {
+                  res.cookie(
+                    "ASP.NET_SessionId",
+                    response.headers["set-cookie"][0]
+                      .split(";")[0]
+                      .split("=")[1],
+                    {
+                      maxAge: 1000 * 60 * 60 * 24 * 365,
+                      httpOnly: true,
+                      secure: true,
+                      domain: process.env.HOSTNAME,
+                      sameSite: "strict"
+                    }
+                  )
+                } else {
+                  res.cookie(
+                    "ASP.NET_SessionId",
+                    response.headers["set-cookie"][0]
+                      .split(";")[0]
+                      .split("=")[1],
+                    {
+                      httpOnly: true,
+                      secure: true,
+                      domain: process.env.HOSTNAME,
+                      sameSite: "strict"
+                    }
+                  )
+                }
+                res.json({
+                  success: true,
+                  cookieToken: response.headers["set-cookie"][0]
+                    .split(";")[0]
+                    .split("=")[1],
+                  token: response2.data.d,
+                  userId: response.data.d?.roles[0].userId
+                })
+              }
+            })
+            .catch((e) => {
+              console.log(e)
+            })
+        })
+    }
   } catch (err) {
     next(err)
   }
@@ -173,10 +246,10 @@ router.get("/", auth, (req, res, next) => {
         })
       })
       .catch((e) => {
-        next(e)
+        console.log(e.request)
       })
   } catch (e) {
-    next(e)
+    console.log(1)
   }
 })
 
@@ -194,6 +267,14 @@ router.post("/logout", (req, res, next) => {
 })
 
 router.put("/settings/:type", auth, async (req, res, next) => {
+  async function checkPasswordArgon2(password, hash) {
+    try {
+      return await argon2.verify(hash, password)
+    } catch {
+      console.log("Error")
+      return false
+    }
+  }
   async function checkPassword(password) {
     return new Promise((resolve, reject) => {
       axios
@@ -290,7 +371,7 @@ router.put("/settings/:type", auth, async (req, res, next) => {
         const match = await checkPassword(req.body.password)
         if (match) {
           const token = speakeasy.generateSecret({
-            name: "BetterCompass - " + req.user.username,
+            name: "BetterCompass - " + req.user.displayCode,
             issuer: "BetterCompass"
           })
           await User.update(
@@ -365,6 +446,26 @@ router.put("/settings/:type", auth, async (req, res, next) => {
           other: {},
           userId: req.user.id
         })
+      } else {
+        throw Errors.invalidCredentials
+      }
+    } else if (req.params.type === "password") {
+      const user = await User.findOne({
+        where: {
+          id: req.user.id
+        }
+      })
+      let match
+      if (user.password) {
+        match = await checkPasswordArgon2(req.body.password)
+      } else {
+        match = true
+      }
+      if (match) {
+        await user.update({
+          password: await argon2.hash(req.body.new)
+        })
+        res.sendStatus(204)
       } else {
         throw Errors.invalidCredentials
       }

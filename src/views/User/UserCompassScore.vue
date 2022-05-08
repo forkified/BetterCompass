@@ -317,7 +317,7 @@ export default {
       this.loading = true
       this.axios
         .get(
-          "/Services/ReferenceDataCache.svc/GetGradingSchemesForLearningTasks"
+          "/Services/ReferenceDataCache.svc/GetGradingSchemesForLearningTasks?page=1&start=0&limit=1000"
         )
         .then((res) => {
           this.loading = false
