@@ -475,8 +475,10 @@ export default {
   watch: {
     "$store.state.user.bcUser.theme": {
       handler() {
-        this.$vuetify.theme.dark =
-          this.$store.state.user.bcUser.theme === "dark"
+        if (this.$store.state.user?.bcUser?.theme) {
+          this.$vuetify.theme.dark =
+            this.$store.state.user.bcUser.theme === "dark"
+        }
       },
       deep: true
     },
