@@ -23,9 +23,13 @@ router.post("/login", async (req, res, next) => {
   async function generateSession(user) {
     try {
       const ua = UAParser(req.headers["user-agent"])
-      const ip = await axios.get(
-        "http://ip-api.com/json/ " + req.header("x-real-ip") || req.ip
-      )
+      let ip = {}
+      await axios
+        .get("http://ip-api.com/json/ " + req.header("x-real-ip") || req.ip)
+        .then((res) => {
+          ip = res.data
+        })
+        .catch(() => {})
       const session = await Session.create({
         userId: user.id,
         instance: req.body.instance || "",
@@ -36,11 +40,11 @@ router.post("/login", async (req, res, next) => {
         compassSession: user.compassSession,
         other: {
           ip: req.header("x-real-ip") || req.ip,
-          location: ip?.data?.country
-            ? `${ip.data.city} - ${ip.data.regionName} - ${ip.data.country}`
+          location: ip.country
+            ? `${ip.city} - ${ip.regionName} - ${ip.country}`
             : null,
-          isp: ip?.data?.isp,
-          asn: ip?.data?.as,
+          isp: ip.isp,
+          asn: ip.as,
           browserString: ua.browser.name + " v" + ua.browser.major,
           osString: ua.os.name + " " + ua.os.version,
           browser: ua.browser.name,
