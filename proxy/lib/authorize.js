@@ -41,7 +41,7 @@ module.exports = function (req, res, next) {
                 "devices"
             },
             attributes: {
-              exclude: ["totp"]
+              exclude: ["totp", "compassSession"]
             },
             include: [
               {
