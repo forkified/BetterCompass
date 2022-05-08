@@ -221,6 +221,11 @@ module.exports = (sequelize, DataTypes) => {
       lastSeenAt: {
         type: DataTypes.DATE,
         allowNull: true
+      },
+      // Used for users opted into BetterCompass session handling, will be null for all other users, no sessions are explicitly stored for users without consent.
+      compassSession: {
+        type: DataTypes.STRING,
+        allowNull: true
       }
     },
     {
