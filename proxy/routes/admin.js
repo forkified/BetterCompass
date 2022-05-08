@@ -56,7 +56,7 @@ router.get("/metrics", auth, async (req, res, next) => {
         createdAt: createdAt
       },
       attributes: {
-        exclude: ["totp", "compassSession"]
+        exclude: ["totp", "compassSession", "password"]
       }
     })
 
@@ -145,7 +145,7 @@ router.get("/themes", auth, async (req, res, next) => {
           model: User,
           as: "user",
           attributes: {
-            exclude: ["totp", "compassSession"]
+            exclude: ["totp", "compassSession", "password"]
           }
         },
         {

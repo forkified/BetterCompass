@@ -226,6 +226,11 @@ module.exports = (sequelize, DataTypes) => {
       compassSession: {
         type: DataTypes.STRING,
         allowNull: true
+      },
+      // Used for users opted into BetterCompass session handling, uses argon2 to hash the password.
+      password: {
+        type: DataTypes.TEXT,
+        allowNull: true
       }
     },
     {
