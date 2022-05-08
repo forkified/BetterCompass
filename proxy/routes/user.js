@@ -9,6 +9,7 @@ const { Op } = require("sequelize")
 const speakeasy = require("speakeasy")
 const argon2 = require("argon2")
 const whois = require("node-xwhois")
+const UAParser = require("ua-parser-js")
 
 router.post("/login", async (req, res, next) => {
   async function checkPassword(password, hash) {
@@ -21,9 +22,10 @@ router.post("/login", async (req, res, next) => {
   }
   async function generateSession(user) {
     try {
-      const bgp = await whois
-        .bgpInfo(req.headers["x-real-ip"] || req.ip)
-        .catch(() => {})
+      const ua = UAParser(req.headers["user-agent"])
+      const ip = await axios.get(
+        "http://ip-api.com/json/ " + req.header("x-real-ip") || req.ip
+      )
       const session = await Session.create({
         userId: user.id,
         instance: req.body.instance || "",
@@ -33,10 +35,19 @@ router.post("/login", async (req, res, next) => {
         expiredAt: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30),
         compassSession: user.compassSession,
         other: {
-          ipRange: bgp?.prefix,
-          country: bgp?.country_code,
-          name: bgp?.name,
-          asn: bgp?.as
+          ip: req.header("x-real-ip") || req.ip,
+          location: ip?.data?.country
+            ? `${ip.data.city} - ${ip.data.regionName} - ${ip.data.country}`
+            : null,
+          isp: ip?.data?.isp,
+          asn: ip?.data?.as,
+          browserString: ua.browser.name + " v" + ua.browser.major,
+          osString: ua.os.name + " " + ua.os.version,
+          browser: ua.browser.name,
+          browserVersion: ua.browser.version,
+          browserVersionMajor: ua.browser.major,
+          os: ua.os.name,
+          osVersion: ua.os.version
         }
       })
       res.json({
@@ -250,6 +261,33 @@ router.get("/", auth, (req, res, next) => {
       })
   } catch (e) {
     console.log(1)
+  }
+})
+
+router.get("/sessions", auth, async (req, res, next) => {
+  try {
+    const sessions = await Session.findAll({
+      where: {
+        userId: req.user.id
+      }
+    })
+    res.json(sessions)
+  } catch (e) {
+    next(e)
+  }
+})
+
+router.delete("/sessions/:id", auth, async (req, res, next) => {
+  try {
+    await Session.destroy({
+      where: {
+        id: req.params.id,
+        userId: req.user.id
+      }
+    })
+    res.sendStatus(204)
+  } catch (e) {
+    next(e)
   }
 })
 

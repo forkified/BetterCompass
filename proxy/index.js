@@ -14,7 +14,6 @@ const { Feedback, Session } = require("./models")
 const auth = require("./lib/authorize.js")
 const semver = require("semver")
 const path = require("path")
-
 const compassRouter = function (req) {
   const instance =
     req.header("compassInstance") ||
