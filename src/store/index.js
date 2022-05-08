@@ -143,6 +143,7 @@ export default new Vuex.Store({
           localStorage.removeItem("learningTasksCache")
           localStorage.removeItem("userCache")
           localStorage.removeItem("categoriesCache")
+          localStorage.removeItem("bcToken")
           Vue.axios.defaults.headers.common["CompassAPIKey"] = null
           Vue.axios.defaults.headers.common["Authorization"] = null
           context.commit("setUser", {

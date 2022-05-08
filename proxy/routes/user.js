@@ -54,6 +54,13 @@ router.post("/login", async (req, res, next) => {
           osVersion: ua.os.version
         }
       })
+      res.cookie("bcSession", session.session, {
+        httpOnly: true,
+        secure: true,
+        domain: process.env.HOSTNAME,
+        sameSite: "strict",
+        maxAge: 1000 * 60 * 60 * 24 * 365
+      })
       res.json({
         bcToken: session.session,
         bcSessions: true,
@@ -302,6 +309,7 @@ router.post("/logout", (req, res, next) => {
 
     res.clearCookie("cpssid_" + req.header("compassSchoolId"))
     res.clearCookie("cpsdid")
+    res.clearCookie("bcSession")
     res.sendStatus(204)
   } catch (e) {
     next(e)
