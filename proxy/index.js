@@ -29,10 +29,10 @@ const compassRouter = function (req) {
   }
 }
 app.use(function (req, res, next) {
-  if (req.header("Authorization")) {
+  if (req.header("Authorization") || req.cookies.bcSession) {
     Session.findOne({
       where: {
-        session: req.header("Authorization")
+        session: req.header("Authorization") || req.cookies.bcSession || ""
       }
     })
       .then((session) => {
