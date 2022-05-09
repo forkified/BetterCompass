@@ -234,7 +234,63 @@ export default {
               this.progressReportTable()
             })
             .catch(() => {
-              this.$toast.error("Unable to load progression reports.")
+              if (!localStorage.getItem("debugProgressReports")) {
+                this.$toast.error("Unable to load progression reports.")
+                this.loading = false
+              } else {
+                this.axios
+                  .post("/Services/Gpa.svc/GetResultsByCycleAndStudent", {
+                    entityId: this.$store.state.user.userId,
+                    cycleId: this.selectedCycle,
+                    editing: true
+                  })
+                  .then((res) => {
+                    this.progressReports = res.data.d
+                    this.axios
+                      .post("/Services/Gpa.svc/GetActivitiesForStaffByCycle", {
+                        userId: this.user.userId,
+                        cycleId: this.selectedCycle,
+                        page: 1,
+                        start: 0,
+                        limit: 25
+                      })
+                      .then((cycleActivities) => {
+                        this.axios
+                          .post(
+                            "/Services/Gpa.svc/GetOverviewGraphDataForActivities",
+                            {
+                              cycleIds: [this.selectedCycle],
+                              activityIds: cycleActivities.data.d.map(function (
+                                activity
+                              ) {
+                                return activity.id
+                              }),
+                              userId: this.user.userId
+                            }
+                          )
+                          .then((resp) => {
+                            this.progressReports.entities = []
+                            resp.data.d.forEach(function (entity) {
+                              this.progressReports.entities.push({
+                                results: entity.ActivityCyclesGraphLines[0]
+                                  ?.Results
+                                  ? entity.ActivityCyclesGraphLines[0]?.Results
+                                  : [],
+                                activityId: entity.ActivityId,
+                                name: cycleActivities.data.d.find(function (
+                                  activity
+                                ) {
+                                  return activity.id === entity.ActivityId
+                                }).name
+                              })
+                            }, this)
+                            this.progressReportTable()
+                            this.loading = false
+                          })
+                      })
+                  })
+                  .catch(() => {})
+              }
             })
         })
         .catch(() => {

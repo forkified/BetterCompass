@@ -28,7 +28,7 @@
           <v-tab to="dashboard"> Dashboard </v-tab>
           <v-tab to="tasks" v-if="!permissionError"> Learning Tasks </v-tab>
           <v-tab to="attendance"> Attendance </v-tab>
-          <v-tab to="reports" v-if="!permissionError"> Reports </v-tab>
+          <v-tab to="reports" v-if="!permissionError || debug"> Reports </v-tab>
           <v-tab to="analytics" v-if="!permissionError"> Analytics </v-tab>
           <v-tab
             to="events"
@@ -66,6 +66,9 @@ export default {
     }
   },
   computed: {
+    debug() {
+      return localStorage.getItem("debugProgressReports")
+    },
     compassScore() {
       return JSON.parse(localStorage.getItem("compassScoreEnabled"))
     },

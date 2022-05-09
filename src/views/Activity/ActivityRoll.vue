@@ -16,7 +16,12 @@
             'background-color: ' +
             $vuetify.theme.themes[$vuetify.theme.dark ? 'dark' : 'light'].card
           "
+          style="cursor: pointer"
+          @click:row="handleClick"
         >
+          <template v-slot:item.fs="{ item }">
+            {{ $date(item.fs).format("YYYY/MM/DD") }}
+          </template>
         </v-data-table>
       </v-card>
     </v-container>
@@ -56,11 +61,19 @@ export default {
           text: "User ID",
           align: "left",
           value: "uid"
+        },
+        {
+          text: "Enrollment Date",
+          align: "left",
+          value: "fs"
         }
       ]
     }
   },
   methods: {
+    handleClick(item) {
+      this.$router.push("/user/" + item.uid)
+    },
     getUsers() {
       this.loading = true
       this.axios

@@ -1137,7 +1137,15 @@
                   >
                   <v-spacer></v-spacer>
                 </v-toolbar>
-                <v-tabs background-color="card" fixed-tabs v-model="newsTab">
+                <v-tabs
+                  background-color="card"
+                  fixed-tabs
+                  v-model="newsTab"
+                  style="
+                    white-space: pre-line !important;
+                    overflow-wrap: anywhere !important;
+                  "
+                >
                   <v-tab>News for {{ $store.state.user.firstName }}</v-tab>
                   <v-tab v-if="parentNews">Parent News</v-tab>
                   <v-tab-item
@@ -1156,6 +1164,10 @@
                       elevation="3"
                       text
                       color="card"
+                      style="
+                        white-space: pre-line !important;
+                        overflow-wrap: anywhere !important;
+                      "
                     >
                       <v-toolbar color="toolbar">
                         <v-avatar
@@ -1230,6 +1242,10 @@
                       elevation="3"
                       text
                       color="card"
+                      style="
+                        white-space: pre-line !important;
+                        overflow-wrap: anywhere !important;
+                      "
                     >
                       <v-toolbar color="toolbar">
                         <v-avatar
@@ -1478,7 +1494,6 @@
                 style="
                   white-space: pre-line !important;
                   overflow-wrap: anywhere !important;
-                  display: inline-block;
                 "
               >
                 <v-overlay v-if="loading.learningTasks" absolute>
@@ -1916,7 +1931,6 @@ export default {
           value: "name"
         },
         { text: "Tags", value: "tags", sortable: false },
-        { text: "Activity", value: "activityName" },
         { text: "Subject", value: "subjectName" },
         { text: "Due Date", value: "dueDateTimestamp" },
         { text: "Status", value: "status" }
@@ -3324,6 +3338,10 @@ export default {
       if (val === "1969-04-20") {
         this.$toast.success("Enabled debug mode")
         localStorage.setItem("debugModeEnabled", true)
+      }
+      if (val === "1913-12-08") {
+        this.$toast.success("Enabled reporting debug mode")
+        localStorage.setItem("debugProgressReports", true)
       }
     },
     type() {
