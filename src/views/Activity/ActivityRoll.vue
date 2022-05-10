@@ -22,6 +22,9 @@
           <template v-slot:item.fs="{ item }">
             {{ $date(item.fs).format("YYYY/MM/DD") }}
           </template>
+          <template v-slot:item.ss="{ item }">
+            {{ $date(item.ss).format("YYYY/MM/DD") }}
+          </template>
         </v-data-table>
       </v-card>
     </v-container>
@@ -63,9 +66,14 @@ export default {
           value: "uid"
         },
         {
-          text: "Enrollment Date",
+          text: "Enrollment Expiration",
           align: "left",
           value: "fs"
+        },
+        {
+          text: "Enrollment Date",
+          align: "left",
+          value: "ss"
         }
       ]
     }
@@ -90,8 +98,11 @@ export default {
             if (users.findIndex((u) => u.uid === user.uid) === -1) {
               users.push({
                 name: user.n.split(", ")[1] + " " + user.n.split(", ")[0],
+                rc: 1,
                 ...user
               })
+            } else {
+              users.find((u) => u.uid === user.uid).rc++
             }
           })
           this.users = users
