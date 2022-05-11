@@ -1089,6 +1089,12 @@ export default {
                 : "No due date"
             }
           })
+          if (!this.academicGroupId) {
+            localStorage.setItem(
+              "learningTasksCache",
+              JSON.stringify(this.tasks)
+            )
+          }
           this.cachedResult = false
         })
         .catch((e) => {

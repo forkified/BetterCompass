@@ -3081,7 +3081,7 @@ export default {
       this.axios
         .post("/Services/LearningTasks.svc/GetAllLearningTasksByUserId", {
           forceTaskId: 0,
-          limit: 20,
+          limit: 100,
           page: 1,
           sort: '[{"property":"dueDateTimestamp","direction":"ASC"}]',
           start: 0,
