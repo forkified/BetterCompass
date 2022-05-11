@@ -1196,6 +1196,9 @@
                             }}
                           </div>
                         </v-toolbar-title>
+                        <v-chip disabled style="opacity: 1" v-if="item.Priority"
+                          ><v-icon small>mdi-pin-outline</v-icon></v-chip
+                        >
                       </v-toolbar>
                       <v-container>
                         <div>
@@ -1274,6 +1277,10 @@
                             }}
                           </div>
                         </v-toolbar-title>
+                        <v-spacer></v-spacer>
+                        <v-chip disabled style="opacity: 1" v-if="item.Priority"
+                          ><v-icon small>mdi-pin-outline</v-icon></v-chip
+                        >
                       </v-toolbar>
                       <v-container>
                         <div>
