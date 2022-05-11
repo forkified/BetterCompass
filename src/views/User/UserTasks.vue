@@ -520,6 +520,7 @@
       <v-toolbar color="toolbar">
         <v-toolbar-title> Learning Tasks </v-toolbar-title>
         <v-spacer></v-spacer>
+        <v-chip v-if="cachedResult"> Cached </v-chip>&nbsp;
         <v-tooltip top>
           <template v-slot:activator="{ on, attrs }">
             <div v-on="on" v-bind="attrs">
@@ -638,6 +639,7 @@ export default {
       offset: 0,
       academicGroups: [],
       academicGroupId: null,
+      cachedResult: true,
       selectedTask: {
         __type: "Task:http://jdlf.com.au/ns/data/learningtasks/",
         activityId: 0,
@@ -707,6 +709,7 @@ export default {
         })
         .then((res) => {
           this.categories = res.data.d
+          this.getLearningTasks()
         })
     },
     getCategory(item) {
@@ -1058,6 +1061,11 @@ export default {
     },
     getLearningTasks() {
       this.loading = true
+      if (localStorage.getItem("learningTasksCache")) {
+        this.loading = false
+        this.tasks = JSON.parse(localStorage.getItem("learningTasksCache"))
+        this.cachedResult = true
+      }
       this.axios
         .post("/Services/LearningTasks.svc/GetAllLearningTasksByUserId", {
           forceTaskId: 0,
@@ -1081,17 +1089,21 @@ export default {
                 : "No due date"
             }
           })
+          this.cachedResult = false
         })
-        .catch(() => {
+        .catch((e) => {
           this.loading = false
-          this.$toast.error("The learning tasks could not be loaded.")
+          this.$toast.info(
+            "Unable to refresh Learning Tasks cache.\nHelp ID: " +
+              e?.response?.data?.h?.substring(0, 5)
+          )
+          this.cachedResult = true
         })
     }
   },
   mounted() {
     this.getAcademicGroups()
     this.getLearningSchemes()
-    this.getLearningTasks()
     this.getCategories()
     this.hideIrrelevantTasks =
       this.$store.state.user.bcUser?.hideIrrelevantTasks
