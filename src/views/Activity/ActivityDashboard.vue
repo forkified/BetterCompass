@@ -157,7 +157,10 @@
               <v-spacer></v-spacer>
             </v-toolbar>
             <v-container>
-              <html v-html="cleanLessonPlan"></html>
+              <html
+                style="overflow-wrap: anywhere !important"
+                v-html="cleanLessonPlan"
+              ></html>
             </v-container>
           </v-card>
         </v-col>
@@ -237,56 +240,79 @@
               <v-toolbar-title>Class News</v-toolbar-title>
               <v-spacer></v-spacer>
             </v-toolbar>
-            <v-container>
-              <v-card color="card" v-for="item in news" :key="item.id">
-                <v-list-item two-line>
-                  <v-list-item-content>
-                    <v-list-item-title class="text-h5">
-                      <v-avatar large left>
-                        <img
-                          :src="
-                            item.UserImageUrl +
-                            '?compassInstance=' +
-                            $store.state.school.instance
-                          "
-                        /> </v-avatar
-                      >&nbsp;
-                      {{ item.UserName }}
-                    </v-list-item-title>
-                    <v-list-item-title class="text-h6">
-                      {{ item.Title }}
-                    </v-list-item-title>
-                    <v-list-item-subtitle>{{
+            <v-card
+              v-for="item in news"
+              :key="item.id"
+              class="rounded-xl mx-2 ma-3"
+              dense
+              elevation="3"
+              text
+              color="card"
+              style="
+                white-space: pre-line !important;
+                overflow-wrap: anywhere !important;
+              "
+            >
+              <v-toolbar color="toolbar">
+                <v-avatar
+                  @click="$router.push('/user/' + item.UserId)"
+                  style="cursor: pointer"
+                  large
+                  class="mr-3"
+                >
+                  <img :src="$store.state.school.fqdn + item.UserImageUrl" />
+                </v-avatar>
+                <v-toolbar-title>
+                  {{ item.Title }}
+                  <div class="subheading subtitle-1">
+                    Created by:
+                    <span
+                      @click="$router.push('/user/' + item.UserId)"
+                      style="cursor: pointer"
+                      >{{ item.UserName }}</span
+                    >, on
+                    {{
                       $date(item.PostDateTime).format(
-                        "hh:mm A, dddd, MMMM Do YYYY"
+                        "dddd, MMMM Do YYYY, hh:mm A"
                       )
-                    }}</v-list-item-subtitle
-                    ><br />
-                    <p
-                      style="
-                        white-space: pre-line !important;
-                        overflow-wrap: anywhere !important;
-                        display: inline-block;
-                      "
-                      v-html="item.Content1"
-                    ></p>
+                    }}
+                  </div>
+                </v-toolbar-title>
+                <v-spacer></v-spacer>
+                <v-chip disabled style="opacity: 1" v-if="item.Priority"
+                  ><v-icon small>mdi-pin-outline</v-icon></v-chip
+                >
+              </v-toolbar>
+              <v-container>
+                <div>
+                  <div
+                    class="text-block"
+                    style="white-space: pre-line"
+                    v-html="item.Content1"
+                  ></div>
+                  <v-card-actions class="justify-center">
                     <v-chip
-                      v-for="download in item.Attachments"
-                      :key="download.id"
-                      color="indigo"
+                      v-for="attachment in item.Attachments"
+                      :key="attachment.id"
                       :href="
-                        download.UiLink +
+                        attachment.UiLink +
                         '&compassInstance=' +
                         $store.state.school.instance
                       "
+                      download
+                      color="calendarNormalActivity"
+                      dark
                     >
                       <v-icon>mdi-download</v-icon>
-                      {{ download.Name }}
+                      {{ attachment.Name }}
                     </v-chip>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-card>
-            </v-container>
+                  </v-card-actions>
+                </div>
+              </v-container>
+            </v-card>
+            <v-card-text class="text-center justify-center" v-if="!news.length">
+              There are no news items to display.
+            </v-card-text>
           </v-card>
         </v-col>
       </v-row>

@@ -216,7 +216,10 @@ Vue.use(VueSanitize, {
       "height",
       "loading",
       "style"
-    ]
+    ],
+    tr: ["style"],
+    td: ["style"],
+    table: ["style"]
   },
   allowedStyles: {
     "*": {
