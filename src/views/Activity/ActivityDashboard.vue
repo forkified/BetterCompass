@@ -120,7 +120,7 @@
       <v-card color="card" class="rounded-xl ma-3" elevation="7">
         <v-container>
           <v-row>
-            <v-col v-if="activity.managers">
+            <v-col v-if="activity.managers" md="3">
               <h3>Teacher</h3>
               <h1>
                 <router-link
@@ -144,6 +144,159 @@
             <v-col>
               <h3>Computers</h3>
               <h1>{{ activity.LocationDetails.computerNumber }}</h1>
+            </v-col>
+            <v-col>
+              <h3>Assets</h3>
+              <v-tooltip top>
+                <template v-slot:activator="{ on, attrs }">
+                  <span v-on="on" v-bind="attrs">
+                    <v-icon
+                      :disabled="!activity.LocationDetails.hasCooling"
+                      v-on="on"
+                      >mdi-air-conditioner</v-icon
+                    >
+                  </span>
+                </template>
+                <span>
+                  Air Conditioner:
+                  {{ activity.LocationDetails.hasCooling ? "Yes" : "No" }}
+                </span>
+              </v-tooltip>
+              <v-tooltip top>
+                <template v-slot:activator="{ on, attrs }">
+                  <span v-on="on" v-bind="attrs">
+                    <v-icon
+                      :disabled="!activity.LocationDetails.hasDvd"
+                      v-on="on"
+                      >mdi-disc-player</v-icon
+                    >
+                  </span>
+                </template>
+                <span>
+                  DVD Player:
+                  {{ activity.LocationDetails.hasDvd ? "Yes" : "No" }}
+                </span>
+              </v-tooltip>
+              <v-tooltip top>
+                <template v-slot:activator="{ on, attrs }">
+                  <span v-on="on" v-bind="attrs">
+                    <v-icon
+                      :disabled="!activity.LocationDetails.hasHeating"
+                      v-on="on"
+                      >mdi-water-boiler</v-icon
+                    >
+                  </span>
+                </template>
+                <span>
+                  Heater:
+                  {{ activity.LocationDetails.hasHeating ? "Yes" : "No" }}
+                </span>
+              </v-tooltip>
+              <v-tooltip top>
+                <template v-slot:activator="{ on, attrs }">
+                  <span v-on="on" v-bind="attrs">
+                    <v-icon
+                      :disabled="!activity.LocationDetails.hasWater"
+                      v-on="on"
+                      >mdi-water-pump</v-icon
+                    >
+                  </span>
+                </template>
+                <span>
+                  Water Tap:
+                  {{ activity.LocationDetails.hasWater ? "Yes" : "No" }}
+                </span>
+              </v-tooltip>
+              <v-tooltip top>
+                <template v-slot:activator="{ on, attrs }">
+                  <span v-on="on" v-bind="attrs">
+                    <v-icon
+                      :disabled="!activity.LocationDetails.hasSmartboard"
+                      v-on="on"
+                      >mdi-presentation-play</v-icon
+                    >
+                  </span>
+                </template>
+                <span>
+                  Smartboard:
+                  {{ activity.LocationDetails.hasSmartboard ? "Yes" : "No" }}
+                </span>
+              </v-tooltip>
+              <v-tooltip top>
+                <template v-slot:activator="{ on, attrs }">
+                  <span v-on="on" v-bind="attrs">
+                    <v-icon
+                      :disabled="!activity.LocationDetails.hasWhiteboard"
+                      v-on="on"
+                      >mdi-human-male-board
+                    </v-icon>
+                  </span>
+                </template>
+                <span>
+                  Whiteboard:
+                  {{ activity.LocationDetails.hasWhiteboard ? "Yes" : "No" }}
+                </span>
+              </v-tooltip>
+              <v-tooltip top>
+                <template v-slot:activator="{ on, attrs }">
+                  <span v-on="on" v-bind="attrs">
+                    <v-icon
+                      :disabled="!activity.LocationDetails.hasSoundfield"
+                      v-on="on"
+                      >mdi-surround-sound
+                    </v-icon>
+                  </span>
+                </template>
+                <span>
+                  Soundfield:
+                  {{ activity.LocationDetails.hasSoundfield ? "Yes" : "No" }}
+                </span>
+              </v-tooltip>
+              <v-tooltip top>
+                <template v-slot:activator="{ on, attrs }">
+                  <span v-on="on" v-bind="attrs">
+                    <v-icon
+                      :disabled="!activity.LocationDetails.hasTv"
+                      v-on="on"
+                      >mdi-television
+                    </v-icon>
+                  </span>
+                </template>
+                <span>
+                  TV:
+                  {{ activity.LocationDetails.hasTv ? "Yes" : "No" }}
+                </span>
+              </v-tooltip>
+              <v-tooltip top>
+                <template v-slot:activator="{ on, attrs }">
+                  <span v-on="on" v-bind="attrs">
+                    <v-icon
+                      :disabled="!activity.LocationDetails.hasGas"
+                      v-on="on"
+                      >mdi-fire
+                    </v-icon>
+                  </span>
+                </template>
+                <span>
+                  Gas:
+                  {{ activity.LocationDetails.hasGas ? "Yes" : "No" }}
+                </span>
+              </v-tooltip>
+              <v-tooltip top>
+                <template v-slot:activator="{ on, attrs }">
+                  <span v-on="on" v-bind="attrs">
+                    <v-icon
+                      :disabled="!activity.LocationDetails.hasWheelchair"
+                      v-on="on"
+                      >mdi-wheelchair-accessibility
+                    </v-icon>
+                  </span>
+                </template>
+                <span>
+                  Wheelchair Access:
+                  {{ activity.LocationDetails.hasWheelchair ? "Yes" : "No" }}
+                </span>
+              </v-tooltip>
             </v-col>
           </v-row>
         </v-container>
