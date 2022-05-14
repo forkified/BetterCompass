@@ -379,6 +379,14 @@ const routes = [
           import(
             /* webpackChunkName: "settingsSessions" */ "../views/Settings/SettingsSessions"
           )
+      },
+      {
+        path: "versions",
+        name: "Versions",
+        component: () =>
+          import(
+            /* webpackChunkName: "settingsVersions" */ "../views/Settings/SettingsVersions"
+          )
       }
     ],
     component: () =>

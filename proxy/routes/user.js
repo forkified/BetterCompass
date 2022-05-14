@@ -10,6 +10,8 @@ const speakeasy = require("speakeasy")
 const argon2 = require("argon2")
 const whois = require("node-xwhois")
 const UAParser = require("ua-parser-js")
+const fs = require("fs")
+const path = require("path")
 
 router.post("/login", async (req, res, next) => {
   async function checkPassword(password, hash) {
@@ -283,6 +285,34 @@ router.get("/sessions", auth, async (req, res, next) => {
       }
     })
     res.json(sessions)
+  } catch (e) {
+    next(e)
+  }
+})
+
+router.get("/versions", async (req, res, next) => {
+  try {
+    const files = fs.readdirSync(path.join(__dirname, "../../dist"))
+    const versions = files
+      .filter((file) => file.startsWith("precache-manifest."))
+      .map((file) => {
+        const version = file.split(".")[1]
+        const comment = fs
+          .readFileSync(path.join(__dirname, "../../dist", file))
+          .toString()
+          .split("\n")
+          .find((line) => line.startsWith("//"))
+        const versionNumber = comment
+          .split("Version information: ")[1]
+          .split(",")[0]
+        return {
+          version,
+          versionNumber,
+          versionBuildDate: comment.split("Build Date: ")[1].split("  ")[0],
+          url: `/precache-manifest.${version}.js`
+        }
+      })
+    res.json(versions)
   } catch (e) {
     next(e)
   }
