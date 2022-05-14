@@ -33,7 +33,20 @@ router.get("/newsFeed", auth, async (req, res, next) => {
           }
         )
         .then((resp) => {
-          res.json(resp.data)
+          let newsFeed
+          if (parentLinkInstance.whitelistedSenderIds.length) {
+            newsFeed = resp.data.d.data.filter((item) =>
+              parentLinkInstance.whitelistedSenderIds.includes(item.SenderId)
+            )
+          } else {
+            newsFeed = resp.data.d.data
+          }
+          res.json({
+            d: {
+              total: newsFeed.length,
+              data: newsFeed
+            }
+          })
         })
         .catch((e) => {
           next(e)
