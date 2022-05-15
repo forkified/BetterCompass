@@ -23,6 +23,7 @@
     >
       <v-card
         color="card lighten-1"
+        class="rounded-xl"
         elevation="12"
         max-width="900px"
         max-height="700px"
@@ -260,6 +261,7 @@
       <v-card
         min-width="100%"
         color="card lighten-1"
+        class="rounded-xl"
         elevation="7"
         style="border-radius: 0; padding: 0"
       >

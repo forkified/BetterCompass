@@ -1,8 +1,9 @@
 const WebpackAutoInject = require("webpack-auto-inject-version-next")
 const Dotenv = require("dotenv-webpack")
 //const SentryPlugin = require("@sentry/webpack-plugin")
-
+const version = require("./package.json").version
 let plugins
+
 if (process.env.NODE_ENV === "production") {
   plugins = [
     /*new SentryPlugin({
@@ -90,6 +91,10 @@ module.exports = {
   },
   productionSourceMap: true,
   configureWebpack: {
+    output: {
+      filename: `[name].[hash].${version}.js`,
+      chunkFilename: `[name].[hash].${version}.js`
+    },
     plugins
   },
   pwa: {

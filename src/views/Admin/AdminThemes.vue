@@ -19,6 +19,9 @@
       <template v-slot:item.actions="{ item }">
         <v-btn text color="primary" @click="applyTheme(item)"> Apply </v-btn>
       </template>
+      <template v-slot:item.theme.css="{ item }">
+        {{ item.theme.css ? "Yes" : "No" }}
+      </template>
     </v-data-table>
   </div>
 </template>
@@ -63,6 +66,10 @@ export default {
         {
           text: "Users Count",
           value: "users.length"
+        },
+        {
+          text: "CSS",
+          value: "theme.css"
         },
         {
           text: "Actions",
