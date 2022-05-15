@@ -306,16 +306,25 @@ router.get("/versions", async (req, res, next) => {
         const versionNumber = comment
           .split("Version information: ")[1]
           .split(",")[0]
-        return {
-          version,
-          versionNumber,
-          versionBuildDate: comment.split("Build Date: ")[1].split("  ")[0],
-          url: `/precache-manifest.${version}.js`
+        if (semver.gte(versionNumber, "1.0.130")) {
+          return {
+            version,
+            versionNumber,
+            available: true,
+            versionBuildDate: comment.split("Build Date: ")[1].split("  ")[0],
+            url: `/precache-manifest.${version}.js`
+          }
+        } else {
+          return {
+            version,
+            versionNumber,
+            available: false,
+            versionBuildDate: comment.split("Build Date: ")[1].split("  ")[0],
+            url: `/precache-manifest.${version}.js`
+          }
         }
       })
-    res.json(
-      versions.filter((version) => semver.gte(version.versionNumber, "1.0.130"))
-    )
+    res.json(versions)
   } catch (e) {
     next(e)
   }
