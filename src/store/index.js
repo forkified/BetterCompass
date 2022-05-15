@@ -478,13 +478,12 @@ export default new Vuex.Store({
             Vuetify.framework.theme.themes.primaryType =
               res.data.bcUser.themeObject.theme.primaryType
             const element = document.getElementById("user-theme")
-            if (element) {
-              element.parentNode.removeChild(element)
+            if (!element) {
+              const style = document.createElement("style")
+              style.id = "user-theme"
+              style.innerHTML = res.data.bcUser.themeObject.theme.css
+              document.head.appendChild(style)
             }
-            const style = document.createElement("style")
-            style.id = "user-theme"
-            style.innerHTML = res.data.bcUser.themeObject.theme.css
-            document.head.appendChild(style)
             Vue.axios
               .post("/Services/NewsFeed.svc/GetMyUpcoming", {
                 userId: context.state.user.userId
