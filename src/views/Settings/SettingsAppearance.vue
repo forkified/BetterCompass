@@ -511,7 +511,6 @@ export default {
           element.parentNode.removeChild(element)
         }
         const style = document.createElement("style")
-        style.type = "text/css"
         style.id = "user-theme"
         style.innerHTML = this.creator.css
         document.head.appendChild(style)
@@ -521,7 +520,6 @@ export default {
           element.parentNode.removeChild(element)
         }
         const style = document.createElement("style")
-        style.type = "text/css"
         style.id = "user-theme"
         style.innerHTML = theme.css
         document.head.appendChild(style)

@@ -265,8 +265,8 @@
           <v-row>
             <v-col>
               <v-alert type="info" text class="editor__toolbar">
-                CTRL + ALT + D will toggle all custom CSS styling, works
-                anywhere, even outside the editor.</v-alert
+                CTRL + ALT + D / CTRL + ⌘ + D will toggle all custom CSS
+                styling, works anywhere, even outside the editor.</v-alert
               >
               <v-switch
                 inset

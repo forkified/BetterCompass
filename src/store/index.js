@@ -208,7 +208,7 @@ export default new Vuex.Store({
         style.id = "user-theme"
         style.innerHTML =
           context.state.themeEngine.theme.css ||
-          context.state.user?.bcUser?.themeObject?.css
+          context.state.user?.bcUser?.themeObject?.theme?.css
         document.head.appendChild(style)
       }
       context.state.themeEngine.cssEnabled =
@@ -482,7 +482,6 @@ export default new Vuex.Store({
               element.parentNode.removeChild(element)
             }
             const style = document.createElement("style")
-            style.type = "text/css"
             style.id = "user-theme"
             style.innerHTML = res.data.bcUser.themeObject.theme.css
             document.head.appendChild(style)
@@ -548,7 +547,6 @@ export default new Vuex.Store({
                 element.parentNode.removeChild(element)
               }
               const style = document.createElement("style")
-              style.type = "text/css"
               style.id = "user-theme"
               style.innerHTML = user.bcUser.themeObject.theme.css
               document.head.appendChild(style)
