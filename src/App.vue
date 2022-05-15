@@ -242,18 +242,27 @@
       </v-card>
     </vue-final-modal>
     <vue-final-modal
+      ref="editor-modal"
       v-model="$store.state.themeEngine.cssEditor"
       classes="modal-container"
       content-class="modal-content"
       :drag="true"
       :hide-overlay="true"
-      :resize="false"
+      :resize="true"
+      :resize-directions="['r', 'l']"
+      :min-width="400"
+      :focus-retain="true"
       :click-to-close="false"
       drag-selector=".editor__toolbar"
       :prevent-click="true"
-      :lock-scroll="true"
+      :lock-scroll="false"
     >
-      <v-card color="card lighten-1" elevation="7">
+      <v-card
+        min-width="100%"
+        color="card lighten-1"
+        elevation="7"
+        style="border-radius: 0; padding: 0"
+      >
         <v-card-title color="toolbar" class="editor__toolbar v-toolbar">
           <v-toolbar-title>CSS Editor</v-toolbar-title>
           <v-spacer></v-spacer>
@@ -265,8 +274,8 @@
           <v-row>
             <v-col>
               <v-alert type="info" text class="editor__toolbar">
-                CTRL + ALT + D / CTRL + ⌘ + D will toggle all custom CSS
-                styling, works anywhere, even outside the editor.</v-alert
+                CTRL + ALT + D / F9 will toggle all custom CSS styling, works
+                anywhere, even outside the editor.</v-alert
               >
               <v-switch
                 inset
@@ -296,11 +305,17 @@
                 @init="editorInit"
                 lang="css"
                 :theme="$vuetify.theme.dark ? 'monokai' : 'chrome'"
-                width="580"
-                height="700"
+                height="350"
               ></editor>
             </v-col>
-            <v-col>
+            <v-col v-if="cssTips">
+              <v-card-title>
+                Tips
+                <v-spacer></v-spacer>
+                <v-btn icon @click="cssTips = false">
+                  <v-icon>mdi-close</v-icon>
+                </v-btn></v-card-title
+              >
               <v-alert type="error" text>
                 This is an alert.<br />
                 Try to style it with .v-alert</v-alert
@@ -312,21 +327,6 @@
               </code>
               <v-btn class="mt-2 mr-2">Here's a button</v-btn>
               <v-btn class="mt-2" text color="info">Here's another one</v-btn>
-              <v-calendar
-                :style="'background-color: inherit'"
-                class="day"
-                v-model="today"
-                type="day"
-                :events="fakeEvents"
-                event-overlap-mode="column"
-                :event-overlap-threshold="30"
-                :first-interval="8"
-                :interval-minutes="60"
-                :interval-count="6"
-                :interval-height="60"
-                :event-color="computeColor"
-              >
-              </v-calendar>
             </v-col>
           </v-row>
           <v-card-actions>
@@ -593,15 +593,13 @@ import Header from "./components/Header.vue"
 import AjaxErrorHandler from "@/lib/errorHandler"
 import Vue from "vue"
 import Vuetify from "@/plugins/vuetify"
-import { VueFinalModal, ModalsContainer } from "vue-final-modal"
+import { VueFinalModal } from "vue-final-modal"
 
 export default {
   name: "App",
   components: {
     Header,
     VueFinalModal,
-    // eslint-disable-next-line vue/no-unused-components
-    ModalsContainer,
     editor: require("vue2-ace-editor")
   },
   data: () => ({
@@ -671,7 +669,8 @@ export default {
     search: "",
     results: [],
     searchInput: null,
-    themes: []
+    themes: [],
+    cssTips: true
   }),
   computed: {
     creatorJSON: {
@@ -849,6 +848,9 @@ export default {
     }
   },
   mounted() {
+    if (localStorage.getItem("cssTipsDismissed")) {
+      this.cssTips = false
+    }
     window.addEventListener("offline", () => {
       this.$store.commit("setOnline", false)
       this.$store.dispatch("getState")
@@ -939,6 +941,9 @@ export default {
       })
   },
   watch: {
+    cssTips(val) {
+      localStorage.setItem("cssTipsDismissed", !val)
+    },
     "$store.state.themeEngine.theme": {
       handler() {
         this.$vuetify.theme.themes.dark =

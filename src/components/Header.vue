@@ -167,7 +167,7 @@
       </button>
       <button
         style="display: none"
-        v-shortkey="['ctrl', 'meta', 'd']"
+        v-shortkey="['f9']"
         @shortkey="$store.dispatch('toggleCSS')"
       >
         Style Toggle
