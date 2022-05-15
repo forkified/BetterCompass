@@ -49,7 +49,9 @@ export default {
           if (asset.url.endsWith(".js")) {
             if (
               asset.url.startsWith("/js/app") ||
-              asset.url.startsWith("/js/chunk-vendors")
+              asset.url.startsWith("/js/chunk-vendors") ||
+              asset.url.startsWith("/app") ||
+              asset.url.startsWith("/chunk-vendors")
             ) {
               const script = document.createElement("script")
               script.src = asset.url
