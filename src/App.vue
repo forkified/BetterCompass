@@ -327,8 +327,38 @@
                 >.v-alert {<br />
                 background-color: blue !important; <br />}
               </code>
-              <v-btn class="mt-2 mr-2">Here's a button</v-btn>
-              <v-btn class="mt-2" text color="info">Here's another one</v-btn>
+              <v-btn
+                class="mt-2 mr-2"
+                @click="$toast.success('I have been pressed.')"
+                >Here's a button</v-btn
+              >
+              <v-btn
+                class="mt-2"
+                text
+                color="info"
+                @click="$toast.info('This is the second button\'s action.')"
+                >Here's another one</v-btn
+              >
+              <v-card-title> Fonts </v-card-title>
+              <code
+                class="block"
+                style="white-space: pre-line; overflow-wrap: anywhere"
+              >
+                /* Stop from font breaking CSS code editor */<br />
+                .ace_editor div {<br />
+                &nbsp;font-family: "JetBrains Mono" !important; <br />}<br />
+                div {<br />
+                &nbsp;font-family: "Inter", sans-serif;
+                <br />}
+              </code>
+              There are little pre-loaded fonts you can use, they include:
+              <ul>
+                <li>Roboto (Default)</li>
+                <li>Inter</li>
+                <li>JetBrains Mono</li>
+              </ul>
+              You may import your own fonts using
+              <code>@import</code>, or use system fonts.
             </v-col>
           </v-row>
           <v-card-actions>

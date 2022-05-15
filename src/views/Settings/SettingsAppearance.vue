@@ -39,6 +39,16 @@
         v-model="accent"
       ></v-color-picker>
     </v-card-text>
+    <v-col sm="4">
+      <v-select
+        v-if="$store.state.site.release === 'dev'"
+        v-model="font"
+        :items="fonts"
+        label="Font"
+        item-text="name"
+        item-value="name"
+      ></v-select>
+    </v-col>
     <v-card-text>
       <v-card
         class="my-2"
@@ -139,6 +149,17 @@ export default {
       accent: null,
       css: "",
       autoCSS: false,
+      fonts: [
+        "Roboto",
+        "Inter",
+        "JetBrains Mono",
+        "Montserrat",
+        "Ubuntu",
+        "Inconsolata",
+        "Comfortaa",
+        "Comic Neue"
+      ],
+      font: "Roboto",
       creator: {
         id: 1,
         name: "",
