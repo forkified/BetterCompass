@@ -36,7 +36,9 @@ export default {
             .split(");")[0]
         )
         document.open()
-        document.write("<head><title>BetterCompass</title></head><body></body>")
+        document.write(
+          `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8" /><meta http-equiv="X-UA-Compatible" content="IE=edge" /><meta name="viewport" content="width=device-width,initial-scale=1" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" /><title>BetterCompass</title></head><body><noscript><strong>We're sorry but BetterCompass doesn't work properly without JavaScript enabled. Please enable it to continue.</strong></noscript><div id="app"></div></body></html>`
+        )
         parsed.forEach((asset) => {
           if (asset.url.endsWith(".js")) {
             if (
