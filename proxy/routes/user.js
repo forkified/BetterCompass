@@ -12,6 +12,7 @@ const whois = require("node-xwhois")
 const UAParser = require("ua-parser-js")
 const fs = require("fs")
 const path = require("path")
+const semver = require("semver")
 
 router.post("/login", async (req, res, next) => {
   async function checkPassword(password, hash) {
@@ -312,7 +313,9 @@ router.get("/versions", async (req, res, next) => {
           url: `/precache-manifest.${version}.js`
         }
       })
-    res.json(versions)
+    res.json(
+      versions.filter((version) => semver.gte(version.versionNumber, "1.0.130"))
+    )
   } catch (e) {
     next(e)
   }
