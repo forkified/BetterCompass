@@ -2,6 +2,7 @@ import Vue from "vue"
 import Vuex from "vuex"
 import dayjs from "dayjs"
 import Vuetify from "../plugins/vuetify"
+import AjaxErrorHandler from "@/lib/errorHandler"
 
 Vue.use(Vuex)
 
@@ -38,9 +39,32 @@ export default new Vuex.Store({
       settings: false,
       search: false
     },
-    quickSwitchCache: []
+    quickSwitchCache: [],
+    themeEngine: {
+      cssEnabled: true,
+      theme: {},
+      cssEditor: false,
+      editor: false,
+      type: "create",
+      autoCSS: false
+    }
   },
   mutations: {
+    setThemeEngine(state, payload) {
+      state.themeEngine = payload
+    },
+    setThemeEngineTheme(state, payload) {
+      state.themeEngine.theme = payload
+    },
+    setThemeEngineCSSEditor(state, payload) {
+      state.themeEngine.cssEditor = payload
+    },
+    setThemeEngineEditor(state, payload) {
+      state.themeEngine.editor = payload
+    },
+    setThemeEngineType(state, payload) {
+      state.themeEngine.type = payload
+    },
     setCalendars(state, calendars) {
       state.calendars = calendars
     },
@@ -99,6 +123,114 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    discardTheme(context) {
+      context.state.themeEngine.theme = {
+        id: 1,
+        name: "BetterCompass Classic",
+        primaryType: "all",
+        css: "",
+        dark: {
+          primary: "#0190ea",
+          secondary: "#757575",
+          accent: "#000000",
+          error: "#ff1744",
+          info: "#2196F3",
+          success: "#4CAF50",
+          warning: "#ff9800",
+          card: "#151515",
+          toolbar: "#191919",
+          sheet: "#181818",
+          text: "#000000",
+          dark: "#151515",
+          bg: "#151515",
+          calendarNormalActivity: "#3f51b5",
+          calendarActivityType7: "#f44336",
+          calendarActivityType8: "#4caf50",
+          calendarActivityType10: "#ff9800",
+          calendarExternalActivity: "#2196f3"
+        },
+        light: {
+          primary: "#0190ea",
+          secondary: "#757575",
+          accent: "#000000",
+          error: "#ff1744",
+          info: "#2196F3",
+          success: "#4CAF50",
+          warning: "#ff9800",
+          card: "#f8f8f8",
+          toolbar: "#f8f8f8",
+          sheet: "#f8f8f8",
+          text: "#000000",
+          dark: "#f8f8f8",
+          bg: "#f8f8f8",
+          calendarNormalActivity: "#3f51b5",
+          calendarActivityType7: "#f44336",
+          calendarActivityType8: "#4caf50",
+          calendarActivityType10: "#ff9800",
+          calendarExternalActivity: "#2196f3"
+        }
+      }
+      context.state.themeEngine.type = "create"
+    },
+    saveTheme(context, { theme, type }) {
+      if (context.state.themeEngine.type === "create" || type === "copy") {
+        Vue.axios
+          .post("/api/v1/themes", {
+            name:
+              type === "copy"
+                ? context.state.themeEngine.theme.name + " - Copy"
+                : context.state.themeEngine.theme.name,
+            theme: theme || context.state.themeEngine.theme
+          })
+          .then(() => {})
+          .catch((e) => {
+            AjaxErrorHandler(this.$store)(e)
+          })
+      } else {
+        Vue.axios
+          .put("/api/v1/themes/" + context.state.themeEngine.theme.id, {
+            name: context.state.themeEngine.theme.name,
+            theme: theme || context.state.themeEngine.theme
+          })
+          .then(() => {})
+          .catch((e) => {
+            AjaxErrorHandler(this.$store)(e)
+          })
+      }
+    },
+    toggleCSS(context) {
+      const element = document.getElementById("user-theme")
+      if (element) {
+        element.parentNode.removeChild(element)
+      }
+      if (!context.state.themeEngine.cssEnabled) {
+        const style = document.createElement("style")
+        style.id = "user-theme"
+        style.innerHTML =
+          context.state.themeEngine.theme.css ||
+          context.state.user?.bcUser?.themeObject?.css
+        document.head.appendChild(style)
+      }
+      context.state.themeEngine.cssEnabled =
+        !context.state.themeEngine.cssEnabled
+    },
+    applyCSS(context, theme) {
+      const element = document.getElementById("user-theme")
+      if (element) {
+        element.parentNode.removeChild(element)
+      }
+      if (!theme) {
+        const style = document.createElement("style")
+        style.id = "user-theme"
+        style.innerHTML = context.state.themeEngine.theme.css
+        document.head.appendChild(style)
+      } else {
+        const style = document.createElement("style")
+        style.id = "user-theme"
+        style.innerHTML = context.state.themeEngine.theme.css
+        document.head.appendChild(style)
+      }
+    },
     checkAuth(context) {
       return new Promise((resolve, reject) => {
         Vue.axios
@@ -345,6 +477,15 @@ export default new Vuex.Store({
             Vuetify.framework.theme.themes.name = name
             Vuetify.framework.theme.themes.primaryType =
               res.data.bcUser.themeObject.theme.primaryType
+            const element = document.getElementById("user-theme")
+            if (element) {
+              element.parentNode.removeChild(element)
+            }
+            const style = document.createElement("style")
+            style.type = "text/css"
+            style.id = "user-theme"
+            style.innerHTML = res.data.bcUser.themeObject.theme.css
+            document.head.appendChild(style)
             Vue.axios
               .post("/Services/NewsFeed.svc/GetMyUpcoming", {
                 userId: context.state.user.userId
@@ -386,7 +527,7 @@ export default new Vuex.Store({
             if (e?.response?.data?.errors[0]?.name === "bcSessionsForced") {
               Vue.$toast.error(e.response.data.errors[0].message)
             }
-            if (JSON.parse(localStorage.getItem("userCache"))?.bcUser.id) {
+            if (JSON.parse(localStorage.getItem("userCache"))?.bcUser?.id) {
               const user = JSON.parse(localStorage.getItem("userCache"))
               const name = user.bcUser.themeObject.id
               const dark = user.bcUser.themeObject.theme.dark
@@ -402,6 +543,15 @@ export default new Vuex.Store({
               Vuetify.framework.theme.themes.name = name
               Vuetify.framework.theme.themes.primaryType =
                 user.bcUser.themeObject.theme.primaryType
+              const element = document.getElementById("user-theme")
+              if (element) {
+                element.parentNode.removeChild(element)
+              }
+              const style = document.createElement("style")
+              style.type = "text/css"
+              style.id = "user-theme"
+              style.innerHTML = user.bcUser.themeObject.theme.css
+              document.head.appendChild(style)
               context.commit("setLoading", false)
               context.commit("setUser", user)
               resolve(user)

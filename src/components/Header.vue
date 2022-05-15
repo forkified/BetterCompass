@@ -160,6 +160,13 @@
       </button>
       <button
         style="display: none"
+        v-shortkey="['ctrl', 'alt', 'd']"
+        @shortkey="$store.dispatch('toggleCSS')"
+      >
+        Style Toggle
+      </button>
+      <button
+        style="display: none"
         v-shortkey="['ctrl', 'alt', 's']"
         @shortkey="enableCompassScore"
       >

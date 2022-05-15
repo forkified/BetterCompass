@@ -39,9 +39,14 @@ export default {
         document.write("<head><title>BetterCompass</title></head><body></body>")
         parsed.forEach((asset) => {
           if (asset.url.endsWith(".js")) {
-            const script = document.createElement("script")
-            script.src = asset.url
-            document.body.appendChild(script)
+            if (
+              asset.url.startsWith("/js/app") ||
+              asset.url.startsWith("/js/chunk-vendors")
+            ) {
+              const script = document.createElement("script")
+              script.src = asset.url
+              document.body.appendChild(script)
+            }
           } else if (asset.url.endsWith(".css")) {
             const link = document.createElement("link")
             link.rel = "stylesheet"

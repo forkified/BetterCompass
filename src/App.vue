@@ -8,6 +8,345 @@
     <v-overlay :value="$store.state.site.loading">
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
+    <!-- theme engine editors -->
+    <vue-final-modal
+      v-model="$store.state.themeEngine.editor"
+      classes="modal-container"
+      content-class="modal-content"
+      :drag="true"
+      :hide-overlay="true"
+      :resize="false"
+      :click-to-close="false"
+      drag-selector=".editor__toolbar"
+      :prevent-click="true"
+      :lock-scroll="true"
+    >
+      <v-card
+        color="card lighten-1"
+        elevation="12"
+        max-width="900px"
+        max-height="700px"
+      >
+        <v-card-title color="toolbar" class="editor__toolbar v-toolbar">
+          <v-toolbar-title>
+            Theme
+            {{
+              $store.state.themeEngine.type === "create" ? "Creator" : "Editor"
+            }}
+            <v-tooltip top>
+              <template v-slot:activator="{ on, attrs }">
+                <span v-on="on" v-bind="attrs">
+                  <v-btn
+                    fab
+                    small
+                    text
+                    @click="$store.dispatch('randomizeTheme')"
+                  >
+                    <v-icon>mdi-dice-multiple</v-icon>
+                  </v-btn>
+                </span>
+              </template>
+              <span> Randomize theme </span>
+            </v-tooltip>
+          </v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn icon @click="$store.state.themeEngine.editor = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-container>
+          <v-alert type="info" text>
+            You can now view your changes in real time by navigating anywhere
+            throughout BetterCompass with the editor open.
+          </v-alert>
+          <v-card-actions>
+            <v-btn
+              color="primary"
+              text
+              @click="
+                $store.dispatch('saveTheme', { theme: null, type: null })
+                $store.state.themeEngine.editor = false
+              "
+              >{{
+                $store.state.themeEngine.type === "create"
+                  ? "Create & Apply"
+                  : "Save Edits"
+              }}</v-btn
+            >
+            <v-btn
+              color="primary"
+              text
+              @click="
+                $store.dispatch('saveTheme', { theme: null, type: 'copy' })
+              "
+              v-if="$store.state.themeEngine.type === 'edit'"
+              >Save a Copy</v-btn
+            >
+            <v-btn
+              color="error darken-1"
+              text
+              @click="$store.dispatch('discardTheme')"
+              >Discard</v-btn
+            >
+          </v-card-actions>
+          <v-form>
+            <v-text-field
+              v-model="$store.state.themeEngine.theme.name"
+              class="mx-3"
+              label="Theme Name"
+              required
+            ></v-text-field>
+            <v-select
+              :items="intendedFor"
+              label="Intended for"
+              class="mx-3"
+              v-model="$store.state.themeEngine.theme.primaryType"
+            >
+            </v-select>
+            <v-text-field
+              v-model="creatorJSON"
+              label="JSON"
+              class="mx-3"
+            ></v-text-field>
+            <v-btn @click="$store.state.themeEngine.cssEditor = true">
+              Custom CSS
+            </v-btn>
+            <h2
+              class="ml-2 mt-2 mb-3"
+              v-if="
+                $store.state.themeEngine.theme.primaryType === 'dark' ||
+                $store.state.themeEngine.theme.primaryType === 'all'
+              "
+            >
+              Dark:
+            </h2>
+            <v-row
+              v-if="
+                $store.state.themeEngine.theme.primaryType === 'dark' ||
+                $store.state.themeEngine.theme.primaryType === 'all'
+              "
+            >
+              <v-col
+                sm="3"
+                v-for="(item, index) in $store.state.themeEngine.theme.dark"
+                :key="index + '-dark-card'"
+              >
+                <v-card color="card">
+                  <h3 class="ml-2 mt-2 mb-2">
+                    {{ friendlyName(index) }}
+                  </h3>
+                  <v-menu offset-y>
+                    <template v-slot:activator="{ on }">
+                      <v-card
+                        class="mb-2 mx-2"
+                        :color="$store.state.themeEngine.theme.dark[index]"
+                        v-on="on"
+                      >
+                        <v-container></v-container>
+                      </v-card>
+                    </template>
+                    <v-color-picker
+                      v-model="$store.state.themeEngine.theme.dark[index]"
+                      show-swatches
+                      hide-inputs
+                    ></v-color-picker>
+                  </v-menu>
+                  <v-text-field
+                    class="mx-2"
+                    label="#HEX"
+                    v-model="$store.state.themeEngine.theme.dark[index]"
+                  ></v-text-field>
+                </v-card>
+              </v-col>
+            </v-row>
+            <h2
+              class="ml-2 mt-2 mb-3"
+              v-if="
+                $store.state.themeEngine.theme.primaryType === 'light' ||
+                $store.state.themeEngine.theme.primaryType === 'all'
+              "
+            >
+              Light:
+            </h2>
+            <v-row
+              v-if="
+                $store.state.themeEngine.theme.primaryType === 'light' ||
+                $store.state.themeEngine.theme.primaryType === 'all'
+              "
+            >
+              <v-col
+                sm="3"
+                v-for="(item, index) in $store.state.themeEngine.theme.light"
+                :key="index + '-light-card'"
+              >
+                <v-card color="card">
+                  <h3 class="ml-2 mt-2 mb-2">
+                    {{ friendlyName(index) }}
+                  </h3>
+                  <v-menu offset-y>
+                    <template v-slot:activator="{ on }">
+                      <v-card
+                        class="mb-2 mx-2"
+                        :color="$store.state.themeEngine.theme.light[index]"
+                        v-on="on"
+                      >
+                        <v-container></v-container>
+                      </v-card>
+                    </template>
+                    <v-color-picker
+                      v-model="$store.state.themeEngine.theme.light[index]"
+                      show-swatches
+                      hide-inputs
+                    ></v-color-picker>
+                  </v-menu>
+                  <v-text-field
+                    class="mx-2"
+                    label="#HEX"
+                    v-model="$store.state.themeEngine.theme.light[index]"
+                  ></v-text-field>
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-form>
+          <v-card-actions>
+            <v-btn
+              color="primary"
+              text
+              @click="
+                $store.dispatch('saveTheme', { theme: null, type: null })
+                $store.state.themeEngine.editor = false
+              "
+              >{{
+                $store.state.themeEngine.type === "create"
+                  ? "Create & Apply"
+                  : "Save Edits"
+              }}</v-btn
+            >
+            <v-btn
+              color="primary"
+              text
+              @click="
+                $store.dispatch('saveTheme', { theme: null, type: 'copy' })
+              "
+              v-if="$store.state.themeEngine.type === 'edit'"
+              >Save a Copy</v-btn
+            >
+            <v-btn
+              color="error darken-1"
+              text
+              @click="$store.dispatch('discardTheme')"
+              >Discard</v-btn
+            >
+          </v-card-actions>
+        </v-container>
+      </v-card>
+    </vue-final-modal>
+    <vue-final-modal
+      v-model="$store.state.themeEngine.cssEditor"
+      classes="modal-container"
+      content-class="modal-content"
+      :drag="true"
+      :hide-overlay="true"
+      :resize="false"
+      :click-to-close="false"
+      drag-selector=".editor__toolbar"
+      :prevent-click="true"
+      :lock-scroll="true"
+    >
+      <v-card color="card lighten-1" elevation="7">
+        <v-card-title color="toolbar" class="editor__toolbar v-toolbar">
+          <v-toolbar-title>CSS Editor</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn icon @click="$store.state.themeEngine.cssEditor = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-container>
+          <v-row>
+            <v-col>
+              <v-alert type="info" text class="editor__toolbar">
+                CTRL + ALT + D will toggle all custom CSS styling, works
+                anywhere, even outside the editor.</v-alert
+              >
+              <v-switch
+                inset
+                label="Live update"
+                v-model="$store.state.themeEngine.autoCSS"
+              ></v-switch>
+              <v-btn
+                icon
+                class="mb-2"
+                @click="
+                  $store.dispatch('saveTheme', { theme: null, type: null })
+                  $store.dispatch('applyCSS', null)
+                "
+              >
+                <v-icon>mdi-content-save</v-icon>
+              </v-btn>
+              <v-btn
+                icon
+                class="mb-2"
+                @click="$store.dispatch('applyCSS', null)"
+              >
+                <v-icon>mdi-refresh</v-icon>
+              </v-btn>
+              <editor
+                class="editor"
+                v-model="$store.state.themeEngine.theme.css"
+                @init="editorInit"
+                lang="css"
+                :theme="$vuetify.theme.dark ? 'monokai' : 'chrome'"
+                width="580"
+                height="700"
+              ></editor>
+            </v-col>
+            <v-col>
+              <v-alert type="error" text>
+                This is an alert.<br />
+                Try to style it with .v-alert</v-alert
+              >
+              Here's an example:<br />
+              <code class="block"
+                >.v-alert {<br />
+                background-color: blue !important; <br />}
+              </code>
+              <v-btn class="mt-2 mr-2">Here's a button</v-btn>
+              <v-btn class="mt-2" text color="info">Here's another one</v-btn>
+              <v-calendar
+                :style="'background-color: inherit'"
+                class="day"
+                v-model="today"
+                type="day"
+                :events="fakeEvents"
+                event-overlap-mode="column"
+                :event-overlap-threshold="30"
+                :first-interval="8"
+                :interval-minutes="60"
+                :interval-count="6"
+                :interval-height="60"
+                :event-color="computeColor"
+              >
+              </v-calendar>
+            </v-col>
+          </v-row>
+          <v-card-actions>
+            <v-spacer />
+            <v-btn
+              color="blue darken-1"
+              text
+              @click="
+                $store.dispatch('saveTheme', { theme: null, type: null })
+                $store.dispatch('applyCSS', null)
+                $store.state.themeEngine.cssEditor = false
+              "
+            >
+              Save Changes
+            </v-btn>
+          </v-card-actions>
+        </v-container>
+      </v-card>
+    </vue-final-modal>
+    <!-- end theme engine editors -->
     <v-dialog
       v-if="$store.state.user.bcUser"
       v-model="$store.state.user.bcUser.guidedWizard"
@@ -254,12 +593,72 @@ import Header from "./components/Header.vue"
 import AjaxErrorHandler from "@/lib/errorHandler"
 import Vue from "vue"
 import Vuetify from "@/plugins/vuetify"
+import { VueFinalModal, ModalsContainer } from "vue-final-modal"
+
 export default {
   name: "App",
   components: {
-    Header
+    Header,
+    VueFinalModal,
+    // eslint-disable-next-line vue/no-unused-components
+    ModalsContainer,
+    editor: require("vue2-ace-editor")
   },
   data: () => ({
+    intendedFor: [
+      { text: "All base themes", value: "all" },
+      { text: "Dark theme", value: "dark" },
+      { text: "Light theme", value: "light" }
+    ],
+    fakeEvents: [
+      {
+        name: "English",
+        content: "English",
+        color: "#dce6f4",
+        start: new Date().setHours(9, 0, 0, 0),
+        end: new Date().setHours(10, 0, 0, 0),
+        timed: true,
+        activityType: 1,
+        activityId: 0,
+        calendarId: 0
+      },
+      {
+        name: "Maths",
+        content: "Maths",
+        color: "#f4dcdc",
+        start: new Date().setHours(10, 0, 0, 0),
+        end: new Date().setHours(11, 0, 0, 0),
+        timed: true,
+        activityType: 1,
+        activityId: 0,
+        instanceId: 0,
+        calendarId: 0
+      },
+      {
+        name: "Lunch Break",
+        content: "Lunch Break",
+        color: "#dce6f4",
+        start: new Date().setHours(11, 0, 0, 0),
+        end: new Date().setHours(11, 30, 0, 0),
+        timed: true,
+        activityType: 1,
+        activityId: 0,
+        instanceId: 0,
+        calendarId: 0
+      },
+      {
+        name: "Excursion",
+        content: "Excursion",
+        color: "#dce6f4",
+        start: new Date().setHours(11, 0, 0, 0),
+        end: new Date().setHours(13, 30, 0, 0),
+        timed: true,
+        activityType: 1,
+        activityId: 0,
+        instanceId: 0,
+        calendarId: 0
+      }
+    ],
     loading: false,
     defineAccent: false,
     accent: "#0179f3",
@@ -275,6 +674,17 @@ export default {
     themes: []
   }),
   computed: {
+    creatorJSON: {
+      get() {
+        return JSON.stringify(this.$store.state.themeEngine.theme)
+      },
+      set(value) {
+        this.$store.state.themeEngine.theme = JSON.parse(value)
+      }
+    },
+    today() {
+      return this.$date().format("YYYY-MM-DD")
+    },
     computeThemes() {
       let array = []
       if (this.$vuetify.theme.dark) {
@@ -292,6 +702,62 @@ export default {
     }
   },
   methods: {
+    friendlyName(index) {
+      if (index === "calendarNormalActivity") {
+        return "Standard Class"
+      } else if (index === "calendarActivityType7") {
+        return "Relief Event"
+      } else if (index === "calendarActivityType8") {
+        return "Generic Type 8"
+      } else if (index === "calendarActivityType10") {
+        return "Learning Task"
+      } else if (index === "calendarExternalActivity") {
+        return "External Activity"
+      } else if (index === "bg") {
+        return "Background"
+      } else if (index === "dark") {
+        return "Sidebar & Header"
+      } else {
+        return index.charAt(0).toUpperCase() + index.slice(1)
+      }
+    },
+    computeColor(event) {
+      if (this.$vuetify?.theme?.themes) {
+        if (event.color === "#003300") {
+          return this.$vuetify.theme.themes[
+            this.$store.state.user.bcUser.theme || "dark"
+          ].calendarActivityType8
+        } else if (event.color === "#133897") {
+          return this.$vuetify.theme.themes[
+            this.$store.state.user.bcUser.theme || "dark"
+          ].calendarExternalActivity
+        } else if (event.activityType === 7 || event.color === "#f4dcdc") {
+          return this.$vuetify.theme.themes[
+            this.$store.state.user.bcUser.theme || "dark"
+          ].calendarActivityType7
+        } else if (event.color === "#dce6f4") {
+          return this.$vuetify.theme.themes[
+            this.$store.state.user.bcUser.theme || "dark"
+          ].calendarNormalActivity
+        } else if (event.activityType === 10) {
+          return this.$vuetify.theme.themes[
+            this.$store.state.user.bcUser.theme || "dark"
+          ].calendarActivityType10
+        } else {
+          return this.$vuetify.theme.themes[
+            this.$store.state.user.bcUser.theme || "dark"
+          ].calendarNormalActivity
+        }
+      }
+    },
+    editorInit() {
+      require("brace/ext/language_tools")
+      require("brace/mode/css")
+      require("brace/mode/less")
+      require("brace/theme/monokai")
+      require("brace/theme/chrome")
+      require("brace/snippets/css")
+    },
     baseRole() {
       if (this.$store.state.user?.baseRole) {
         return (
@@ -473,6 +939,21 @@ export default {
       })
   },
   watch: {
+    "$store.state.themeEngine.theme": {
+      handler() {
+        this.$vuetify.theme.themes.dark =
+          this.$store.state.themeEngine.theme.dark
+        this.$vuetify.theme.themes.light =
+          this.$store.state.themeEngine.theme.light
+        this.$vuetify.theme.themes.name = this.$store.state.themeEngine.theme.id
+      },
+      deep: true
+    },
+    "$store.state.themeEngine.theme.css"() {
+      if (this.$store.state.themeEngine.autoCSS) {
+        this.$store.dispatch("applyCSS", null)
+      }
+    },
     "$store.state.user.bcUser.theme": {
       handler() {
         if (this.$store.state.user?.bcUser?.theme) {
@@ -507,3 +988,45 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+::v-deep .modal-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+::v-deep .modal-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  max-height: 90%;
+  margin: 0 1rem;
+  padding: 1rem;
+  border-radius: 0.25rem;
+}
+.editor__toolbar {
+}
+.editor {
+  height: 100%;
+  width: 100%;
+  border-radius: inherit !important;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1) !important;
+  padding: 20px !important;
+  overflow: hidden !important;
+  background: inherit;
+  font-family: "JetBrains Mono", monospace !important;
+}
+.ace_gutter {
+  background: inherit !important;
+}
+.block {
+  display: block;
+  background: none;
+  white-space: pre;
+  -webkit-overflow-scrolling: touch;
+  overflow-x: scroll;
+  max-width: 100%;
+  min-width: 100px;
+  padding: 0;
+}
+</style>

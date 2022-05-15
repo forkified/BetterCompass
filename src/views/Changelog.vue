@@ -6,6 +6,40 @@
           <v-toolbar-title>BetterCompass Changelog</v-toolbar-title>
         </v-toolbar>
         <v-container>
+          <v-card-title> 03/05/2022 - 15/05/2022 </v-card-title>
+          <ul>
+            <li>You can now add custom CSS styles to themes.</li>
+            <li>
+              The theme editor, and CSS editor dialogs now float, and persist
+              throughout BetterCompass to make styling easier.
+            </li>
+            <li>Custom CSS styles can be toggled with CTRL + ALT + D</li>
+            <li>
+              Theme colors are exposed as CSS variables, and can be used, for
+              example <code>var(--v-primary-base)</code>
+            </li>
+            <li>Location assets are now displayed on Activity pages.</li>
+            <li>
+              Class News is now consistent with the rest of BetterCompass.
+            </li>
+            <li>News that is pinned now displays a pinned icon.</li>
+            <li>Learning Tasks are now cached for quicker viewing.</li>
+            <li>
+              Enrollment Date and Expiration is now shown on the Class Roll.
+            </li>
+            <li>Grading Scheme loading is now fixed.</li>
+            <li>
+              Clicking on relief managers will now go to the correct user
+              profile page.
+            </li>
+            <li>School classes, subjects, and staff now have a search bar.</li>
+            <li>
+              When loading BetterCompass in the PWA app on desktop, back and
+              forward navigation buttons now exist on the sidebar.
+            </li>
+            <li>External Lesson Plan links now open in a new tab.</li>
+          </ul>
+
           <v-card-title> 29/04/2022 - 03/05/2022 </v-card-title>
           <ul>
             <li>

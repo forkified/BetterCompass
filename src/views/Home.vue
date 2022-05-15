@@ -124,11 +124,13 @@
             style="display: none"
             v-shortkey="['arrowleft']"
             @shortkey="changeDay('subtract')"
+            v-if="!$store.state.themeEngine.cssEditor"
           ></button>
           <button
             style="display: none"
             v-shortkey="['arrowright']"
             @shortkey="changeDay('add')"
+            v-if="!$store.state.themeEngine.cssEditor"
           ></button>
           <v-btn text small fab @click="changeDay('add')">
             <v-icon>mdi-arrow-right</v-icon>
@@ -1379,42 +1381,46 @@
                   <v-spacer></v-spacer>
                 </v-toolbar>
                 <v-container>
-                  <v-card-title> 29/04/2022 - 03/05/2022 </v-card-title>
+                  <v-card-title> 03/05/2022 - 15/05/2022 </v-card-title>
                   <ul>
+                    <li>You can now add custom CSS styles to themes.</li>
                     <li>
-                      Fixed where you don't get logged out when your Compass
-                      session expires (causes infinite load on uncached pages).
-                    </li>
-                    <li>Fixed logout.</li>
-                    <li>
-                      Set Remember Me to true as default option for login.
+                      The theme editor, and CSS editor dialogs now float, and
+                      persist throughout BetterCompass to make styling easier.
                     </li>
                     <li>
-                      Settings is now its own dedicated page to allow for extra
-                      options in the future.
+                      Custom CSS styles can be toggled with CTRL + ALT + D
                     </li>
                     <li>
-                      You can now see your assigned CompassIdentity ID cards in
-                      User Profile.
+                      Theme colors are exposed as CSS variables, and can be
+                      used, for example <code>var(--v-primary-base)</code>
                     </li>
                     <li>
-                      You can now see your BetterCompass ID in User Profile.
+                      Location assets are now displayed on Activity pages.
                     </li>
                     <li>
-                      You can now see your historical, and current
-                      classes/subjects in User Profile.
+                      Class News is now consistent with the rest of
+                      BetterCompass.
+                    </li>
+                    <li>News that is pinned now displays a pinned icon.</li>
+                    <li>Learning Tasks are now cached for quicker viewing.</li>
+                    <li>
+                      Enrollment Date and Expiration is now shown on the Class
+                      Roll.
+                    </li>
+                    <li>Grading Scheme loading is now fixed.</li>
+                    <li>
+                      Clicking on relief managers will now go to the correct
+                      user profile page.
                     </li>
                     <li>
-                      Improved Upcoming Events to show some event types
-                      correctly that weren't previously.
+                      School classes, subjects, and staff now have a search bar.
                     </li>
                     <li>
-                      You can now see your Medical Record in User Profile if you
-                      have one recorded on Compass.
+                      When loading BetterCompass in the PWA app on desktop, back
+                      and forward navigation buttons now exist on the sidebar.
                     </li>
-                    <li>
-                      External links on Lesson Plans now open in a new tab.
-                    </li>
+                    <li>External Lesson Plan links now open in a new tab.</li>
                   </ul>
                   <small
                     >BetterCompass version

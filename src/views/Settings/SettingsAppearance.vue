@@ -1,153 +1,5 @@
 <template>
   <div>
-    <v-dialog v-model="createTheme" max-width="950px">
-      <v-card color="card">
-        <v-toolbar color="toolbar">
-          <v-toolbar-title>
-            Theme {{ creatorType === "create" ? "Creator" : "Editor" }}
-            <v-tooltip top>
-              <template v-slot:activator="{ on, attrs }">
-                <span v-on="on" v-bind="attrs">
-                  <v-btn fab small text @click="randomizeTheme">
-                    <v-icon>mdi-dice-multiple</v-icon>
-                  </v-btn>
-                </span>
-              </template>
-              <span> Randomize theme </span>
-            </v-tooltip>
-          </v-toolbar-title>
-        </v-toolbar>
-        <v-container>
-          <v-form>
-            <v-text-field
-              v-model="creator.name"
-              class="mx-3"
-              label="Theme Name"
-              required
-            ></v-text-field>
-            <v-select
-              :items="intendedFor"
-              label="Intended for"
-              class="mx-3"
-              v-model="creator.primaryType"
-            >
-            </v-select>
-            <v-text-field
-              v-model="creatorJSON"
-              label="JSON"
-              class="mx-3"
-            ></v-text-field>
-            <h2
-              class="ml-2 mt-2 mb-3"
-              v-if="
-                creator.primaryType === 'dark' || creator.primaryType === 'all'
-              "
-            >
-              Dark:
-            </h2>
-            <v-row
-              v-if="
-                creator.primaryType === 'dark' || creator.primaryType === 'all'
-              "
-            >
-              <v-col
-                sm="3"
-                v-for="(item, index) in creator.dark"
-                :key="index + '-dark-card'"
-              >
-                <v-card color="card">
-                  <h3 class="ml-2 mt-2 mb-2">
-                    {{ friendlyName(index) }}
-                  </h3>
-                  <v-menu offset-y>
-                    <template v-slot:activator="{ on }">
-                      <v-card
-                        class="mb-2 mx-2"
-                        :color="creator.dark[index]"
-                        v-on="on"
-                      >
-                        <v-container></v-container>
-                      </v-card>
-                    </template>
-                    <v-color-picker
-                      v-model="creator.dark[index]"
-                      show-swatches
-                      hide-inputs
-                    ></v-color-picker>
-                  </v-menu>
-                  <v-text-field
-                    class="mx-2"
-                    label="#HEX"
-                    v-model="creator.dark[index]"
-                  ></v-text-field>
-                </v-card>
-              </v-col>
-            </v-row>
-            <h2
-              class="ml-2 mt-2 mb-3"
-              v-if="
-                creator.primaryType === 'light' || creator.primaryType === 'all'
-              "
-            >
-              Light:
-            </h2>
-            <v-row
-              v-if="
-                creator.primaryType === 'light' || creator.primaryType === 'all'
-              "
-            >
-              <v-col
-                sm="3"
-                v-for="(item, index) in creator.light"
-                :key="index + '-light-card'"
-              >
-                <v-card color="card">
-                  <h3 class="ml-2 mt-2 mb-2">
-                    {{ friendlyName(index) }}
-                  </h3>
-                  <v-menu offset-y>
-                    <template v-slot:activator="{ on }">
-                      <v-card
-                        class="mb-2 mx-2"
-                        :color="creator.light[index]"
-                        v-on="on"
-                      >
-                        <v-container></v-container>
-                      </v-card>
-                    </template>
-                    <v-color-picker
-                      v-model="creator.light[index]"
-                      show-swatches
-                      hide-inputs
-                    ></v-color-picker>
-                  </v-menu>
-                  <v-text-field
-                    class="mx-2"
-                    label="#HEX"
-                    v-model="creator.light[index]"
-                  ></v-text-field>
-                </v-card>
-              </v-col>
-            </v-row>
-          </v-form>
-          <v-card-actions>
-            <v-btn color="primary" text @click="doCreateTheme">{{
-              creatorType === "create" ? "Create & Apply" : "Save Edits"
-            }}</v-btn>
-            <v-btn
-              color="primary"
-              text
-              @click="doCreateTheme('copy')"
-              v-if="creatorType === 'edit'"
-              >Save a Copy</v-btn
-            >
-            <v-btn color="error darken-1" text @click="doDiscardTheme"
-              >Discard</v-btn
-            >
-          </v-card-actions>
-        </v-container>
-      </v-card>
-    </v-dialog>
     <v-card-text>
       <v-switch
         v-model="$store.state.user.bcUser.theme"
@@ -229,6 +81,7 @@
             <v-list-item-subtitle>
               {{ theme.public ? "Public" : "Private" }}, created by
               {{ theme.user.sussiId }}
+              <v-btn v-if="theme.css" small text> Custom CSS </v-btn>
             </v-list-item-subtitle>
           </v-list-item-content>
           <v-list-item-action>
@@ -240,6 +93,8 @@
         <div class="my-2" v-if="$vuetify.theme.dark">
           <v-chip-group>
             <v-chip
+              disabled
+              style="opacity: 1"
               class="mx-1"
               label
               :color="theme.dark[key]"
@@ -280,18 +135,16 @@ export default {
   name: "SettingsAppearance",
   data() {
     return {
-      intendedFor: [
-        { text: "All base themes", value: "all" },
-        { text: "Dark theme", value: "dark" },
-        { text: "Light theme", value: "light" }
-      ],
       defineAccent: false,
       accent: null,
+      css: "",
+      autoCSS: false,
       creator: {
         id: 1,
         name: "",
         json: {},
         primaryType: "all",
+        css: "",
         dark: {
           primary: "#0190ea",
           secondary: "#757575",
@@ -334,9 +187,59 @@ export default {
         }
       },
       createTheme: false,
+      createThemeCSS: false,
       name: "",
       creatorType: "create",
-      themes: []
+      themes: [],
+      fakeEvents: [
+        {
+          name: "English",
+          content: "English",
+          color: "#dce6f4",
+          start: new Date().setHours(9, 0, 0, 0),
+          end: new Date().setHours(10, 0, 0, 0),
+          timed: true,
+          activityType: 1,
+          activityId: 0,
+          calendarId: 0
+        },
+        {
+          name: "Maths",
+          content: "Maths",
+          color: "#f4dcdc",
+          start: new Date().setHours(10, 0, 0, 0),
+          end: new Date().setHours(11, 0, 0, 0),
+          timed: true,
+          activityType: 1,
+          activityId: 0,
+          instanceId: 0,
+          calendarId: 0
+        },
+        {
+          name: "Lunch Break",
+          content: "Lunch Break",
+          color: "#dce6f4",
+          start: new Date().setHours(11, 0, 0, 0),
+          end: new Date().setHours(11, 30, 0, 0),
+          timed: true,
+          activityType: 1,
+          activityId: 0,
+          instanceId: 0,
+          calendarId: 0
+        },
+        {
+          name: "Excursion",
+          content: "Excursion",
+          color: "#dce6f4",
+          start: new Date().setHours(11, 0, 0, 0),
+          end: new Date().setHours(13, 30, 0, 0),
+          timed: true,
+          activityType: 1,
+          activityId: 0,
+          instanceId: 0,
+          calendarId: 0
+        }
+      ]
     }
   },
   computed: {
@@ -365,6 +268,41 @@ export default {
     }
   },
   methods: {
+    computeColor(event) {
+      if (event.color === "#003300") {
+        return this.$vuetify.theme.themes[
+          this.$store.state.user.bcUser.theme || "dark"
+        ].calendarActivityType8
+      } else if (event.color === "#133897") {
+        return this.$vuetify.theme.themes[
+          this.$store.state.user.bcUser.theme || "dark"
+        ].calendarExternalActivity
+      } else if (event.activityType === 7 || event.color === "#f4dcdc") {
+        return this.$vuetify.theme.themes[
+          this.$store.state.user.bcUser.theme || "dark"
+        ].calendarActivityType7
+      } else if (event.color === "#dce6f4") {
+        return this.$vuetify.theme.themes[
+          this.$store.state.user.bcUser.theme || "dark"
+        ].calendarNormalActivity
+      } else if (event.activityType === 10) {
+        return this.$vuetify.theme.themes[
+          this.$store.state.user.bcUser.theme || "dark"
+        ].calendarActivityType10
+      } else {
+        return this.$vuetify.theme.themes[
+          this.$store.state.user.bcUser.theme || "dark"
+        ].calendarNormalActivity
+      }
+    },
+    editorInit() {
+      require("brace/ext/language_tools")
+      require("brace/mode/css")
+      require("brace/mode/less")
+      require("brace/theme/monokai")
+      require("brace/theme/chrome")
+      require("brace/snippets/css")
+    },
     randomizeTheme() {
       this.creator.light = {
         primary: "#" + Math.floor(Math.random() * 16777215).toString(16),
@@ -441,7 +379,8 @@ export default {
             light: theme.theme.light,
             public: theme.public,
             user: theme.user,
-            userId: theme.userId
+            userId: theme.userId,
+            css: theme.theme.css
           }
         })
         this.setTheme(
@@ -485,62 +424,13 @@ export default {
     },
     initEditTheme(theme) {
       this.creator = theme
-      this.creatorType = "edit"
-      this.createTheme = true
-    },
-    doDiscardTheme() {
-      this.creator = {
-        id: 1,
-        name: "BetterCompass Classic",
-        primaryType: "all",
-        dark: {
-          primary: "#0190ea",
-          secondary: "#757575",
-          accent: "#000000",
-          error: "#ff1744",
-          info: "#2196F3",
-          success: "#4CAF50",
-          warning: "#ff9800",
-          card: "#151515",
-          toolbar: "#191919",
-          sheet: "#181818",
-          text: "#000000",
-          dark: "#151515",
-          bg: "#151515",
-          calendarNormalActivity: "#3f51b5",
-          calendarActivityType7: "#f44336",
-          calendarActivityType8: "#4caf50",
-          calendarActivityType10: "#ff9800",
-          calendarExternalActivity: "#2196f3"
-        },
-        light: {
-          primary: "#0190ea",
-          secondary: "#757575",
-          accent: "#000000",
-          error: "#ff1744",
-          info: "#2196F3",
-          success: "#4CAF50",
-          warning: "#ff9800",
-          card: "#f8f8f8",
-          toolbar: "#f8f8f8",
-          sheet: "#f8f8f8",
-          text: "#000000",
-          dark: "#f8f8f8",
-          bg: "#f8f8f8",
-          calendarNormalActivity: "#3f51b5",
-          calendarActivityType7: "#f44336",
-          calendarActivityType8: "#4caf50",
-          calendarActivityType10: "#ff9800",
-          calendarExternalActivity: "#2196f3"
-        }
-      }
-      this.creatorType = "create"
-      this.createTheme = false
+      this.$store.commit("setThemeEngineTheme", theme)
+      this.$store.commit("setThemeEngineType", "edit")
+      this.$store.commit("setThemeEngineEditor", true)
     },
     initThemeCreator() {
-      this.doDiscardTheme()
-      this.creatorType = "create"
-      this.createTheme = true
+      this.$store.dispatch("discardTheme")
+      this.$store.state.themeEngine.editor = true
     },
     download(theme) {
       const data = JSON.stringify(theme)
@@ -604,6 +494,7 @@ export default {
         this.$store.state.user.bcUser.accentColor = null
       }
       this.name = name
+      this.applyCSS(theme)
       this.axios
         .put("/api/v1/user/settings/theme", {
           id: name,
@@ -612,6 +503,29 @@ export default {
         .catch((e) => {
           AjaxErrorHandler(this.$store)(e)
         })
+    },
+    applyCSS(theme) {
+      if (!theme) {
+        const element = document.getElementById("user-theme")
+        if (element) {
+          element.parentNode.removeChild(element)
+        }
+        const style = document.createElement("style")
+        style.type = "text/css"
+        style.id = "user-theme"
+        style.innerHTML = this.creator.css
+        document.head.appendChild(style)
+      } else {
+        const element = document.getElementById("user-theme")
+        if (element) {
+          element.parentNode.removeChild(element)
+        }
+        const style = document.createElement("style")
+        style.type = "text/css"
+        style.id = "user-theme"
+        style.innerHTML = theme.css
+        document.head.appendChild(style)
+      }
     },
     saveSettings() {
       this.loading = true
@@ -629,12 +543,24 @@ export default {
     }
   },
   mounted() {
+    console.log(document.querySelectorAll(".editor__toolbar"))
     this.defineAccent = this.$store.state.user.bcUser?.accentColor !== null
     this.accent = this.$store.state.user.bcUser?.accentColor
     this.name = this.$vuetify.theme.themes.name
     this.getThemes()
   },
   watch: {
+    "$store.state.themeEngine.editor"() {
+      this.getThemes()
+    },
+    "$store.state.themeEngine.cssEditor"() {
+      this.getThemes()
+    },
+    "creator.css"() {
+      if (this.autoCSS) {
+        this.applyCSS(null)
+      }
+    },
     creator() {
       this.$vuetify.theme.themes.dark = this.creator.dark
       this.$vuetify.theme.themes.light = this.creator.light
@@ -666,5 +592,3 @@ export default {
   }
 }
 </script>
-
-<style scoped></style>
