@@ -41,7 +41,6 @@
     </v-card-text>
     <v-col sm="4">
       <v-select
-        v-if="$store.state.site.release === 'dev'"
         v-model="$store.state.user.bcUser.font"
         :items="fonts"
         @change="setFont"
