@@ -2275,52 +2275,6 @@ export default {
         grid.items.some((item) => item.name === "home.thanatophobia")
       )
     },
-    /*age() {
-      /*
-      // extract day, month, and year from the date
-      const day = this.$date(this.$store.state.user.dateOfBirth).format("DD")
-      const month = this.$date(this.$store.state.user.dateOfBirth).format("MM")
-      //onst year = this.$date(this.$store.state.user.dateOfBirth).format("YYYY")
-      const birthDayOnCurrentYear = new Date(
-        this.$date().format("YYYY"),
-        month - 1,
-        day,
-        0
-      ).getTime()
-      let lastBirthday = null
-      let nextBirthday = null
-      if (new Date().getTime() > birthDayOnCurrentYear) {
-        lastBirthday = birthDayOnCurrentYear
-        nextBirthday = new Date(
-          this.$date().format("YYYY") + 1,
-          month - 1,
-          day,
-          0
-        ).getTime()
-      } else {
-        // User's birthday has not yet passed
-        lastBirthday = new Date(
-          this.$date().format("YYYY") - 1,
-          month - 1,
-          day,
-          0
-        ).getTime()
-        nextBirthday = birthDayOnCurrentYear
-      }
-      const ageYears = Math.abs(
-        new Date(
-          Date.now() - new Date(this.$store.state.user.dateOfBirth).getTime()
-        ).getFullYear() - 1970
-      )
-      const betweenBirthdays = nextBirthday - lastBirthday
-      const ageFraction = (Date.now() - lastBirthday) / betweenBirthdays
-      // The user's age is the integer part of the date + the fractional part
-      console.log(ageFraction)
-      return {
-        age: ageYears + ageFraction,
-        yearsLeft: 81 - ageYears + ageFraction
-      }
-    },*/
     cleanLessonPlan() {
       return this.$sanitize(this.selectedTask.description)
     },
@@ -3512,6 +3466,9 @@ export default {
     this.getCategories()
     this.getLearningSchemes()
     this.getTasks()
+    if (localStorage.getItem("debugModeEnabled")) {
+      this.$store.state.site.release = "dev"
+    }
     if (!localStorage.getItem("calendarType")) {
       localStorage.setItem("calendarType", "day")
     }
@@ -3592,6 +3549,7 @@ export default {
       if (val === "1969-04-20") {
         this.$toast.success("Enabled debug mode")
         localStorage.setItem("debugModeEnabled", true)
+        this.$store.state.site.release = "dev"
       }
       if (val === "1913-12-08") {
         this.$toast.success("Enabled reporting debug mode")

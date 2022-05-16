@@ -12,13 +12,25 @@
           <v-tab to="/settings/appearance"> Appearance </v-tab>
           <v-tab
             to="/settings/security"
-            v-if="$store.state.user.bcUser.bcSessions"
+            v-if="
+              $store.state.user.bcUser.bcSessions ||
+              $store.state.site.release === 'dev'
+            "
           >
             Security
           </v-tab>
           <v-tab
             to="/settings/sessions"
-            v-if="$store.state.user.bcUser.bcSessions"
+            v-if="
+              $store.state.user.bcUser.bcSessions ||
+              $store.state.site.release === 'dev'
+            "
+          >
+            Sessions
+          </v-tab>
+          <v-tab
+            to="/settings/versions"
+            v-if="$store.state.site.release === 'dev'"
           >
             Sessions
           </v-tab>
