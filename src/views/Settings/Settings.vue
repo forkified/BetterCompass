@@ -32,7 +32,7 @@
             to="/settings/versions"
             v-if="$store.state.site.release === 'dev'"
           >
-            Sessions
+            Versions
           </v-tab>
         </v-tabs>
         <router-view> </router-view>
