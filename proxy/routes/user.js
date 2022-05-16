@@ -417,7 +417,8 @@ router.put("/settings/:type", auth, async (req, res, next) => {
           homeGrids: req.body.homeGrids,
           discussionsImage: req.body.discussionsImage,
           calendars: req.body.calendars,
-          bookmarks: req.body.bookmarks
+          bookmarks: req.body.bookmarks,
+          font: req.body.font
         },
         {
           where: {

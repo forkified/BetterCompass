@@ -1012,7 +1012,7 @@
                 :color="color(item)"
                 class="rounded-xl mb-3"
                 elevation="7"
-                v-if="item.name === 'home.tasks' && $store.state.online"
+                v-else-if="item.name === 'home.tasks' && $store.state.online"
               >
                 <v-overlay :value="loading.tasks" absolute>
                   <v-progress-circular
@@ -1091,7 +1091,7 @@
                 :color="color(item)"
                 class="rounded-xl mb-3"
                 elevation="7"
-                v-if="item.name === 'home.events' && $store.state.online"
+                v-else-if="item.name === 'home.events' && $store.state.online"
               >
                 <v-toolbar color="toolbar">
                   <v-spacer></v-spacer>
@@ -1130,7 +1130,11 @@
                 :color="color(item)"
                 class="rounded-xl mb-3"
                 elevation="7"
-                v-if="item.name === 'home.news' && $store.state.online"
+                v-else-if="item.name === 'home.news' && $store.state.online"
+                style="
+                  white-space: pre-line !important;
+                  overflow-wrap: anywhere !important;
+                "
               >
                 <v-toolbar color="toolbar">
                   <v-spacer></v-spacer>
@@ -1151,6 +1155,10 @@
                   <v-tab>News for {{ $store.state.user.firstName }}</v-tab>
                   <v-tab v-if="parentNews">Parent News</v-tab>
                   <v-tab-item
+                    style="
+                      white-space: pre-line !important;
+                      overflow-wrap: anywhere !important;
+                    "
                     :style="
                       'background-color: ' +
                       $vuetify.theme.themes[
@@ -1171,7 +1179,13 @@
                         overflow-wrap: anywhere !important;
                       "
                     >
-                      <v-toolbar color="toolbar">
+                      <v-toolbar
+                        color="toolbar"
+                        style="
+                          white-space: pre-line !important;
+                          overflow-wrap: anywhere !important;
+                        "
+                      >
                         <v-avatar
                           @click="$router.push('/user/' + item.UserId)"
                           style="cursor: pointer"
@@ -1182,7 +1196,12 @@
                             :src="$store.state.school.fqdn + item.UserImageUrl"
                           />
                         </v-avatar>
-                        <v-toolbar-title>
+                        <v-toolbar-title
+                          style="
+                            white-space: pre-line !important;
+                            overflow-wrap: anywhere !important;
+                          "
+                        >
                           {{ item.Title }}
                           <div class="subheading subtitle-1">
                             Created by:
@@ -1190,12 +1209,14 @@
                               @click="$router.push('/user/' + item.UserId)"
                               style="cursor: pointer"
                               >{{ item.UserName }}</span
-                            >, on
-                            {{
-                              $date(item.PostDateTime).format(
-                                "dddd, MMMM Do YYYY, hh:mm A"
-                              )
-                            }}
+                            ><template v-if="$vuetify.breakpoint.xl"
+                              >, on
+                              {{
+                                $date(item.PostDateTime).format(
+                                  "dddd, MMMM Do YYYY, hh:mm A"
+                                )
+                              }}</template
+                            >
                           </div>
                         </v-toolbar-title>
                         <v-spacer></v-spacer>
@@ -1207,7 +1228,10 @@
                         <div>
                           <div
                             class="text-block"
-                            style="white-space: pre-line"
+                            style="
+                              white-space: pre-line !important;
+                              overflow-wrap: anywhere !important;
+                            "
                             v-html="item.Content1"
                           ></div>
                           <v-card-actions class="justify-center">
@@ -1227,6 +1251,14 @@
                               {{ attachment.Name }}
                             </v-chip>
                           </v-card-actions>
+                          <template v-if="$vuetify.breakpoint.lgAndDown"
+                            ><br />Created on
+                            {{
+                              $date(item.PostDateTime).format(
+                                "dddd, MMMM Do YYYY, hh:mm A"
+                              )
+                            }}</template
+                          >
                         </div>
                       </v-container>
                     </v-card>
@@ -1253,7 +1285,13 @@
                         overflow-wrap: anywhere !important;
                       "
                     >
-                      <v-toolbar color="toolbar">
+                      <v-toolbar
+                        color="toolbar"
+                        style="
+                          white-space: pre-line !important;
+                          overflow-wrap: anywhere !important;
+                        "
+                      >
                         <v-avatar
                           @click="$router.push('/user/' + item.UserId)"
                           style="cursor: pointer"
@@ -1264,7 +1302,12 @@
                             :src="$store.state.school.fqdn + item.UserImageUrl"
                           />
                         </v-avatar>
-                        <v-toolbar-title>
+                        <v-toolbar-title
+                          style="
+                            white-space: pre-line !important;
+                            overflow-wrap: anywhere !important;
+                          "
+                        >
                           {{ item.Title }}
                           <div class="subheading subtitle-1">
                             Created by:
@@ -1272,12 +1315,14 @@
                               @click="$router.push('/user/' + item.UserId)"
                               style="cursor: pointer"
                               >{{ item.UserName }}</span
-                            >, on
-                            {{
-                              $date(item.PostDateTime).format(
-                                "dddd, MMMM Do YYYY, hh:mm A"
-                              )
-                            }}
+                            ><template v-if="$vuetify.breakpoint.xl"
+                              >, on
+                              {{
+                                $date(item.PostDateTime).format(
+                                  "dddd, MMMM Do YYYY, hh:mm A"
+                                )
+                              }}</template
+                            >
                           </div>
                         </v-toolbar-title>
                         <v-spacer></v-spacer>
@@ -1285,13 +1330,14 @@
                           ><v-icon small>mdi-pin-outline</v-icon></v-chip
                         >
                       </v-toolbar>
-                      <v-container>
+                      <v-container
+                        style="
+                          white-space: pre-line !important;
+                          overflow-wrap: anywhere !important;
+                        "
+                      >
                         <div>
-                          <div
-                            class="text-block"
-                            style="white-space: pre-line"
-                            v-html="item.Content1"
-                          ></div>
+                          <div class="text-block" v-html="item.Content1"></div>
                           <v-card-actions class="justify-center">
                             <v-chip
                               v-for="attachment in item.Attachments"
@@ -1309,6 +1355,14 @@
                               {{ attachment.Name }}
                             </v-chip>
                           </v-card-actions>
+                          <template v-if="$vuetify.breakpoint.lgAndDown"
+                            ><br />Created on
+                            {{
+                              $date(item.PostDateTime).format(
+                                "dddd, MMMM Do YYYY, hh:mm A"
+                              )
+                            }}</template
+                          >
                         </div>
                       </v-container>
                     </v-card>
@@ -1325,7 +1379,7 @@
                 :color="color(item)"
                 class="rounded-xl mb-3 text-center justify-center"
                 elevation="7"
-                v-if="item.name === 'home.weather' && weather.name"
+                v-else-if="item.name === 'home.weather' && weather.name"
               >
                 <v-toolbar color="toolbar">
                   <v-spacer></v-spacer>
@@ -1371,7 +1425,7 @@
                 :color="color(item)"
                 class="rounded-xl mb-3"
                 elevation="7"
-                v-if="item.name === 'home.features'"
+                v-else-if="item.name === 'home.features'"
               >
                 <v-toolbar color="toolbar">
                   <v-spacer></v-spacer>
@@ -1381,8 +1435,17 @@
                   <v-spacer></v-spacer>
                 </v-toolbar>
                 <v-container>
-                  <v-card-title> 03/05/2022 - 15/05/2022 </v-card-title>
+                  <v-card-title> 03/05/2022 - 16/05/2022 </v-card-title>
                   <ul>
+                    <li>
+                      BetterCompass now looks better on lower resolution
+                      devices.
+                    </li>
+                    <li>
+                      You can now select a font in Appearance Settings without
+                      modifying CSS manually.
+                    </li>
+                    <li>There is a new widget.</li>
                     <li>You can now add custom CSS styles to themes.</li>
                     <li>
                       The theme editor, and CSS editor dialogs now float, and
@@ -1433,7 +1496,7 @@
                 :color="color(item)"
                 class="rounded-xl mb-3"
                 elevation="7"
-                v-if="item.name === 'home.placeholder'"
+                v-else-if="item.name === 'home.placeholder'"
               >
                 <v-toolbar color="toolbar">
                   <v-spacer></v-spacer>
@@ -1449,7 +1512,7 @@
                 :color="color(item)"
                 class="rounded-xl mb-3"
                 elevation="7"
-                v-if="item.name === 'home.compassScore'"
+                v-else-if="item.name === 'home.compassScore'"
               >
                 <v-toolbar :color="computeCompassScoreDescription.color">
                   <v-spacer></v-spacer>
@@ -1467,7 +1530,7 @@
                   <v-btn text disabled> 01/04/2022 </v-btn>
                 </v-card-actions>
               </v-card>
-              <template v-if="item.name === 'home.overdueLearningTasks'">
+              <template v-else-if="item.name === 'home.overdueLearningTasks'">
                 <router-link
                   v-if="learningTaskAlert"
                   :to="'/user/' + $store.state.user.userId + '/tasks'"
@@ -1484,7 +1547,7 @@
                   </v-alert>
                 </router-link>
               </template>
-              <template v-if="item.name === 'home.notifications'">
+              <template v-else-if="item.name === 'home.notifications'">
                 <router-link
                   v-if="learningTaskAlert"
                   :to="'/user/' + $store.state.user.userId + '/tasks'"
@@ -1504,7 +1567,7 @@
                 color="card"
                 class="rounded-xl mb-3"
                 elevation="7"
-                v-if="item.name === 'home.learningTasks'"
+                v-else-if="item.name === 'home.learningTasks'"
                 style="
                   white-space: pre-line !important;
                   overflow-wrap: anywhere !important;
@@ -1596,7 +1659,7 @@
                 color="card"
                 class="rounded-xl mb-3"
                 elevation="7"
-                v-if="item.name === 'home.bookmarks'"
+                v-else-if="item.name === 'home.bookmarks'"
               >
                 <v-toolbar color="toolbar">
                   <v-btn text fab disabled> </v-btn>
@@ -1634,7 +1697,7 @@
                 color="card"
                 class="rounded-xl mb-3"
                 elevation="7"
-                v-if="item.name === 'home.chronicles'"
+                v-else-if="item.name === 'home.chronicles'"
               >
                 <v-overlay :value="chronicle.loading" absolute>
                   <v-progress-circular
@@ -1826,6 +1889,60 @@
                   </v-card>
                 </v-container>
               </v-card>
+              <v-card
+                color="card"
+                class="rounded-xl mb-3"
+                elevation="7"
+                v-else-if="item.name === 'home.thanatophobia'"
+                style="
+                  white-space: pre-line !important;
+                  overflow-wrap: anywhere !important;
+                "
+              >
+                <v-toolbar color="toolbar">
+                  <v-spacer></v-spacer>
+                  <v-toolbar-title> Thanatophobia </v-toolbar-title>
+                  <v-spacer></v-spacer>
+                </v-toolbar>
+                <v-container class="text-center">
+                  <v-slider
+                    v-model="thanatophobiaDecimals"
+                    :min="0"
+                    :max="14"
+                    thumb-label
+                  ></v-slider>
+                  <h1 style="font-size: 30px">
+                    {{ thanatophobia.age }}
+                  </h1>
+                  <v-card-subtitle>
+                    {{ thanatophobia.percentage }}% of your life left<br />
+                    {{ thanatophobia.percentageUsed }}% of your life used<br />
+                    {{ thanatophobia.yearsLeft }} years left
+                  </v-card-subtitle>
+                </v-container>
+              </v-card>
+              <v-card
+                color="card"
+                class="rounded-xl mb-3"
+                elevation="7"
+                v-else-if="item.name !== 'home.weather'"
+                style="
+                  white-space: pre-line !important;
+                  overflow-wrap: anywhere !important;
+                "
+              >
+                <v-toolbar color="toolbar">
+                  <v-spacer></v-spacer>
+                  <v-toolbar-title>
+                    {{ item.friendlyName }} ({{ item.name }})
+                  </v-toolbar-title>
+                  <v-spacer></v-spacer>
+                </v-toolbar>
+                <v-container>
+                  This widget is not compatible with your version of
+                  BetterCompass.
+                </v-container>
+              </v-card>
             </div>
           </draggable>
         </v-col>
@@ -1846,6 +1963,14 @@ export default {
   },
   data() {
     return {
+      thanatophobia: {
+        interval: null,
+        age: null,
+        yearsLeft: null,
+        percentage: null,
+        percentageUsed: null,
+        decimals: 11
+      },
       chronicle: {
         loading: true,
         loadingPinned: true,
@@ -2022,6 +2147,12 @@ export default {
           name: "home.chronicles",
           friendlyName: "Chronicle Widget",
           invisible: false
+        },
+        {
+          itemId: 14,
+          name: "home.thanatophobia",
+          friendlyName: "Thanatophobia Widget",
+          invisible: false
         }
       ],
       grids: [
@@ -2130,6 +2261,66 @@ export default {
     }
   },
   computed: {
+    thanatophobiaDecimals: {
+      get: function () {
+        return this.thanatophobia.decimals
+      },
+      set: function (value) {
+        localStorage.setItem("thanatophobiaDecimals", value)
+        this.thanatophobia.decimals = value
+      }
+    },
+    hasThanatophobia() {
+      return this.grids.some((grid) =>
+        grid.items.some((item) => item.name === "home.thanatophobia")
+      )
+    },
+    /*age() {
+      /*
+      // extract day, month, and year from the date
+      const day = this.$date(this.$store.state.user.dateOfBirth).format("DD")
+      const month = this.$date(this.$store.state.user.dateOfBirth).format("MM")
+      //onst year = this.$date(this.$store.state.user.dateOfBirth).format("YYYY")
+      const birthDayOnCurrentYear = new Date(
+        this.$date().format("YYYY"),
+        month - 1,
+        day,
+        0
+      ).getTime()
+      let lastBirthday = null
+      let nextBirthday = null
+      if (new Date().getTime() > birthDayOnCurrentYear) {
+        lastBirthday = birthDayOnCurrentYear
+        nextBirthday = new Date(
+          this.$date().format("YYYY") + 1,
+          month - 1,
+          day,
+          0
+        ).getTime()
+      } else {
+        // User's birthday has not yet passed
+        lastBirthday = new Date(
+          this.$date().format("YYYY") - 1,
+          month - 1,
+          day,
+          0
+        ).getTime()
+        nextBirthday = birthDayOnCurrentYear
+      }
+      const ageYears = Math.abs(
+        new Date(
+          Date.now() - new Date(this.$store.state.user.dateOfBirth).getTime()
+        ).getFullYear() - 1970
+      )
+      const betweenBirthdays = nextBirthday - lastBirthday
+      const ageFraction = (Date.now() - lastBirthday) / betweenBirthdays
+      // The user's age is the integer part of the date + the fractional part
+      console.log(ageFraction)
+      return {
+        age: ageYears + ageFraction,
+        yearsLeft: 81 - ageYears + ageFraction
+      }
+    },*/
     cleanLessonPlan() {
       return this.$sanitize(this.selectedTask.description)
     },
@@ -2240,6 +2431,22 @@ export default {
     }
   },
   methods: {
+    calculateThanatophobia() {
+      this.thanatophobia.age = this.$date()
+        .diff(this.$store.state.user.dateOfBirth, "years", true)
+        .toFixed(this.thanatophobia.decimals)
+      this.thanatophobia.yearsLeft = (83 - this.thanatophobia.age).toFixed(
+        this.thanatophobia.decimals
+      )
+      this.thanatophobia.percentage = (
+        (this.thanatophobia.yearsLeft / 83) *
+        100
+      ).toFixed(this.thanatophobia.decimals)
+      this.thanatophobia.percentageUsed = (
+        (1 - this.thanatophobia.percentage / 100) *
+        100
+      ).toFixed(this.thanatophobia.decimals)
+    },
     fetchEventsForCache() {
       this.axios
         .post("/Services/Calendar.svc/GetCalendarEventsByUser", {
@@ -2900,9 +3107,7 @@ export default {
     },
     addWidget(item) {
       this.grids[0].items.unshift({
-        id: this.grids.reduce((acc, grid) => {
-          return acc + grid.items.length
-        }, 0),
+        id: this.$date().unix(),
         itemId: item.itemId,
         name: item.name,
         friendlyName: item.friendlyName,
@@ -3329,9 +3534,44 @@ export default {
       this.getNews()
       this.getAlerts()
       this.getLearningTasks()
+      if (localStorage.getItem("thanatophobiaDecimals")) {
+        this.thanatophobia.decimals = JSON.parse(
+          localStorage.getItem("thanatophobiaDecimals")
+        )
+      }
+      if (this.hasThanatophobia) {
+        clearInterval(this.thanatophobia.interval)
+        this.thanatophobia.interval = null
+        this.thanatophobia.interval = setInterval(
+          function () {
+            this.calculateThanatophobia()
+          }.bind(this),
+          15
+        )
+      }
     })
   },
   watch: {
+    grids: {
+      handler() {
+        console.log(this.hasThanatophobia)
+        if (this.hasThanatophobia && !this.thanatophobia.interval) {
+          clearInterval(this.thanatophobia.interval)
+          this.thanatophobia.interval = null
+          this.thanatophobia.interval = setInterval(
+            function () {
+              this.calculateThanatophobia()
+            }.bind(this),
+            15
+          )
+        } else if (!this.hasThanatophobia && this.thanatophobia.interval) {
+          clearInterval(this.thanatophobia.interval)
+          this.thanatophobia.interval = null
+          this.thanatophobia.age = null
+        }
+      },
+      deep: true
+    },
     "chronicle.year"() {
       this.getChronicle()
     },

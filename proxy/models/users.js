@@ -231,6 +231,11 @@ module.exports = (sequelize, DataTypes) => {
       password: {
         type: DataTypes.TEXT,
         allowNull: true
+      },
+      font: {
+        type: DataTypes.STRING,
+        defaultValue: "Roboto",
+        allowNull: false
       }
     },
     {

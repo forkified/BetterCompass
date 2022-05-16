@@ -6,8 +6,14 @@
           <v-toolbar-title>BetterCompass Changelog</v-toolbar-title>
         </v-toolbar>
         <v-container>
-          <v-card-title> 03/05/2022 - 15/05/2022 </v-card-title>
+          <v-card-title> 03/05/2022 - 16/05/2022 </v-card-title>
           <ul>
+            <li>BetterCompass now looks better on lower resolution devices.</li>
+            <li>
+              You can now select a font in Appearance Settings without modifying
+              CSS manually.
+            </li>
+            <li>There is a new widget.</li>
             <li>You can now add custom CSS styles to themes.</li>
             <li>
               The theme editor, and CSS editor dialogs now float, and persist

@@ -42,8 +42,9 @@
     <v-col sm="4">
       <v-select
         v-if="$store.state.site.release === 'dev'"
-        v-model="font"
+        v-model="$store.state.user.bcUser.font"
         :items="fonts"
+        @change="setFont"
         label="Font"
         item-text="name"
         item-value="name"
@@ -157,9 +158,9 @@ export default {
         "Ubuntu",
         "Inconsolata",
         "Comfortaa",
-        "Comic Neue"
+        "Comic Neue",
+        "Open Sans"
       ],
-      font: "Roboto",
       creator: {
         id: 1,
         name: "",
@@ -289,6 +290,25 @@ export default {
     }
   },
   methods: {
+    setFont() {
+      const element = document.getElementById("user-font")
+      if (element) {
+        element.parentNode.removeChild(element)
+      }
+      const style = document.createElement("style")
+      style.id = "user-font"
+      style.innerHTML = `/* Stop from font breaking CSS code editor */
+.ace_editor div {
+ font-family: "JetBrains Mono" !important;
+}
+
+div {
+ font-family: "${this.$store.state.user.bcUser.font}", sans-serif;
+}
+`
+      document.head.appendChild(style)
+      this.$store.dispatch("saveOnlineSettings")
+    },
     computeColor(event) {
       if (event.color === "#003300") {
         return this.$vuetify.theme.themes[

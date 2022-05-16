@@ -100,7 +100,7 @@
                   </v-tooltip>
                   <br />
                   Today's Attendance:
-                  <v-chip-group>
+                  <v-chip-group column>
                     <v-tooltip
                       top
                       v-for="attendance in user.userTimeLinePeriods"

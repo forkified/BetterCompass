@@ -477,11 +477,26 @@ export default new Vuex.Store({
             Vuetify.framework.theme.themes.name = name
             Vuetify.framework.theme.themes.primaryType =
               res.data.bcUser.themeObject.theme.primaryType
-            const element = document.getElementById("user-theme")
-            if (!element) {
+            const themeElement = document.getElementById("user-theme")
+            if (!themeElement) {
               const style = document.createElement("style")
               style.id = "user-theme"
               style.innerHTML = res.data.bcUser.themeObject.theme.css
+              document.head.appendChild(style)
+            }
+            const fontElement = document.getElementById("user-font")
+            if (!fontElement) {
+              const style = document.createElement("style")
+              style.id = "user-font"
+              style.innerHTML = `/* Stop from font breaking CSS code editor */
+.ace_editor div {
+ font-family: "JetBrains Mono" !important;
+}
+
+div {
+ font-family: "${res.data.bcUser.font}", sans-serif;
+}
+`
               document.head.appendChild(style)
             }
             Vue.axios
@@ -541,14 +556,28 @@ export default new Vuex.Store({
               Vuetify.framework.theme.themes.name = name
               Vuetify.framework.theme.themes.primaryType =
                 user.bcUser.themeObject.theme.primaryType
-              const element = document.getElementById("user-theme")
-              if (element) {
-                element.parentNode.removeChild(element)
+              const themeElement = document.getElementById("user-theme")
+              if (!themeElement) {
+                const style = document.createElement("style")
+                style.id = "user-theme"
+                style.innerHTML = user.bcUser.themeObject.theme.css
+                document.head.appendChild(style)
               }
-              const style = document.createElement("style")
-              style.id = "user-theme"
-              style.innerHTML = user.bcUser.themeObject.theme.css
-              document.head.appendChild(style)
+              const fontElement = document.getElementById("user-font")
+              if (!fontElement) {
+                const style = document.createElement("style")
+                style.id = "user-font"
+                style.innerHTML = `/* Stop from font breaking CSS code editor */
+.ace_editor div {
+ font-family: "JetBrains Mono" !important;
+}
+
+div {
+ font-family: "${user.bcUser.font}", sans-serif;
+}
+`
+                document.head.appendChild(style)
+              }
               context.commit("setLoading", false)
               context.commit("setUser", user)
               resolve(user)
