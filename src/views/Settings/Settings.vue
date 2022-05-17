@@ -11,6 +11,12 @@
           <v-tab to="/settings/site"> General </v-tab>
           <v-tab to="/settings/appearance"> Appearance </v-tab>
           <v-tab
+            to="/settings/communications"
+            v-if="$store.state.user.bcUser.privacy.communications.enabled"
+          >
+            Communications
+          </v-tab>
+          <v-tab
             to="/settings/security"
             v-if="
               $store.state.user.bcUser.bcSessions ||
@@ -33,6 +39,12 @@
             v-if="$store.state.site.release === 'dev'"
           >
             Versions
+          </v-tab>
+          <v-tab
+            to="/settings/developer"
+            v-if="$store.state.site.release === 'dev'"
+          >
+            Developer Options
           </v-tab>
         </v-tabs>
         <router-view> </router-view>

@@ -565,6 +565,23 @@ router.put("/settings/:type", auth, async (req, res, next) => {
       } else {
         throw Errors.invalidCredentials
       }
+    } else if (req.params.type === "communications") {
+      const user = await User.findOne({
+        where: {
+          id: req.user.id
+        }
+      })
+      await user.update({
+        privacy: {
+          communications: {
+            enabled: req.body.enabled,
+            outsideTenant: req.body.outsideTenant,
+            directMessages: req.body.directMessages,
+            friendRequests: req.body.friendRequests
+          }
+        }
+      })
+      res.sendStatus(204)
     } else {
       throw Errors.invalidParameter("Settings type", "Invalid settings type")
     }

@@ -387,6 +387,14 @@ const routes = [
           import(
             /* webpackChunkName: "settingsVersions" */ "../views/Settings/SettingsVersions"
           )
+      },
+      {
+        path: "developer",
+        name: "Developer Options",
+        component: () =>
+          import(
+            /* webpackChunkName: "settingsDeveloper" */ "../views/Settings/SettingsDeveloper"
+          )
       }
     ],
     component: () =>
@@ -438,6 +446,12 @@ const routes = [
     name: "Service Status",
     component: () =>
       import(/* webpackChunkName: "status" */ "../views/Status.vue")
+  },
+  {
+    path: "/tweaks",
+    name: "Tweaks",
+    component: () =>
+      import(/* webpackChunkName: "tweaks" */ "../views/Tweaks/Tweaks.vue")
   },
   {
     path: "*",

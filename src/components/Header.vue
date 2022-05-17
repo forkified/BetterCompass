@@ -426,6 +426,19 @@
                 </v-list-group>
               </v-list-group>
               <v-list-item
+                to="/tweaks"
+                v-if="$store.state.site.release === 'dev'"
+                :color="active('/tweaks')"
+              >
+                <v-list-item-icon>
+                  <v-icon>mdi-storefront</v-icon>
+                </v-list-item-icon>
+                <v-list-item-title>Tweaks</v-list-item-title>
+                <v-chip disabled style="opacity: 1" color="transparent"
+                  ><v-icon>mdi-ab-testing</v-icon></v-chip
+                >
+              </v-list-item>
+              <v-list-item
                 to="/communications"
                 v-if="$store.state.site.release === 'dev'"
                 :color="active('/communications')"
@@ -435,6 +448,9 @@
                 </v-list-item-icon>
 
                 <v-list-item-title>Communications</v-list-item-title>
+                <v-chip disabled style="opacity: 1" color="transparent"
+                  ><v-icon>mdi-ab-testing</v-icon></v-chip
+                >
               </v-list-item>
               <v-list-item
                 :to="'/user/events'"

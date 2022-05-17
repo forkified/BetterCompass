@@ -40,4 +40,50 @@ router.get("/", auth, async (req, res, next) => {
   }
 })
 
+router.get("/search", auth, async (req, res, next) => {
+  try {
+    const users = await User.findAll({
+      where: {
+        [Op.or]: [
+          {
+            privacy: {
+              communications: {
+                enabled: true
+              }
+            },
+            instance: req.user.instance,
+            sussiId: {
+              [Op.like]: `%${req.query.query}%`
+            }
+          },
+          {
+            privacy: {
+              communications: {
+                outsideTenant: true,
+                enabled: true
+              }
+            },
+            sussiId: {
+              [Op.like]: `%${req.query.query}%`
+            }
+          }
+        ]
+      },
+      attributes: [
+        "sussiId",
+        "discussionsFirstName",
+        "discussionsLastName",
+        "discussionsImage",
+        "id",
+        "createdAt",
+        "updatedAt",
+        "instance"
+      ]
+    })
+    res.json(users)
+  } catch (err) {
+    next(err)
+  }
+})
+
 module.exports = router
