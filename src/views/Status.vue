@@ -7,6 +7,17 @@
         </v-overlay>
         <v-toolbar color="toolbar">
           <v-toolbar-title> Service Status </v-toolbar-title>
+          <v-btn
+            icon
+            text
+            class="ml-1"
+            @click="
+              getStatus()
+              getIncidents()
+            "
+          >
+            <v-icon>mdi-refresh</v-icon>
+          </v-btn>
         </v-toolbar>
         <v-container>
           This data is not pulled from status.compass.education.<br />
@@ -70,6 +81,7 @@ export default {
   },
   methods: {
     getIncidents() {
+      this.loadingIncidents = true
       this.axios
         .get("/api/v1/status/incidents")
         .then((res) => {
@@ -82,6 +94,7 @@ export default {
         })
     },
     getStatus() {
+      this.loading = true
       this.axios
         .get("/api/v1/status", {
           timeout: 7000
@@ -90,14 +103,23 @@ export default {
           this.loading = false
           this.statuses = res.data
         })
-        .catch(() => {
-          this.loading = false
-          this.statuses = [
-            {
-              name: "BetterCompass",
-              status: false
-            }
-          ]
+        .catch((e) => {
+          if (e?.response?.status === 429) {
+            this.loading = false
+            this.$toast.error(
+              "You are being rate limited, retry in " +
+                e.response.headers["ratelimit-reset"] +
+                " seconds"
+            )
+          } else {
+            this.loading = false
+            this.statuses = [
+              {
+                name: "BetterCompass",
+                status: false
+              }
+            ]
+          }
         })
     }
   },

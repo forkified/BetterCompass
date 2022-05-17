@@ -2,13 +2,23 @@ const express = require("express")
 const router = express.Router()
 const Errors = require("../lib/errors.js")
 const axios = require("axios")
+const os = require("os")
+const rateLimit = require("express-rate-limit")
 
-router.get("/", async (req, res, next) => {
+const limiter = rateLimit({
+  windowMs: 2 * 60 * 1000,
+  max: 10,
+  message: Errors.rateLimit,
+  standardHeaders: true,
+  legacyHeaders: false
+})
+
+router.get("/", limiter, async (req, res, next) => {
   try {
     let status = []
     axios.defaults.timeout = 1000
     status.push({
-      name: "BetterCompass",
+      name: `BetterCompass (${os.hostname()})`,
       status: true
     })
     status.push({

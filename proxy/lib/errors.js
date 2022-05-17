@@ -13,6 +13,10 @@ let Errors = {
   bcSessionsForced: [
     "You are attempting to login as a user that enforces BetterCompass Sessions.\nBetterCompass extended functionality is disabled for this session instance.",
     401
+  ],
+  rateLimit: [
+    "You are being rate-limited. Please try again in a few minutes.",
+    429
   ]
 }
 
