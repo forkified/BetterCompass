@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="activity-roll">
     <v-container>
       <v-card color="card" class="rounded-xl" elevation="7">
         <v-overlay :value="loading" absolute>

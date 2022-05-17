@@ -1,5 +1,5 @@
 <template>
-  <div class="home" v-if="$store.state.user?.bcUser?.id">
+  <div id="home" v-if="$store.state.user?.bcUser?.id">
     <v-dialog v-model="bookmarks.dialog" max-width="700px">
       <v-card color="card">
         <v-toolbar color="toolbar">

@@ -1,5 +1,5 @@
 <template>
-  <div></div>
+  <div id="activity-settings"></div>
 </template>
 
 <script>

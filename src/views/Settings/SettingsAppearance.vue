@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="settings-appearance">
     <v-card-text>
       <v-switch
         v-model="$store.state.user.bcUser.theme"

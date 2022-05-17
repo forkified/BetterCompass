@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="everything">
     <v-dialog
       v-model="learningTasks.upload.dialog"
       max-width="500px"

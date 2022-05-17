@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="settings-security">
     <v-card-text>
       <v-alert :type="totp.stage === 3 ? 'success' : 'info'">
         <template v-if="totp.stage === 1">

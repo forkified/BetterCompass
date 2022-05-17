@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="user-reports">
     <v-overlay :value="loading" absolute>
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>

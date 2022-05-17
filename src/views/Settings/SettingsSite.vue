@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="settings-site">
     <v-card-text>
       <v-text-field
         v-model="$store.state.user.bcUser.discussionsImage"

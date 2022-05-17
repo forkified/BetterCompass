@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="user-analytics">
     <v-card color="card" class="rounded-xl">
       <v-toolbar color="toolbar">
         <v-toolbar-title>Analytics</v-toolbar-title>

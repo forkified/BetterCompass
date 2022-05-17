@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="activity-discussions">
     <v-dialog v-model="topicDialog" max-width="800px">
       <v-card color="card">
         <v-toolbar color="toolbar">

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="user-subjects">
     <v-card class="rounded-xl" color="card">
       <v-toolbar color="toolbar">
         <v-toolbar-title> Classes </v-toolbar-title>

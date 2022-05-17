@@ -283,6 +283,9 @@ router.get("/sessions", auth, async (req, res, next) => {
     const sessions = await Session.findAll({
       where: {
         userId: req.user.id
+      },
+      attributes: {
+        exclude: ["session", "compassSession"]
       }
     })
     res.json(sessions)

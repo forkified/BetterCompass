@@ -1,5 +1,5 @@
 <template>
-  <div class="about">
+  <div id="about">
     <v-container>
       <v-card color="card" class="rounded-xl" elevation="7">
         <v-container class="text-center justify-center">

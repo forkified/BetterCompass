@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="admin-home">
     <v-container>
       <v-row>
         <v-col>

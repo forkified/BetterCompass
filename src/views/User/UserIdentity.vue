@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="user-identity">
     <v-dialog v-model="create.dialog" max-width="600px">
       <v-card color="card">
         <v-toolbar color="toolbar">

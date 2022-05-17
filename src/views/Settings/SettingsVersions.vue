@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="settings-versions">
     <v-container>
       <v-switch
         v-model="showUnavailable"

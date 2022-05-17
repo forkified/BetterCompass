@@ -155,6 +155,7 @@ app.use("/api/v1/themes", require("./routes/theme.js"))
 app.use("/api/v1/communications", require("./routes/communications.js"))
 app.use("/api/v1/admin", require("./routes/admin.js"))
 app.use("/api/v1/parentLink", require("./routes/parentlink.js"))
+app.use("/api/v1/status", require("./routes/status.js"))
 app.get("/api/v1/state", async (req, res) => {
   try {
     if (semver.lte(req.query.v, "1.0.88")) {
@@ -227,7 +228,7 @@ app.get("/api/v1/weather", (req, res) => {
           .catch((error) => {
             res.json({
               message: "Weather widget API failure.",
-              error: error.response.data
+              error: error?.response?.data
             })
           })
       })

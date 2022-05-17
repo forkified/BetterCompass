@@ -1,7 +1,7 @@
 <!-- this is a joke feature -->
 <template>
-  <div>
-    <v-dialog v-model="scoreDialog" max-width="600px">
+  <div id="user-score">
+    <v-dialog v-model="scoreDialog" max-width="600px" id="user-score-dialog">
       <v-card :color="computeBasedOnScore.color">
         <v-toolbar :color="computeBasedOnScore.color">
           <v-toolbar-title>Your CompassScore</v-toolbar-title>

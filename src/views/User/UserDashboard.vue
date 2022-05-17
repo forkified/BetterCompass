@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="user-dashboard">
     <v-dialog v-model="chronicle.info" v-if="chronicle.info" max-width="600px">
       <v-card color="card">
         <v-card-title>
@@ -113,10 +113,10 @@
                             style="opacity: 1"
                             disabled
                             fab
-                            :color="getAttendance(attendance.statusName).color"
+                            :color="getAttendance(attendance.status).color"
                           >
                             <v-icon>
-                              {{ getAttendance(attendance.statusName).icon }}
+                              {{ getAttendance(attendance.status).icon }}
                             </v-icon>
                           </v-chip>
                         </span>
@@ -510,25 +510,17 @@ export default {
       }
     },
     getAttendance(attendanceStatus) {
-      if (attendanceStatus === "Present") {
+      if (attendanceStatus === 1) {
         return {
           color: "green",
           icon: "mdi-check"
         }
-      } else if (attendanceStatus === "Not Present") {
+      } else if (attendanceStatus === 2 || attendanceStatus === 3) {
         return {
           color: "red",
           icon: "mdi-close"
         }
-      } else if (attendanceStatus === "Medical/Illness") {
-        return {
-          color: "red",
-          icon: "mdi-close"
-        }
-      } else if (
-        attendanceStatus === "Late" ||
-        attendanceStatus === "Late Un'd"
-      ) {
+      } else if (attendanceStatus === 4 || attendanceStatus === 5) {
         return {
           color: "orange",
           icon: "mdi-clock"

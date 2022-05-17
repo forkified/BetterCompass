@@ -1,5 +1,8 @@
 <template>
-  <div v-if="$store.state.site.release === 'dev'"></div>
+  <div
+    v-if="$store.state.site.release === 'dev'"
+    id="communications-chat"
+  ></div>
 </template>
 
 <script>

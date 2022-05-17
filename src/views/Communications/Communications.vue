@@ -1,5 +1,5 @@
 <template>
-  <div v-if="$store.state.site.release === 'dev'">
+  <div v-if="$store.state.site.release === 'dev'" id="communications">
     <v-container fluid>
       <v-row>
         <v-col cols="12" sm="3">

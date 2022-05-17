@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="settings">
     <v-container v-if="$store.state.user?.bcUser">
       <v-card color="card" elevation="7" class="rounded-xl">
         <v-toolbar color="toolbar">

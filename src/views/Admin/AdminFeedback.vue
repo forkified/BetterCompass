@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="admin-feedback">
     <v-toolbar color="toolbar">
       <v-toolbar-title>Feedback ({{ feedback.count }})</v-toolbar-title>
       <v-spacer></v-spacer>

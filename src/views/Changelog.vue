@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="changelog">
     <v-container>
       <v-card color="card" class="rounded-xl" elevation="7">
         <v-toolbar color="toolbar">

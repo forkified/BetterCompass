@@ -434,6 +434,12 @@ const routes = [
       import(/* webpackChunkName: "admin" */ "../views/Admin/Admin.vue")
   },
   {
+    path: "/status",
+    name: "Service Status",
+    component: () =>
+      import(/* webpackChunkName: "status" */ "../views/Status.vue")
+  },
+  {
     path: "*",
     name: "Not Found",
     component: () =>

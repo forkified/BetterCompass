@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="admin-themes">
     <v-toolbar color="toolbar">
       <v-toolbar-title>Themes ({{ themes.count }})</v-toolbar-title>
       <v-spacer></v-spacer>

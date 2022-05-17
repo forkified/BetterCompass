@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="activity-dashboard">
     <v-dialog v-model="taskDialog" max-width="600px">
       <v-card color="card" elevation="7">
         <v-card-title>
@@ -305,9 +305,13 @@
         <v-col sm="7">
           <v-card color="card" class="rounded-xl ma-3" elevation="7">
             <v-toolbar color="toolbar">
+              <v-btn icon text disabled small> </v-btn>
               <v-spacer></v-spacer>
               <v-toolbar-title>Lesson Plan</v-toolbar-title>
               <v-spacer></v-spacer>
+              <v-btn icon text @click="getLessonPlan">
+                <v-icon>mdi-refresh</v-icon>
+              </v-btn>
             </v-toolbar>
             <v-container>
               <html
@@ -485,6 +489,10 @@ export default {
     news: {},
     lessonPlan: {},
     getActivity: {
+      type: Function,
+      default: () => {}
+    },
+    getLessonPlan: {
       type: Function,
       default: () => {}
     }

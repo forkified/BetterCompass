@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="admin">
     <v-overlay :value="loading" absolute>
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>

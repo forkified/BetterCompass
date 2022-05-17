@@ -47,9 +47,13 @@ export default new Vuex.Store({
       editor: false,
       type: "create",
       autoCSS: false
-    }
+    },
+    compassEnvironment: ""
   },
   mutations: {
+    setCompassEnvironment(state, payload) {
+      state.compassEnvironment = payload
+    },
     setThemeEngine(state, payload) {
       state.themeEngine = payload
     },
@@ -504,6 +508,10 @@ div {
                 userId: context.state.user.userId
               })
               .then((res) => {
+                context.commit(
+                  "setCompassEnvironment",
+                  res.headers["x-compass-environment"]
+                )
                 context.commit("setUpcomingEvents", res.data.d)
               })
               .catch(() => {})

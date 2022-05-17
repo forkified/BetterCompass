@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="school-subjects">
     <v-dialog v-model="dialog" max-width="500px" v-if="selectedSubject.classes">
       <v-card color="card">
         <v-toolbar color="toolbar">

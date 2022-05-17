@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="user">
     <v-container v-if="permissionError">
       <v-alert type="info" text>
         You are viewing an incomplete profile due to lack of permission. ({{
@@ -36,11 +36,8 @@
           >
             Events
           </v-tab>
-          <v-tab to="settings" v-if="user.userId === $store.state.user.userId">
-            BetterCompass
-          </v-tab>
           <v-tab to="subjects"> Classes </v-tab>
-          <v-tab to="identity" v-if="!permissionError">CompassIdentity</v-tab>
+          <v-tab to="identity" v-if="!permissionError">Identity</v-tab>
           <v-tab to="score" v-if="compassScore"> Compass Score </v-tab>
         </v-tabs>
         <v-container>

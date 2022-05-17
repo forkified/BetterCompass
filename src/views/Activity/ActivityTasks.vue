@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="activity-tasks">
     <v-dialog v-model="upload.dialog" max-width="500px" class="rounded-xl">
       <v-card color="card">
         <v-card-title class="headline">

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="activity-schedule">
     <v-container>
       <v-card color="card" class="rounded-xl mb-3" elevation="7">
         <v-overlay :value="loading" absolute>

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="user-events">
     <v-dialog v-model="dialog" max-width="900px">
       <v-card color="card">
         <v-toolbar color="toolbar">

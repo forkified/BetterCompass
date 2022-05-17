@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="user-settings">
     <v-dialog v-model="totp.dialog" max-width="750px">
       <v-card color="card">
         <v-toolbar color="toolbar">

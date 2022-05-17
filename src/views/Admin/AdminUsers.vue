@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="admin-users">
     <v-toolbar color="toolbar">
       <v-toolbar-title>Users ({{ users.count }})</v-toolbar-title>
       <v-spacer></v-spacer>

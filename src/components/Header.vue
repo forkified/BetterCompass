@@ -97,13 +97,14 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-app-bar app v-if="$store.state.user.bcUser" color="dark">
+    <v-app-bar app v-if="$store.state.user.bcUser" color="dark" id="navbar">
       <v-app-bar-nav-icon
         @click.stop="drawer = !drawer"
         v-if="$vuetify.breakpoint.mobile"
       ></v-app-bar-nav-icon>
       <v-toolbar-title
         v-if="!$vuetify.breakpoint.mobile"
+        id="bettercompass-title"
         :style="
           'color: ' +
           $vuetify.theme.themes[$vuetify.theme.dark ? 'dark' : 'light'].primary
@@ -278,6 +279,7 @@
       app
       color="dark"
       floating
+      id="sidebar"
     >
       <v-row
         align="center"
@@ -298,6 +300,7 @@
             <v-toolbar-title
               v-if="$vuetify.breakpoint.mobile"
               class="text-center justify-center"
+              id="bettercompass-title"
               :style="
                 'color: ' +
                 $vuetify.theme.themes[$vuetify.theme.dark ? 'dark' : 'light']
@@ -496,6 +499,13 @@
                 </v-list-item-icon>
 
                 <v-list-item-title>Go to Route</v-list-item-title>
+              </v-list-item>
+              <v-list-item to="/status" :color="active('/status')">
+                <v-list-item-icon>
+                  <v-icon>mdi-list-status</v-icon>
+                </v-list-item-icon>
+
+                <v-list-item-title>Service Status</v-list-item-title>
               </v-list-item>
             </template>
           </v-list>

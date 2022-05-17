@@ -583,6 +583,7 @@
     <v-main>
       <v-container
         v-if="$store.state.site.latestVersion > $store.state.versioning.version"
+        id="update-notify-banner"
       >
         <v-alert class="mx-4" type="info" text>
           BetterCompass just got better. Please CTRL+R / ⌘+R to update. (You are
@@ -592,18 +593,20 @@
       </v-container>
       <v-container
         v-if="$store.state.site.notification && $store.state.user.bcUser"
+        id="notification-banner"
       >
         <v-alert text class="mx-4" type="info">
           {{ $store.state.site.notification }}
         </v-alert>
       </v-container>
-      <v-container v-if="!$store.state.online">
+      <v-container v-if="!$store.state.online" id="offline-notify-banner">
         <v-alert text class="mx-4" type="warning">
           You are currently offline. BetterCompass functionality is limited.
         </v-alert>
       </v-container>
       <v-container
         v-if="baseRole() !== 'Student' && baseRole() !== 'Not Authenticated'"
+        id="account-notify-banner"
       >
         <v-alert class="mx-4 rounded-xl" dismissible type="info">
           {{ baseRole() }} accounts are not officially supported by
