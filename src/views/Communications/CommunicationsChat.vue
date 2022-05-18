@@ -52,8 +52,11 @@
               <v-card-text class="flex-shrink-1">
                 <v-text-field
                   v-model="message"
+                  autofocus
                   label="Type a message"
+                  placeholder="Type a message"
                   type="text"
+                  ref="message-input"
                   outlined
                   append-outer-icon="mdi-send"
                   @keyup.enter="sendMessage"
@@ -99,13 +102,17 @@ export default {
   },
   methods: {
     autoScroll() {
-      this.$nextTick(() => {
-        const lastIndex = this.messages.length - 1
-        const lastMessage = document.querySelector(`#message-${lastIndex}`)
-        lastMessage.scrollIntoView({
-          behavior: "smooth"
+      try {
+        this.$nextTick(() => {
+          const lastIndex = this.messages.length - 1
+          const lastMessage = document.querySelector(`#message-${lastIndex}`)
+          lastMessage.scrollIntoView({
+            behavior: "smooth"
+          })
         })
-      })
+      } catch {
+        //
+      }
     },
     getMessages() {
       this.axios
@@ -117,6 +124,9 @@ export default {
         .then((res) => {
           this.messages = res.data
           this.autoScroll()
+        })
+        .catch((e) => {
+          AjaxErrorHandler(this.$store)(e)
         })
     },
     sendMessage() {
@@ -145,6 +155,7 @@ export default {
   },
   watch: {
     "$route.params.id"() {
+      this.$refs["message-input"].$refs.input.focus()
       this.message = ""
       this.messages = []
       this.getMessages()

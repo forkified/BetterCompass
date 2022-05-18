@@ -313,6 +313,14 @@ const routes = [
     redirect: "/communications/home",
     children: [
       {
+        path: "friends",
+        name: "Friends - Communications",
+        component: () =>
+          import(
+            /* webpackChunkName: "communicationsFriends" */ "../views/Communications/CommunicationsFriends"
+          )
+      },
+      {
         path: ":id",
         name: "Communications",
         component: () =>

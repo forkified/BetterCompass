@@ -48,9 +48,13 @@ export default new Vuex.Store({
       type: "create",
       autoCSS: false
     },
-    compassEnvironment: ""
+    compassEnvironment: "",
+    communicationNotifications: 0
   },
   mutations: {
+    setCommunicationNotifications(state, payload) {
+      state.communicationNotifications = payload
+    },
     setCompassEnvironment(state, payload) {
       state.compassEnvironment = payload
     },

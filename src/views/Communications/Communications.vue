@@ -79,25 +79,30 @@
     >
       <v-row>
         <v-col cols="12" sm="3">
-          <v-app-bar flat color="rgba(0,0,0,0)">
-            <v-btn class="rounded-xl" x-large block @click="dialogs.new = true">
-              New Conversation
-            </v-btn>
-          </v-app-bar>
-          <v-app-bar flat color="card">
-            <v-toolbar-title class="title"> Communications </v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-btn icon>
-              <v-icon>fas fa-ellipsis-h</v-icon>
-            </v-btn>
-          </v-app-bar>
-
+          <v-btn
+            color="card"
+            to="/communications/friends"
+            dark
+            block
+            class="mb-3"
+          >
+            <v-icon left>mdi-account-multiple</v-icon>
+            Friends
+          </v-btn>
           <v-text-field
             filled
             label="Search..."
             append-icon="mdi-magnify"
             color="grey"
           ></v-text-field>
+          <v-toolbar color="card" class="rounded-xl">
+            <v-toolbar-subtitle> MESSAGES </v-toolbar-subtitle>
+            <v-spacer></v-spacer>
+            <v-btn icon @click="dialogs.new = true">
+              <v-icon>mdi-plus</v-icon>
+            </v-btn>
+          </v-toolbar>
+
           <v-list two-line color="card">
             <v-list-item-group v-model="selected" class="rounded-xl">
               <template v-for="(item, index) in items">

@@ -443,6 +443,15 @@
                 v-if="$store.state.site.release === 'dev'"
                 :color="active('/communications')"
               >
+                <v-badge
+                  v-if="$store.state.communicationNotifications > 0"
+                  color="red"
+                  right
+                >
+                  <template v-slot:badge>
+                    {{ $store.state.communicationNotifications }}
+                  </template>
+                </v-badge>
                 <v-list-item-icon>
                   <v-icon>mdi-android-messages</v-icon>
                 </v-list-item-icon>

@@ -3,10 +3,17 @@ const router = express.Router()
 const Errors = require("../lib/errors.js")
 const auth = require("../lib/authorize.js")
 const axios = require("axios")
-const { User, Chat, ChatAssociation, Message } = require("../models")
+const { User, Chat, ChatAssociation, Message, Friend } = require("../models")
 const cryptoRandomString = require("crypto-random-string")
 const { Op } = require("sequelize")
-
+const rateLimit = require("express-rate-limit")
+const limiter = rateLimit({
+  windowMs: 10 * 1000,
+  max: 12,
+  message: Errors.rateLimit,
+  standardHeaders: true,
+  legacyHeaders: false
+})
 router.get("/", auth, async (req, res, next) => {
   try {
     let chats = await ChatAssociation.findAll({
@@ -48,34 +55,201 @@ router.get("/", auth, async (req, res, next) => {
   }
 })
 
-router.get("/search", auth, async (req, res, next) => {
+router.get("/friends", auth, async (req, res, next) => {
   try {
-    const users = await User.findAll({
+    let friends = await Friend.findAll({
       where: {
-        [Op.or]: [
-          {
-            privacy: {
-              communications: {
-                enabled: true
-              }
-            },
-            instance: req.user.instance,
-            sussiId: {
-              [Op.like]: `%${req.query.query}%`
+        userId: req.user.id
+      },
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: [
+            "id",
+            "sussiId",
+            "discussionsImage",
+            "createdAt",
+            "updatedAt"
+          ]
+        },
+        {
+          model: User,
+          as: "user2",
+          attributes: [
+            "id",
+            "sussiId",
+            "discussionsImage",
+            "createdAt",
+            "updatedAt"
+          ]
+        }
+      ]
+    })
+    res.json(friends)
+  } catch (err) {
+    next(err)
+  }
+})
+
+router.post("/friends", auth, async (req, res, next) => {
+  try {
+    const io = req.app.get("io")
+    let friendRes
+    try {
+      friendRes = req.body.friend.split(":")
+    } catch {
+      friendRes = req.body.friend
+    }
+    const user = await User.findOne({
+      where: {
+        sussiId: friendRes[0] || friendRes,
+        instance: friendRes[1] || req.user.instance
+      }
+    })
+    if (user) {
+      const friend = await Friend.findOne({
+        where: {
+          userId: req.user.id,
+          friendId: user.id
+        }
+      })
+      if (friend) {
+        throw Errors.friendAlreadyFriends
+      } else {
+        if (!user.privacy.communications.enabled) {
+          throw Errors.communicationsUserNotOptedIn
+        } else {
+          const newFriend = await Friend.create({
+            userId: req.user.id,
+            friendId: user.id
+          })
+          const remoteFriend = await Friend.create({
+            userId: user.id,
+            friendId: req.user.id,
+            status: "pendingCanAccept"
+          })
+          io.to(user.id).emit("friendRequest", {
+            ...remoteFriend.dataValues,
+            user: {
+              sussiId: req.user.sussiId,
+              discussionsImage: req.user.discussionsImage,
+              id: req.user.id
             }
+          })
+          res.json(newFriend)
+        }
+      }
+    } else {
+      throw Errors.communicationsUserNotFound
+    }
+  } catch (err) {
+    next(err)
+  }
+})
+
+router.delete("/friends/:id", auth, async (req, res, next) => {
+  try {
+    const friend = await Friend.findOne({
+      where: {
+        userId: req.user.id,
+        id: req.params.id
+      }
+    })
+    if (friend) {
+      await friend.destroy()
+      await Friend.destroy({
+        where: {
+          userId: friend.friendId,
+          friendId: req.user.id
+        }
+      })
+      res.sendStatus(204)
+    } else {
+      throw Errors.friendNotFound
+    }
+  } catch (err) {
+    next(err)
+  }
+})
+
+router.put("/friends/:id", auth, async (req, res, next) => {
+  try {
+    const io = req.app.get("io")
+    const friend = await Friend.findOne({
+      where: {
+        id: req.params.id,
+        userId: req.user.id,
+        status: "pendingCanAccept"
+      }
+    })
+    if (friend) {
+      await friend.update({
+        status: "accepted"
+      })
+      const remoteFriend = await Friend.findOne({
+        where: {
+          userId: friend.friendId,
+          friendId: friend.userId
+        },
+        include: [
+          {
+            model: User,
+            as: "user",
+            attributes: ["id", "sussiId", "createdAt", "updatedAt"]
           },
           {
-            privacy: {
-              communications: {
-                outsideTenant: true,
-                enabled: true
-              }
-            },
-            sussiId: {
-              [Op.like]: `%${req.query.query}%`
-            }
+            model: User,
+            as: "user2",
+            attributes: ["id", "sussiId", "createdAt", "updatedAt"]
           }
         ]
+      })
+      await remoteFriend.update({
+        status: "accepted"
+      })
+      io.to(req.user.id).emit("friendAccepted", {
+        ...friend.dataValues
+      })
+      io.to(remoteFriend.userId).emit("friendAccepted", {
+        ...remoteFriend.dataValues
+      })
+      res.json(friend)
+    } else {
+      throw Errors.friendNotFound
+    }
+  } catch (err) {
+    next(err)
+  }
+})
+
+router.get("/search", auth, async (req, res, next) => {
+  try {
+    const friends = await Friend.findAll({
+      where: {
+        userId: req.user.id,
+        status: "accepted"
+      },
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: ["id", "sussiId", "createdAt", "updatedAt"]
+        },
+        {
+          model: User,
+          as: "user2",
+          attributes: ["id", "sussiId", "createdAt", "updatedAt"]
+        }
+      ]
+    })
+    console.log(friends)
+    const users = await User.findAll({
+      where: {
+        id: friends.map((friend) => friend.friendId),
+        sussiId: {
+          [Op.like]: `%${req.query.query}%`
+        }
       },
       attributes: [
         "sussiId",
@@ -88,7 +262,6 @@ router.get("/search", auth, async (req, res, next) => {
         "instance"
       ]
     })
-    // exclude current user
     users.forEach((user) => {
       if (user.id === req.user.id) {
         users.splice(users.indexOf(user), 1)
@@ -145,7 +318,7 @@ router.get("/:id", auth, async (req, res, next) => {
   }
 })
 
-router.post("/:id/message", auth, async (req, res, next) => {
+router.post("/:id/message", limiter, auth, async (req, res, next) => {
   try {
     const io = req.app.get("io")
     if (!req.body.message) {
@@ -318,7 +491,6 @@ router.get("/:id/messages", auth, async (req, res, next) => {
             ]
           }
         ],
-        limit: 50,
         offset: req.query.offset || 0
       })
       res.json(messages)

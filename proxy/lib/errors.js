@@ -17,7 +17,14 @@ let Errors = {
   rateLimit: [
     "You are being rate-limited. Please try again in a few minutes.",
     429
-  ]
+  ],
+  communicationsUserNotFound: ["This user does not exist.", 400],
+  communicationsUserNotOptedIn: [
+    "This user has not opted in to BetterCompass Communications.",
+    400
+  ],
+  friendAlreadyFriends: ["You are already friends with this user.", 400],
+  friendNotFound: ["The friend instance couldn't be found.", 400]
 }
 
 function processErrors(errorName) {

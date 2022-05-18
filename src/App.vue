@@ -962,15 +962,27 @@ export default {
       .dispatch("getUserInfo")
       .then(() => {
         this.$socket.on("message", (message) => {
-          console.log("message", message)
+          console.log(message)
+          if (
+            this.$route.name !== "Communications" ||
+            (this.$route.name === "Communications" && !document.hasFocus())
+          ) {
+            new Audio(require("@/assets/audio/message.wav")).play()
+            this.$toast.info(
+              "Message: " +
+                message.content +
+                "\n\n" +
+                "From: " +
+                message.user.sussiId +
+                "\n" +
+                "Sent in: " +
+                message.chat.name
+            )
+          }
+        })
+        this.$socket.on("friendRequest", (message) => {
           new Audio(require("@/assets/audio/message.wav")).play()
-          this.$toast.info(
-            "Message: " +
-              message.content +
-              "\n\n" +
-              "From: " +
-              message.user.sussiId
-          )
+          this.$toast.info("Friend request sent by " + message.user.sussiId)
         })
         // eslint-disable-next-line no-undef
         if (JSON.parse(process.env.VUE_APP_MATOMO_ENABLED)) {
