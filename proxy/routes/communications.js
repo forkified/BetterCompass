@@ -327,6 +327,9 @@ router.post("/:id/message", limiter, auth, async (req, res, next) => {
     if (!req.body.message.length) {
       throw Errors.invalidParameter("message")
     }
+    if (req.body.message.length > 999) {
+      throw Errors.invalidParameter("message", "Maximum length is 1000")
+    }
     const chat = await ChatAssociation.findOne({
       where: {
         userId: req.user.id,

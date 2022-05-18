@@ -35,9 +35,9 @@
                       <v-list-item-subtitle>
                         {{ message.user.sussiId }}
                       </v-list-item-subtitle>
-                      <v-list-item-title>
+                      <p style="white-space: pre-line; overflow-wrap: anywhere">
                         {{ message.content }}
-                      </v-list-item-title>
+                      </p>
                     </v-list-item-content>
                     <v-list-item-action>
                       <v-list-item-subtitle>
