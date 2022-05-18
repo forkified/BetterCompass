@@ -967,7 +967,13 @@ export default {
             this.$route.name !== "Communications" ||
             (this.$route.name === "Communications" && !document.hasFocus())
           ) {
-            new Audio(require("@/assets/audio/message.wav")).play()
+            if (localStorage.getItem("messageAudio")) {
+              if (JSON.parse(localStorage.getItem("messageAudio"))) {
+                new Audio(require("@/assets/audio/message.wav")).play()
+              }
+            } else {
+              new Audio(require("@/assets/audio/message.wav")).play()
+            }
             this.$toast.info(
               "Message: " +
                 message.content +

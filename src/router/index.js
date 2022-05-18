@@ -403,6 +403,14 @@ const routes = [
           import(
             /* webpackChunkName: "settingsDeveloper" */ "../views/Settings/SettingsDeveloper"
           )
+      },
+      {
+        path: "communications",
+        name: "Communications",
+        component: () =>
+          import(
+            /* webpackChunkName: "settingsCommunications" */ "../views/Settings/SettingsCommunications"
+          )
       }
     ],
     component: () =>

@@ -440,7 +440,10 @@
               </v-list-item>
               <v-list-item
                 to="/communications"
-                v-if="$store.state.site.release === 'dev'"
+                v-if="
+                  $store.state.site.release === 'dev' ||
+                  $store.state.user.bcUser?.communications?.enabled
+                "
                 :color="active('/communications')"
               >
                 <v-badge
