@@ -70,6 +70,10 @@ export default {
           value: "theme"
         },
         {
+          text: "Communications",
+          value: "privacy.communications.enabled"
+        },
+        {
           text: "Theme",
           value: "themeObject.name"
         },
