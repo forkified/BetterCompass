@@ -9,7 +9,12 @@ module.exports = (sequelize, DataTypes) => {
      */
     // eslint-disable-next-line no-unused-vars
     static associate(models) {
-      // define association here
+      Message.belongsTo(models.User, {
+        as: "user"
+      })
+      Message.belongsTo(models.Chat, {
+        as: "chat"
+      })
     }
   }
   Message.init(

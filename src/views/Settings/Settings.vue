@@ -15,6 +15,9 @@
             v-if="$store.state.user.bcUser.privacy.communications.enabled"
           >
             Communications
+            <v-chip disabled style="opacity: 1" color="transparent"
+              ><v-icon>mdi-ab-testing</v-icon></v-chip
+            >
           </v-tab>
           <v-tab
             to="/settings/security"
@@ -24,6 +27,9 @@
             "
           >
             Security
+            <v-chip disabled style="opacity: 1" color="transparent"
+              ><v-icon>mdi-ab-testing</v-icon></v-chip
+            >
           </v-tab>
           <v-tab
             to="/settings/sessions"
@@ -33,18 +39,27 @@
             "
           >
             Sessions
+            <v-chip disabled style="opacity: 1" color="transparent"
+              ><v-icon>mdi-ab-testing</v-icon></v-chip
+            >
           </v-tab>
           <v-tab
             to="/settings/versions"
             v-if="$store.state.site.release === 'dev'"
           >
             Versions
+            <v-chip disabled style="opacity: 1" color="transparent"
+              ><v-icon>mdi-ab-testing</v-icon></v-chip
+            >
           </v-tab>
           <v-tab
             to="/settings/developer"
             v-if="$store.state.site.release === 'dev'"
           >
             Developer Options
+            <v-chip disabled style="opacity: 1" color="transparent"
+              ><v-icon>mdi-ab-testing</v-icon></v-chip
+            >
           </v-tab>
         </v-tabs>
         <router-view> </router-view>

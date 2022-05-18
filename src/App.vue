@@ -961,6 +961,17 @@ export default {
     this.$store
       .dispatch("getUserInfo")
       .then(() => {
+        this.$socket.on("message", (message) => {
+          console.log("message", message)
+          new Audio(require("@/assets/audio/message.wav")).play()
+          this.$toast.info(
+            "Message: " +
+              message.content +
+              "\n\n" +
+              "From: " +
+              message.user.sussiId
+          )
+        })
         // eslint-disable-next-line no-undef
         if (JSON.parse(process.env.VUE_APP_MATOMO_ENABLED)) {
           // eslint-disable-next-line no-undef

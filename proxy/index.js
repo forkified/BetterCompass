@@ -14,6 +14,9 @@ const { Feedback, Session } = require("./models")
 const auth = require("./lib/authorize.js")
 const semver = require("semver")
 const path = require("path")
+const socket = require("./lib/socket")
+const server = require("http").createServer(app)
+
 const compassRouter = function (req) {
   const instance =
     req.header("compassInstance") ||
@@ -250,12 +253,14 @@ console.log(os.hostname())
 
 app.use(require("./lib/errorHandler"))
 
-app.listen(23994, () => {
+server.listen(23994, () => {
   console.log("Initialized")
   console.log("Listening on port 0.0.0.0:" + 23994)
 
   app.locals.appStarted = true
   app.emit("appStarted")
 })
+
+socket.init(app, server)
 
 module.exports = app

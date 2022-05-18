@@ -447,7 +447,7 @@
                     style="white-space: pre-line"
                     v-html="item.Content1"
                   ></div>
-                  <v-card-actions class="justify-center">
+                  <v-chip-group column center-active>
                     <v-chip
                       v-for="attachment in item.Attachments"
                       :key="attachment.id"
@@ -463,7 +463,7 @@
                       <v-icon>mdi-download</v-icon>
                       {{ attachment.Name }}
                     </v-chip>
-                  </v-card-actions>
+                  </v-chip-group>
                 </div>
               </v-container>
             </v-card>

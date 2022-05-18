@@ -466,6 +466,9 @@ export default new Vuex.Store({
           .get("/api/v1/user")
           .then((res) => {
             context.commit("setUser", res.data)
+            Vue.$socket.emit("connection", {
+              message: true
+            })
             localStorage.setItem("userCache", JSON.stringify(res.data))
             const name = res.data.bcUser.themeObject.id
             const dark = res.data.bcUser.themeObject.theme.dark

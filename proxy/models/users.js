@@ -236,6 +236,22 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         defaultValue: "Roboto",
         allowNull: false
+      },
+      status: {
+        type: DataTypes.ENUM([
+          "online",
+          "busy",
+          "away",
+          "offline",
+          "invisible"
+        ]),
+        allowNull: false,
+        defaultValue: "offline"
+      },
+      storedStatus: {
+        type: DataTypes.ENUM(["online", "busy", "away", "invisible"]),
+        allowNull: false,
+        defaultValue: "online"
       }
     },
     {

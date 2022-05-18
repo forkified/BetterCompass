@@ -37,24 +37,19 @@
               </v-chip>
             </template>
             <template v-slot:item="data">
-              <template v-if="typeof data.item !== 'object'">
-                <v-list-item-content v-text="data.item"></v-list-item-content>
-              </template>
-              <template v-else>
-                <v-avatar
-                  left
-                  v-if="data.item.discussionsImage"
-                  class="mr-3 mb-2 mt-2"
-                >
-                  <v-img :src="data.item.discussionsImage"></v-img>
-                </v-avatar>
-                <v-avatar left v-else class="mr-3 mb-2 mt-2">
-                  <v-icon>mdi-account</v-icon>
-                </v-avatar>
-                <v-list-item-content>
-                  @{{ data.item.sussiId }}:{{ data.item.instance }}
-                </v-list-item-content>
-              </template>
+              <v-avatar
+                left
+                v-if="data.item.discussionsImage"
+                class="mr-3 mb-2 mt-2"
+              >
+                <v-img :src="data.item.discussionsImage"></v-img>
+              </v-avatar>
+              <v-avatar left v-else class="mr-3 mb-2 mt-2">
+                <v-icon>mdi-account</v-icon>
+              </v-avatar>
+              <v-list-item-content>
+                @{{ data.item.sussiId }}:{{ data.item.instance }}
+              </v-list-item-content>
             </template>
           </v-autocomplete>
           <small
@@ -62,6 +57,20 @@
             BetterCompass Communications enabled.</small
           >
         </v-container>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="error" text @click="dialogs.new = false">
+            Cancel
+          </v-btn>
+          <v-btn
+            color="primary"
+            :loading="newConversation.loading"
+            text
+            @click="createConversation"
+          >
+            Create
+          </v-btn>
+        </v-card-actions>
       </v-card>
     </v-dialog>
     <v-container
@@ -77,7 +86,6 @@
           </v-app-bar>
           <v-app-bar flat color="card">
             <v-toolbar-title class="title"> Communications </v-toolbar-title>
-
             <v-spacer></v-spacer>
             <v-btn icon>
               <v-icon>fas fa-ellipsis-h</v-icon>
@@ -90,7 +98,6 @@
             append-icon="mdi-magnify"
             color="grey"
           ></v-text-field>
-
           <v-list two-line color="card">
             <v-list-item-group v-model="selected" class="rounded-xl">
               <template v-for="(item, index) in items">
@@ -101,7 +108,7 @@
                   <v-badge
                     bordered
                     bottom
-                    color="green"
+                    :color="getStatus(item)"
                     v-if="item.chat.type === 'direct'"
                     dot
                     offset-x="24"
@@ -113,7 +120,14 @@
                       <v-icon v-if="item.chat.type === 'group'">
                         mdi-account-group
                       </v-icon>
-                      <v-icon v-if="item.chat.type === 'direct'">
+                      <img
+                        v-else-if="
+                          item.chat.type === 'direct' &&
+                          getDirectRecipient(item).discussionsImage
+                        "
+                        :src="getDirectRecipient(item).discussionsImage"
+                      />
+                      <v-icon v-else-if="item.chat.type === 'direct'">
                         mdi-account
                       </v-icon>
                     </v-list-item-avatar>
@@ -130,7 +144,9 @@
                   <template>
                     <v-list-item-content>
                       <v-list-item-title v-if="item.chat.type === 'direct'">
-                        {{ item.chat.name }}
+                        {{ getDirectRecipient(item).sussiId }}:{{
+                          getDirectRecipient(item).instance
+                        }}
                       </v-list-item-title>
                       <v-list-item-title v-else>
                         {{ item.chat.name }}
@@ -151,8 +167,14 @@
             </v-list-item-group>
           </v-list>
         </v-col>
+        <v-col>
+          <router-view
+            v-if="$route.params.id !== 'home'"
+            :chat="selectedChat"
+            :loading="loading"
+          ></router-view>
+        </v-col>
       </v-row>
-      <router-view></router-view>
     </v-container>
     <v-container v-else>
       <v-card
@@ -195,6 +217,7 @@ export default {
     return {
       selected: [2],
       items: [],
+      loading: true,
       newConversation: {
         name: "",
         users: [],
@@ -207,12 +230,58 @@ export default {
     }
   },
   computed: {
+    selectedChat() {
+      try {
+        return this.items.find(
+          (item) => item.id === JSON.parse(this.$route.params.id)
+        )
+      } catch {
+        return null
+      }
+    },
     viewport() {
       let height = window.innerHeight
       return (height -= document.querySelector("#navbar").clientHeight + 24)
     }
   },
   methods: {
+    getStatus(item) {
+      if (this.getDirectRecipient(item).status === "online") {
+        return "green"
+      } else if (this.getDirectRecipient(item).status === "offline") {
+        return "grey"
+      } else {
+        return "grey"
+      }
+    },
+    getDirectRecipient(item) {
+      const user = item.chat.users.find(
+        (user) => user.id !== this.$store.state.user.bcUser.id
+      )
+      if (user) {
+        return user
+      } else {
+        return item.chat.users[0]
+      }
+    },
+    createConversation() {
+      this.newConversation.loading = true
+      this.axios
+        .post("/api/v1/communications/create", {
+          users: this.newConversation.users
+        })
+        .then(() => {
+          this.getChats()
+          this.newConversation.name = ""
+          this.newConversation.users = []
+          this.newConversation.loading = false
+          this.newConversation.results = []
+        })
+        .catch((e) => {
+          this.newConversation.loading = false
+          AjaxErrorHandler(this.$store)(e)
+        })
+    },
     enableCommunications() {
       this.axios
         .put("/api/v1/user/settings/communications", {
@@ -240,10 +309,15 @@ export default {
           this.newConversation.loading = false
           this.newConversation.results.push(...res.data)
         })
+        .catch(() => {
+          this.newConversation.loading = false
+        })
     },
     getChats() {
+      this.loading = true
       this.axios.get("/api/v1/communications").then((res) => {
         this.items = res.data
+        this.loading = false
       })
     }
   },

@@ -16,6 +16,7 @@ import VueApollo from "./plugins/apollo"
 import VueMatomo from "vue-matomo"
 import * as Sentry from "@sentry/vue"
 import { BrowserTracing } from "@sentry/tracing"
+import SocketIO from "socket.io-client"
 if (
   process.env.NODE_ENV === "production" &&
   JSON.parse(process.env.VUE_APP_SENTRY_ENABLED)
@@ -35,6 +36,16 @@ if (
     tracesSampleRate: 1.0
   })
 }
+
+Vue.use({
+  install(Vue) {
+    Vue.prototype.$socket = SocketIO(process.env.VUE_APP_SOCKET_URL, {
+      query: {
+        compassInstance: localStorage.getItem("schoolInstance")
+      }
+    })
+  }
+})
 
 if (JSON.parse(process.env.VUE_APP_MATOMO_ENABLED)) {
   Vue.use(VueMatomo, {
