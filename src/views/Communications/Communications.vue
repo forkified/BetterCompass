@@ -1,5 +1,5 @@
 <template>
-  <div v-if="$store.state.site.release === 'dev'" id="communications">
+  <div id="communications">
     <v-dialog v-model="dialogs.new" max-width="500px">
       <v-card color="card">
         <v-toolbar color="toolbar">
