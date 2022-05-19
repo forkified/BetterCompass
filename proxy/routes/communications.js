@@ -2,14 +2,12 @@ const express = require("express")
 const router = express.Router()
 const Errors = require("../lib/errors.js")
 const auth = require("../lib/authorize.js")
-const axios = require("axios")
 const { User, Chat, ChatAssociation, Message, Friend } = require("../models")
-const cryptoRandomString = require("crypto-random-string")
 const { Op } = require("sequelize")
 const rateLimit = require("express-rate-limit")
 const limiter = rateLimit({
   windowMs: 10 * 1000,
-  max: 12,
+  max: 8,
   message: Errors.rateLimit,
   standardHeaders: true,
   legacyHeaders: false
@@ -25,6 +23,13 @@ router.get("/", auth, async (req, res, next) => {
           model: Chat,
           as: "chat",
           include: [
+            {
+              model: Message,
+              as: "lastMessages",
+              limit: 50,
+              order: [["id", "DESC"]],
+              attributes: ["id", "content", "createdAt", "updatedAt"]
+            },
             {
               model: User,
               as: "users",
@@ -49,7 +54,136 @@ router.get("/", auth, async (req, res, next) => {
         }
       ]
     })
-    res.json(chats)
+    res.json(
+      chats.sort((a, b) => {
+        if (a.chat.lastMessages.length > 0 && b.chat.lastMessages.length > 0) {
+          return b.chat.lastMessages[0].id - a.chat.lastMessages[0].id
+        } else if (a.chat.lastMessages.length > 0) {
+          return -1
+        } else if (b.chat.lastMessages.length > 0) {
+          return 1
+        } else {
+          return b.chat.id - a.chat.id
+        }
+      })
+    )
+  } catch (err) {
+    next(err)
+  }
+})
+
+router.post("/association/:id", auth, async (req, res, next) => {
+  try {
+    const io = req.app.get("io")
+    const chat = await ChatAssociation.findOne({
+      where: {
+        userId: req.user.id,
+        chatId: req.params.id,
+        rank: "admin"
+      },
+      include: [
+        {
+          model: Chat,
+          as: "chat",
+          include: [
+            {
+              model: User,
+              as: "users",
+              attributes: ["id", "sussiId", "createdAt", "updatedAt"]
+            }
+          ]
+        }
+      ]
+    })
+    if (chat) {
+      if (req.body.users.length > 10) {
+        throw Errors.invalidParameter(
+          "User",
+          "The maximum number of users is 10"
+        )
+      }
+      if (!req.body.users.length) {
+        throw Errors.invalidParameter(
+          "User",
+          "You need at least 1 user to create a chat"
+        )
+      }
+      if (req.body.users.includes(req.user.id)) {
+        throw Errors.invalidParameter(
+          "User",
+          "You cannot create a DM with yourself"
+        )
+      }
+      const friends = await Friend.findAll({
+        where: {
+          userId: req.user.id,
+          friendId: req.body.users,
+          status: "accepted"
+        }
+      })
+      if (friends.length !== req.body.users.length) {
+        throw Errors.invalidParameter(
+          "User",
+          "You are not friends with this user"
+        )
+      }
+      const users = await ChatAssociation.findAll({
+        where: {
+          userId: req.body.users,
+          chatId: req.params.id
+        }
+      })
+      if (users.length > 0) {
+        throw Errors.invalidParameter(
+          "User",
+          "One or more users are already in this chat"
+        )
+      }
+      for (let i = 0; i < req.body.users.length; i++) {
+        const c1 = await ChatAssociation.create({
+          chatId: chat.chat.id,
+          userId: req.body.users[i],
+          rank: "member"
+        })
+        const association = await ChatAssociation.findOne({
+          where: {
+            id: c1.id
+          },
+          include: [
+            {
+              model: Chat,
+              as: "chat",
+              include: [
+                {
+                  model: User,
+                  as: "users",
+                  attributes: [
+                    "sussiId",
+                    "discussionsFirstName",
+                    "discussionsLastName",
+                    "discussionsImage",
+                    "id",
+                    "createdAt",
+                    "updatedAt",
+                    "instance",
+                    "status"
+                  ]
+                }
+              ]
+            },
+            {
+              model: User,
+              as: "user",
+              attributes: ["id", "sussiId", "createdAt", "updatedAt"]
+            }
+          ]
+        })
+        io.to(req.body.users[i]).emit("chatAdded", association)
+      }
+      res.sendStatus(204)
+    } else {
+      throw Errors.chatNotFoundOrNotAdmin
+    }
   } catch (err) {
     next(err)
   }
@@ -318,6 +452,130 @@ router.get("/:id", auth, async (req, res, next) => {
   }
 })
 
+router.put("/:id/read", auth, async (req, res, next) => {
+  try {
+    const io = req.app.get("io")
+    const chat = await ChatAssociation.findOne({
+      where: {
+        userId: req.user.id,
+        id: req.params.id
+      },
+      include: [
+        {
+          model: Chat,
+          as: "chat",
+          include: [
+            {
+              model: Message,
+              as: "lastMessages",
+              limit: 50,
+              order: [["id", "DESC"]],
+              attributes: ["id", "content", "createdAt", "updatedAt"]
+            }
+          ]
+        }
+      ]
+    })
+    if (chat) {
+      await chat.update({
+        lastRead: chat.chat.lastMessages[0]?.id || null
+      })
+      io.to(req.user.id).emit("readChat", {
+        id: chat.id,
+        lastRead: chat.chat.lastMessages[0]?.id || null
+      })
+      res.sendStatus(204)
+    } else {
+      throw Errors.invalidParameter("chat association id")
+    }
+  } catch (err) {
+    next(err)
+  }
+})
+
+router.put("/:id/message/edit", auth, async (req, res, next) => {
+  try {
+    const io = req.app.get("io")
+    const chat = await ChatAssociation.findOne({
+      where: {
+        userId: req.user.id,
+        id: req.params.id
+      },
+      include: [
+        {
+          model: Chat,
+          as: "chat",
+          include: [
+            {
+              model: User,
+              as: "users",
+              attributes: ["id"]
+            },
+            {
+              model: Message,
+              as: "lastMessages",
+              limit: 50,
+              order: [["id", "DESC"]],
+              attributes: ["id", "content", "createdAt", "updatedAt"]
+            }
+          ]
+        }
+      ]
+    })
+    if (chat) {
+      const message = await Message.findOne({
+        where: {
+          id: req.body.id,
+          chatId: chat.chat.id,
+          userId: req.user.id
+        }
+      })
+      if (message) {
+        await message.update({
+          content: req.body.content,
+          edited: true,
+          editedAt: new Date().toISOString()
+        })
+        chat.chat.users.forEach((user) => {
+          io.to(user.id).emit("editMessage", {
+            chatId: chat.chat.id,
+            id: message.id,
+            edited: true,
+            editedAt: new Date().toISOString(),
+            content: req.body.content
+          })
+        })
+        res.sendStatus(204)
+      } else {
+        throw Errors.invalidParameter("message id")
+      }
+    } else {
+      throw Errors.invalidParameter("chat association id")
+    }
+  } catch (err) {
+    next(err)
+  }
+})
+
+router.delete("/association/:id", auth, async (req, res, next) => {
+  try {
+    const chat = await ChatAssociation.findOne({
+      where: {
+        userId: req.user.id,
+        id: req.params.id
+      }
+    })
+    if (chat) {
+      await chat.destroy()
+      res.sendStatus(204)
+    } else {
+      throw Errors.invalidParameter("chat association id")
+    }
+  } catch (err) {
+    next(err)
+  }
+})
+
 router.post("/:id/message", limiter, auth, async (req, res, next) => {
   try {
     const io = req.app.get("io")
@@ -494,9 +752,11 @@ router.get("/:id/messages", auth, async (req, res, next) => {
             ]
           }
         ],
-        offset: req.query.offset || 0
+        offset: req.query.offset || 0,
+        order: [["id", "DESC"]],
+        limit: 50
       })
-      res.json(messages)
+      res.json(messages.sort((a, b) => a.id - b.id))
     } else {
       throw Errors.invalidParameter("chat association id")
     }
@@ -507,6 +767,7 @@ router.get("/:id/messages", auth, async (req, res, next) => {
 
 router.post("/create", auth, async (req, res, next) => {
   try {
+    const io = req.app.get("io")
     let name
     let type
     if (req.body.users.length <= 1) {
@@ -516,26 +777,90 @@ router.post("/create", auth, async (req, res, next) => {
       name = "Unnamed Group"
       type = "group"
     }
+    if (req.body.users.length > 10) {
+      throw Errors.invalidParameter("User", "The maximum number of users is 10")
+    }
+    if (!req.body.users.length) {
+      throw Errors.invalidParameter(
+        "User",
+        "You need at least 1 user to create a chat"
+      )
+    }
     if (req.body.users.includes(req.user.id)) {
       throw Errors.invalidParameter(
         "User",
         "You cannot create a DM with yourself"
       )
     }
-    let chat = await Chat.create({
+    const friends = await Friend.findAll({
+      where: {
+        userId: req.user.id,
+        friendId: req.body.users,
+        status: "accepted"
+      }
+    })
+    if (friends.length !== req.body.users.length) {
+      throw Errors.invalidParameter(
+        "User",
+        "You are not friends with this user"
+      )
+    }
+    const chat = await Chat.create({
       name,
       userId: req.user.id,
       type
     })
-    await ChatAssociation.create({
-      chatId: chat.id,
-      userId: req.user.id
-    })
+    req.body.users.push(req.user.id)
     for (let i = 0; i < req.body.users.length; i++) {
-      await ChatAssociation.create({
+      let rank
+      if (type === "group") {
+        if (req.body.users[i] === req.user.id) {
+          rank = "admin"
+        } else {
+          rank = "member"
+        }
+      } else {
+        rank = "member"
+      }
+      const c1 = await ChatAssociation.create({
         chatId: chat.id,
-        userId: req.body.users[i]
+        userId: req.body.users[i],
+        rank
       })
+      const association = await ChatAssociation.findOne({
+        where: {
+          id: c1.id
+        },
+        include: [
+          {
+            model: Chat,
+            as: "chat",
+            include: [
+              {
+                model: User,
+                as: "users",
+                attributes: [
+                  "sussiId",
+                  "discussionsFirstName",
+                  "discussionsLastName",
+                  "discussionsImage",
+                  "id",
+                  "createdAt",
+                  "updatedAt",
+                  "instance",
+                  "status"
+                ]
+              }
+            ]
+          },
+          {
+            model: User,
+            as: "user",
+            attributes: ["id", "sussiId", "createdAt", "updatedAt"]
+          }
+        ]
+      })
+      io.to(req.body.users[i]).emit("chatAdded", association)
     }
     res.json(chat)
   } catch (err) {

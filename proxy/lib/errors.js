@@ -24,7 +24,11 @@ let Errors = {
     400
   ],
   friendAlreadyFriends: ["You are already friends with this user.", 400],
-  friendNotFound: ["The friend instance couldn't be found.", 400]
+  friendNotFound: ["The friend instance couldn't be found.", 400],
+  chatNotFoundOrNotAdmin: [
+    "The chat instance couldn't be found, or you are not an administrator of it.",
+    400
+  ]
 }
 
 function processErrors(errorName) {

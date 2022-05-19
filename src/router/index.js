@@ -341,6 +341,12 @@ const routes = [
       import(/* webpackChunkName: "changelog" */ "../views/Changelog.vue")
   },
   {
+    path: "/eap",
+    name: "Early Access",
+    component: () =>
+      import(/* webpackChunkName: "eap" */ "../views/EarlyAccess.vue")
+  },
+  {
     path: "/about",
     name: "About",
     component: () =>

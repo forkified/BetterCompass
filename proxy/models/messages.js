@@ -52,6 +52,15 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: [],
         allowNull: false
       },
+      edited: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: false
+      },
+      editedAt: {
+        type: DataTypes.DATE,
+        allowNull: true
+      },
       createdAt: {
         allowNull: false,
         type: DataTypes.DATE

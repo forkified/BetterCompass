@@ -233,6 +233,9 @@ export default {
   },
   mounted() {
     this.getFriends()
+    this.$socket.on("friendRequest", () => {
+      this.getFriends()
+    })
   }
 }
 </script>

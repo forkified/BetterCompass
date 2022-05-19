@@ -3,7 +3,15 @@ module.exports = function (vuex) {
     let errors = []
 
     if (res.response === undefined || res.response.data.errors === undefined) {
-      errors.push("An unknown error occurred. Please try again later.")
+      if (res.response.status === 429) {
+        vuex._vm.$toast.error(
+          "You are being rate limited, retry in " +
+            res.response.headers["ratelimit-reset"] +
+            " seconds."
+        )
+      } else {
+        errors.push("An unknown error occurred. Please try again later.")
+      }
     } else {
       res.response.data.errors.forEach((error) => {
         let path = error.path

@@ -8,7 +8,6 @@ const cryptoRandomString = require("crypto-random-string")
 const { Op } = require("sequelize")
 const speakeasy = require("speakeasy")
 const argon2 = require("argon2")
-const whois = require("node-xwhois")
 const UAParser = require("ua-parser-js")
 const fs = require("fs")
 const path = require("path")
@@ -79,7 +78,7 @@ router.post("/login", async (req, res, next) => {
   try {
     const user = await User.findOne({
       where: {
-        sussiId: req.body.username,
+        sussiId: req.body.username || "",
         instance: req.body.instance || ""
       }
     })
@@ -421,7 +420,8 @@ router.put("/settings/:type", auth, async (req, res, next) => {
           discussionsImage: req.body.discussionsImage,
           calendars: req.body.calendars,
           bookmarks: req.body.bookmarks,
-          font: req.body.font
+          font: req.body.font,
+          experiments: req.body.experiments
         },
         {
           where: {

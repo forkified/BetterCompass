@@ -442,7 +442,10 @@
                 to="/communications"
                 v-if="
                   $store.state.site.release === 'dev' ||
-                  $store.state.user.bcUser?.communications?.enabled
+                  $store.state.user.bcUser?.privacy?.communications?.enabled ||
+                  $store.state.user.bcUser?.experiments.includes(
+                    'communications'
+                  )
                 "
                 :color="active('/communications')"
               >
@@ -534,6 +537,13 @@
                 </v-list-item-icon>
 
                 <v-list-item-title>Service Status</v-list-item-title>
+              </v-list-item>
+              <v-list-item to="/eap" :color="active('/eap')">
+                <v-list-item-icon>
+                  <v-icon>mdi-flask</v-icon>
+                </v-list-item-icon>
+
+                <v-list-item-title>Early Access</v-list-item-title>
               </v-list-item>
             </template>
           </v-list>

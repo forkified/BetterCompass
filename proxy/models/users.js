@@ -252,6 +252,11 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.ENUM(["online", "busy", "away", "invisible"]),
         allowNull: false,
         defaultValue: "online"
+      },
+      experiments: {
+        type: DataTypes.JSON,
+        allowNull: false,
+        defaultValue: []
       }
     },
     {

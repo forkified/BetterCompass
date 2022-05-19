@@ -9,7 +9,13 @@
             ref="chatEnvironment"
           >
             <v-card flat class="d-flex flex-column fill-height" color="card">
-              <v-card-title> {{ getDirectRecipient.sussiId }} </v-card-title>
+              <v-card-title>
+                {{
+                  chat.chat.type === "direct"
+                    ? getDirectRecipient.sussiId
+                    : chat.chat.name
+                }}
+              </v-card-title>
               <v-card-text class="flex-grow-1 overflow-y-auto">
                 <v-list two-line color="card">
                   <v-list-item
@@ -35,15 +41,88 @@
                       <v-list-item-subtitle>
                         {{ message.user.sussiId }}
                       </v-list-item-subtitle>
-                      <p style="white-space: pre-line; overflow-wrap: anywhere">
+                      <p
+                        style="white-space: pre-line; overflow-wrap: anywhere"
+                        v-if="edit.id !== message.id"
+                      >
                         {{ message.content }}
+                        <v-tooltip top v-if="message.edited">
+                          <template v-slot:activator="{ on, attrs }">
+                            <span v-on="on" v-bind="attrs">
+                              <small>(edited)</small>
+                            </span>
+                          </template>
+                          <span>
+                            {{
+                              $date(message.editedAt).format(
+                                "DD/MM/YYYY hh:mm:ss A"
+                              )
+                            }}
+                          </span>
+                        </v-tooltip>
                       </p>
+                      <v-text-field
+                        v-model="edit.content"
+                        v-if="edit.editing && edit.id === message.id"
+                        autofocus
+                        :value="message.content"
+                        label="Type a message"
+                        placeholder="Type a message"
+                        type="text"
+                        ref="edit-input"
+                        outlined
+                        append-outer-icon="mdi-send"
+                        @keyup.enter="editMessage(message)"
+                        @keyup.esc="
+                          edit.content = ''
+                          edit.editing = false
+                          edit.id = null
+                          focusInput()
+                        "
+                        @click:append-outer="editMessage(message)"
+                      />
                     </v-list-item-content>
                     <v-list-item-action>
                       <v-list-item-subtitle>
                         {{
                           $date(message.createdAt).format("DD/MM/YYYY hh:mm A")
                         }}
+                      </v-list-item-subtitle>
+                      <v-list-item-subtitle>
+                        <v-btn
+                          icon
+                          v-if="message.userId === $store.state.user.bcUser.id"
+                        >
+                          <v-icon> mdi-delete </v-icon>
+                        </v-btn>
+                        <v-btn
+                          icon
+                          @click="
+                            edit.content = message.content
+                            edit.editing = true
+                            edit.id = message.id
+                          "
+                          v-if="
+                            message.userId === $store.state.user.bcUser.id &&
+                            edit.id !== message.id
+                          "
+                        >
+                          <v-icon> mdi-pencil </v-icon>
+                        </v-btn>
+                        <v-btn
+                          icon
+                          @click="
+                            edit.content = ''
+                            edit.editing = false
+                            edit.id = null
+                          "
+                          v-if="
+                            message.userId === $store.state.user.bcUser.id &&
+                            edit.id === message.id
+                          "
+                        >
+                          <v-icon> mdi-close </v-icon>
+                        </v-btn>
                       </v-list-item-subtitle>
                     </v-list-item-action>
                   </v-list-item>
@@ -60,6 +139,7 @@
                   outlined
                   append-outer-icon="mdi-send"
                   @keyup.enter="sendMessage"
+                  @keyup.up="editLastMessage"
                   @click:append-outer="sendMessage"
                 />
               </v-card-text>
@@ -75,10 +155,15 @@ import AjaxErrorHandler from "@/lib/errorHandler"
 
 export default {
   name: "CommunicationsChat",
-  props: ["chat", "loading"],
+  props: ["chat", "loading", "items"],
   data: () => ({
     messages: [],
-    message: ""
+    message: "",
+    edit: {
+      content: "",
+      editing: false,
+      id: null
+    }
   }),
   computed: {
     scrollTop() {
@@ -101,18 +186,55 @@ export default {
     }
   },
   methods: {
+    focusInput() {
+      this.$refs["message-input"].$refs.input.focus()
+    },
+    editLastMessage() {
+      // find last message sent by current user
+      const lastMessage = this.messages
+        .slice()
+        .reverse()
+        .find((message) => message.userId === this.$store.state.user.bcUser.id)
+      if (lastMessage) {
+        this.edit.content = lastMessage.content
+        this.edit.editing = true
+        this.edit.id = lastMessage.id
+      }
+    },
+    editMessage() {
+      if (this.edit.content.length > 0) {
+        this.axios
+          .put(
+            "/api/v1/communications/" + this.$route.params.id + "/message/edit",
+            {
+              id: this.edit.id,
+              content: this.edit.content
+            }
+          )
+          .then(() => {
+            this.edit.editing = false
+            this.edit.id = null
+            this.edit.content = ""
+            this.$refs["message-input"].$refs.input.focus()
+            // response will be handled via WebSocket
+          })
+          .catch((e) => {
+            AjaxErrorHandler(this.$store)(e)
+          })
+      }
+    },
     autoScroll() {
-      try {
-        this.$nextTick(() => {
+      this.$nextTick(() => {
+        try {
           const lastIndex = this.messages.length - 1
           const lastMessage = document.querySelector(`#message-${lastIndex}`)
           lastMessage.scrollIntoView({
             behavior: "smooth"
           })
-        })
-      } catch {
-        //
-      }
+        } catch {
+          console.log("Could not auto scroll")
+        }
+      })
     },
     getMessages() {
       this.axios
@@ -129,27 +251,54 @@ export default {
           AjaxErrorHandler(this.$store)(e)
         })
     },
+    markRead() {
+      this.axios.put(
+        "/api/v1/communications/" + this.$route.params.id + "/read"
+      )
+    },
     sendMessage() {
-      this.axios
-        .post("/api/v1/communications/" + this.$route.params.id + "/message", {
-          message: this.message
-        })
-        .then((res) => {
-          this.messages.push(res.data)
-          this.message = ""
-          this.autoScroll()
-        })
-        .catch((e) => {
-          AjaxErrorHandler(this.$store)(e)
-        })
+      if (this.message.length > 0) {
+        this.axios
+          .post(
+            "/api/v1/communications/" + this.$route.params.id + "/message",
+            {
+              message: this.message
+            }
+          )
+          .then((res) => {
+            this.messages.push(res.data)
+            this.message = ""
+            this.autoScroll()
+            const chat = this.items.find(
+              (item) => item.chatId === this.chat.chatId
+            )
+            if (chat) {
+              const index = this.items.indexOf(chat)
+              this.items.splice(index, 1)
+              this.items.unshift(chat)
+            }
+          })
+          .catch((e) => {
+            AjaxErrorHandler(this.$store)(e)
+          })
+      }
     }
   },
   mounted() {
     this.getMessages()
+    this.markRead()
     this.$socket.on("message", (message) => {
       if (message.chatId === this.chat.chat.id) {
         this.messages.push(message)
         this.autoScroll()
+      }
+    })
+    this.$socket.on("editMessage", (message) => {
+      if (message.chatId === this.chat.chatId) {
+        const index = this.messages.findIndex((item) => item.id === message.id)
+        this.messages[index].content = message.content
+        this.messages[index].edited = message.edited
+        this.messages[index].editedAt = message.editedAt
       }
     })
   },
@@ -159,6 +308,7 @@ export default {
       this.message = ""
       this.messages = []
       this.getMessages()
+      this.markRead()
     }
   }
 }

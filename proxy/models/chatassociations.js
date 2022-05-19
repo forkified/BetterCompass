@@ -34,6 +34,10 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: "member",
         allowNull: false
       },
+      lastRead: {
+        type: DataTypes.BIGINT,
+        defaultValue: null
+      },
       createdAt: {
         allowNull: false,
         type: DataTypes.DATE
