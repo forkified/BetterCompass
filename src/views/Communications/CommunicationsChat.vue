@@ -65,11 +65,8 @@
                           </span>
                         </v-tooltip>
                       </v-list-item-subtitle>
-                      <p
-                        style="white-space: pre-line; overflow-wrap: anywhere"
-                        v-if="edit.id !== message.id"
-                      >
-                        <span v-markdown>{{ message.content }}</span>
+                      <p v-if="edit.id !== message.id" v-markdown>
+                        {{ message.content }}
                       </p>
                       <v-text-field
                         v-model="edit.content"
