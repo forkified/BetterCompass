@@ -765,6 +765,66 @@ router.get("/:id/messages", auth, async (req, res, next) => {
   }
 })
 
+router.put("/:id/typing", auth, async (req, res, next) => {
+  try {
+    const io = req.app.get("io")
+    const chat = await ChatAssociation.findOne({
+      where: {
+        userId: req.user.id,
+        id: req.params.id
+      },
+      include: [
+        {
+          model: Chat,
+          as: "chat",
+          include: [
+            {
+              model: User,
+              as: "users",
+              attributes: [
+                "sussiId",
+                "discussionsFirstName",
+                "discussionsLastName",
+                "discussionsImage",
+                "id",
+                "createdAt",
+                "updatedAt",
+                "instance"
+              ]
+            }
+          ]
+        },
+        {
+          model: User,
+          as: "user",
+          attributes: ["id", "sussiId", "createdAt", "updatedAt"]
+        }
+      ]
+    })
+    if (chat) {
+      const userIds = chat.chat.users.map((user) => user.id)
+      const userIdsWithoutCurrentUser = userIds.filter(
+        (userId) => userId !== req.user.id
+      )
+      userIdsWithoutCurrentUser.forEach((userId) => {
+        const date = new Date()
+        io.to(userId).emit("typing", {
+          chatId: chat.chat.id,
+          userId: req.user.id,
+          timeout: new Date(date.getTime() + 5000).toISOString(),
+          date: new Date(date).toISOString(),
+          sussiId: req.user.sussiId
+        })
+      })
+      res.sendStatus(204)
+    } else {
+      throw Errors.invalidParameter("chat association id")
+    }
+  } catch (err) {
+    next(err)
+  }
+})
+
 router.post("/create", auth, async (req, res, next) => {
   try {
     const io = req.app.get("io")

@@ -1,6 +1,6 @@
 {
   "name": "compass-vue",
-  "version": "1.0.152",
+  "version": "1.0.153",
   "private": true,
   "license": "GPL-3.0",
   "scripts": {
@@ -33,6 +33,7 @@
     "request": "^2.88.2",
     "selfsigned": "^2.0.1",
     "socket.io-client": "^4.5.1",
+    "twemoji": "^14.0.2",
     "v-year-calendar": "^1.0.2",
     "vue": "^2.6.11",
     "vue-apollo": "^3.1.0",

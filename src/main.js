@@ -17,6 +17,7 @@ import VueMatomo from "vue-matomo"
 import * as Sentry from "@sentry/vue"
 import { BrowserTracing } from "@sentry/tracing"
 import SocketIO from "socket.io-client"
+import twemoji from "twemoji"
 if (
   process.env.NODE_ENV === "production" &&
   JSON.parse(process.env.VUE_APP_SENTRY_ENABLED)
@@ -268,7 +269,14 @@ Vue.use(require("vue-shortkey"))
 Vue.config.productionTip = false
 Vue.use(VueAxios, axios)
 Vue.use(Toast)
-
+Vue.directive("emoji", {
+  inserted(el) {
+    el.innerHTML = twemoji.parse(el.innerHTML, {
+      folder: "svg",
+      ext: ".svg"
+    })
+  }
+})
 new Vue({
   router,
   store,

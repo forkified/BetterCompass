@@ -582,10 +582,7 @@
     <Header></Header>
     <v-main>
       <v-container
-        v-if="
-          ($store.state.site.latestVersion > $store.state.versioning.version) &
-          ($store.state.site.release !== 'dev')
-        "
+        v-if="$store.state.site.latestVersion > $store.state.versioning.version"
         id="update-notify-banner"
       >
         <v-alert class="mx-4" type="info" text>

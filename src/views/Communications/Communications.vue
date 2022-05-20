@@ -208,8 +208,9 @@
             </template>
           </v-autocomplete>
           <small
-            >If the person you want to add doesn't appear, ensure they have
-            BetterCompass Communications enabled.</small
+            >If the person you want to add doesn't appear, ensure you are
+            friends with them. You can add additional friends with the Friends
+            button located on the top left.</small
           >
         </v-container>
         <v-card-actions>
@@ -634,7 +635,7 @@ export default {
       }
     })
     this.$socket.on("readChat", (chat) => {
-      const item = this.items.find((item) => item.chatId === chat.id)
+      const item = this.items.find((item) => item.id === chat.id)
       if (item) {
         const index = this.items.indexOf(item)
         console.log(this.items[index].lastRead)

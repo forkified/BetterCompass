@@ -1,3 +1,18 @@
+img.emoji {
+  /* Since we are using SVGs, you have to change the width using CSS */
+  height: 1.4em;
+  width: 1.4em;
+  vertical-align: middle;
+  padding-left: 0.2px;
+  padding-right: 0.2px;
+  /*
+  This is to make the emojis feel like actual emojis to
+  the user and they won't act like images. This makes the emojis
+  non-reactive to any mouse events such as dragging,
+  hovering, clicking etc. Makes it feel like its actual text.
+  */
+  pointer-events: none;
+}
 @font-face {
   font-family: 'JetBrains Mono';
   src: url('./fonts/JetBrainsMono-Regular.ttf') format('truetype');

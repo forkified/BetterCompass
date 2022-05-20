@@ -44,6 +44,7 @@
                       <p
                         style="white-space: pre-line; overflow-wrap: anywhere"
                         v-if="edit.id !== message.id"
+                        v-emoji
                       >
                         {{ message.content }}
                         <v-tooltip top v-if="message.edited">
@@ -128,7 +129,7 @@
                   </v-list-item>
                 </v-list>
               </v-card-text>
-              <v-card-text class="flex-shrink-1">
+              <v-card-text>
                 <v-text-field
                   v-model="message"
                   autofocus
@@ -142,6 +143,13 @@
                   @keyup.up="editLastMessage"
                   @click:append-outer="sendMessage"
                 />
+                <p
+                  style="margin-top: -17px; position: absolute"
+                  v-if="usersTyping.length"
+                >
+                  {{ usersTyping.map((user) => user.sussiId).join(", ") }}
+                  {{ usersTyping.length > 1 ? " are" : " is" }} typing...
+                </p>
               </v-card-text>
             </v-card>
           </v-responsive>
@@ -157,19 +165,18 @@ export default {
   name: "CommunicationsChat",
   props: ["chat", "loading", "items"],
   data: () => ({
+    emojiPicker: false,
     messages: [],
+    typingDate: null,
     message: "",
     edit: {
       content: "",
       editing: false,
       id: null
-    }
+    },
+    usersTyping: []
   }),
   computed: {
-    scrollTop() {
-      const chatEnvironment = document.querySelector("#chat-environment")
-      return chatEnvironment.offsetTop
-    },
     viewport() {
       let height = window.innerHeight
       return (height -= document.querySelector("#navbar").clientHeight + 26)
@@ -186,6 +193,11 @@ export default {
     }
   },
   methods: {
+    typing() {
+      this.usersTyping = this.usersTyping.filter((user) => {
+        return this.$date().isBefore(user.timeout)
+      })
+    },
     focusInput() {
       this.$refs["message-input"].$refs.input.focus()
     },
@@ -258,6 +270,20 @@ export default {
     },
     sendMessage() {
       if (this.message.length > 0) {
+        const emojis = require("../../lib/emojis.json")
+        this.message = this.message.replaceAll(
+          /:([a-zA-Z0-9_\-+]+):/g,
+          (match, group1) => {
+            const emoji = emojis.find((emoji) => {
+              return emoji.aliases.includes(group1)
+            })
+            if (emoji) {
+              return emoji.emoji
+            } else {
+              return match
+            }
+          }
+        )
         this.axios
           .post(
             "/api/v1/communications/" + this.$route.params.id + "/message",
@@ -285,6 +311,9 @@ export default {
     }
   },
   mounted() {
+    setInterval(() => {
+      this.typing()
+    }, 1000)
     this.getMessages()
     this.markRead()
     this.$socket.on("message", (message) => {
@@ -301,8 +330,35 @@ export default {
         this.messages[index].editedAt = message.editedAt
       }
     })
+    this.$socket.on("typing", (event) => {
+      if (event.chatId === this.chat.chatId) {
+        const index = this.usersTyping.findIndex(
+          (item) => item.userId === event.userId
+        )
+        if (index > -1) {
+          this.usersTyping.splice(index, 1)
+        }
+        this.usersTyping.push(event)
+      }
+    })
   },
   watch: {
+    message() {
+      if (this.typingDate) {
+        const now = new Date()
+        if (now - this.typingDate > 5000) {
+          this.typingDate = now
+          this.axios.put(
+            "/api/v1/communications/" + this.$route.params.id + "/typing"
+          )
+        }
+      } else {
+        this.typingDate = new Date()
+        this.axios.put(
+          "/api/v1/communications/" + this.$route.params.id + "/typing"
+        )
+      }
+    },
     "$route.params.id"() {
       this.$refs["message-input"].$refs.input.focus()
       this.message = ""
