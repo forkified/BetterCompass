@@ -44,13 +44,12 @@
                       <p
                         style="white-space: pre-line; overflow-wrap: anywhere"
                         v-if="edit.id !== message.id"
-                        v-emoji
                       >
-                        {{ message.content }}
+                        <template v-emoji>{{ message.content }}</template>
                         <v-tooltip top v-if="message.edited">
                           <template v-slot:activator="{ on, attrs }">
                             <span v-on="on" v-bind="attrs">
-                              <small>(edited)</small>
+                              <small> (edited)</small>
                             </span>
                           </template>
                           <span>
