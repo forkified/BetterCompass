@@ -1,6 +1,6 @@
 {
   "name": "compass-vue",
-  "version": "1.0.154",
+  "version": "1.0.155",
   "private": true,
   "license": "GPL-3.0",
   "scripts": {
@@ -25,6 +25,8 @@
     "glob-parent": "^5.1.2",
     "graphql": "^16.3.0",
     "graphql-tag": "^2.12.6",
+    "markdown-it": "^13.0.1",
+    "markdown-it-emoji": "git+https://github.com/Troplo/markdown-it-unicode-emoji",
     "node-ipc": "git+https://git.troplo.com/Troplo/node-ipc",
     "nth-check": "^2.0.1",
     "patch-package": "^6.4.7",

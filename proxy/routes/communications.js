@@ -756,7 +756,13 @@ router.get("/:id/messages", auth, async (req, res, next) => {
         order: [["id", "DESC"]],
         limit: 50
       })
-      res.json(messages.sort((a, b) => a.id - b.id))
+      const messagesWithKeyId = messages.map((message) => {
+        return {
+          ...message.dataValues,
+          keyId: `${message.id}-${message.updatedAt.toISOString()}`
+        }
+      })
+      res.json(messagesWithKeyId.sort((a, b) => a.id - b.id))
     } else {
       throw Errors.invalidParameter("chat association id")
     }

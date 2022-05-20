@@ -20,7 +20,7 @@
                 <v-list two-line color="card">
                   <v-list-item
                     v-for="(message, index) in messages"
-                    :key="index"
+                    :key="message.keyId"
                     :class="{
                       'text-xs-right':
                         message.userId === $store.state.user.bcUser.id,
@@ -40,16 +40,20 @@
                     <v-list-item-content>
                       <v-list-item-subtitle>
                         {{ message.user.sussiId }}
-                      </v-list-item-subtitle>
-                      <p
-                        style="white-space: pre-line; overflow-wrap: anywhere"
-                        v-if="edit.id !== message.id"
-                      >
-                        <template v-emoji>{{ message.content }}</template>
                         <v-tooltip top v-if="message.edited">
                           <template v-slot:activator="{ on, attrs }">
                             <span v-on="on" v-bind="attrs">
-                              <small> (edited)</small>
+                              <v-icon
+                                color="grey"
+                                small
+                                style="
+                                  margin-bottom: 2px;
+                                  margin-left: 4px;
+                                  position: absolute;
+                                "
+                              >
+                                mdi-pencil
+                              </v-icon>
                             </span>
                           </template>
                           <span>
@@ -60,6 +64,12 @@
                             }}
                           </span>
                         </v-tooltip>
+                      </v-list-item-subtitle>
+                      <p
+                        style="white-space: pre-line; overflow-wrap: anywhere"
+                        v-if="edit.id !== message.id"
+                      >
+                        <span v-markdown>{{ message.content }}</span>
                       </p>
                       <v-text-field
                         v-model="edit.content"
@@ -73,7 +83,7 @@
                         outlined
                         append-outer-icon="mdi-send"
                         @keyup.enter="editMessage(message)"
-                        @keyup.esc="
+                        @keydown.esc="
                           edit.content = ''
                           edit.editing = false
                           edit.id = null
@@ -138,6 +148,8 @@
                   ref="message-input"
                   outlined
                   append-outer-icon="mdi-send"
+                  auto-grow
+                  single-line
                   @keyup.enter="sendMessage"
                   @keyup.up="editLastMessage"
                   @click:append-outer="sendMessage"
@@ -256,7 +268,9 @@ export default {
         )
         .then((res) => {
           this.messages = res.data
-          this.autoScroll()
+          this.$nextTick(() => {
+            this.autoScroll()
+          })
         })
         .catch((e) => {
           AjaxErrorHandler(this.$store)(e)
@@ -319,6 +333,7 @@ export default {
       if (message.chatId === this.chat.chat.id) {
         this.messages.push(message)
         this.autoScroll()
+        this.markRead()
       }
     })
     this.$socket.on("editMessage", (message) => {
@@ -327,6 +342,7 @@ export default {
         this.messages[index].content = message.content
         this.messages[index].edited = message.edited
         this.messages[index].editedAt = message.editedAt
+        this.messages[index].keyId = message.id + "-" + message.editedAt
       }
     })
     this.$socket.on("typing", (event) => {
