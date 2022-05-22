@@ -40,7 +40,7 @@ const upload = multer({
   limits: { fileSize: 2 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     if (!whitelist.includes(file.mimetype)) {
-      throw Errors.fileTooLarge
+      return cb(new Error("Only images are allowed"))
     }
 
     cb(null, true)
