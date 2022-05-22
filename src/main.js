@@ -18,6 +18,7 @@ import * as Sentry from "@sentry/vue"
 import { BrowserTracing } from "@sentry/tracing"
 import SocketIO from "socket.io-client"
 import twemoji from "twemoji"
+import VueNativeNotification from "vue-native-notification"
 const md = require("markdown-it")({
   html: false, // Enable HTML tags in source
   xhtmlOut: false, // Use '/' to close single tags (<br />).
@@ -90,6 +91,10 @@ if (
     tracesSampleRate: 1.0
   })
 }
+
+Vue.use(VueNativeNotification, {
+  requestOnNotify: false
+})
 
 Vue.use({
   install(Vue) {

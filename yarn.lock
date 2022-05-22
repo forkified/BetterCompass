@@ -9516,6 +9516,11 @@ vue-matomo@^4.1.0:
   resolved "https://registry.yarnpkg.com/vue-matomo/-/vue-matomo-4.1.0.tgz#17b513bc8ac60e168bfa8190ad05b3257a3c441e"
   integrity sha512-y+tdmhY835Ip3EAGfIAgA33+aBYrvRT7fNnBnA7bSM459XpoWXgqJKdbopVpEUrxCPIq8IkuF7g4KqSLc0Fa3w==
 
+vue-native-notification@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/vue-native-notification/-/vue-native-notification-1.1.1.tgz#8a57950dded83b05b9e261f45bc2e027107eb9cd"
+  integrity sha512-UnMjJvhmI+Vp40hcb8EswEJqg2O2fsxSmJbDqlbIglfmCiL62TYMKwcSU7ESjSTBDI+4wOXKzGZGR7jfr//MVw==
+
 vue-router@^3.2.0:
   version "3.5.3"
   resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-3.5.3.tgz#041048053e336829d05dafacf6a8fb669a2e7999"

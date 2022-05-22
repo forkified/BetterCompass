@@ -1012,6 +1012,16 @@ export default {
             } else {
               new Audio(require("@/assets/audio/message.wav")).play()
             }
+            this.$notification.show(
+              message.user.sussiId + " (" + message.chat.name + ")",
+              {
+                body: message.content,
+                icon: message.user.avatar
+                  ? "/usercontent/" + message.user.avatar
+                  : null
+              },
+              {}
+            )
             this.$toast.info(
               "Message: " +
                 message.content +
@@ -1031,6 +1041,16 @@ export default {
         })
         if (this.$store.state.user.bcUser.storedStatus !== "busy") {
           this.$socket.on("friendRequest", (message) => {
+            this.$notification.show(
+              message.user.sussiId,
+              {
+                body: message.user.sussiId + " has sent a friend request",
+                icon: message.user.avatar
+                  ? "/usercontent/" + message.user.avatar
+                  : null
+              },
+              {}
+            )
             new Audio(require("@/assets/audio/message.wav")).play()
             this.$toast.info("Friend request sent by " + message.user.sussiId)
           })

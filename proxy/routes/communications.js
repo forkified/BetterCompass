@@ -500,6 +500,53 @@ router.put("/:id/read", auth, async (req, res, next) => {
   }
 })
 
+router.put("/:id", auth, async (req, res, next) => {
+  try {
+    const io = req.app.get("io")
+    const association = await ChatAssociation.findOne({
+      where: {
+        userId: req.user.id,
+        id: req.params.id,
+        rank: "admin"
+      },
+      include: [
+        {
+          model: Chat,
+          as: "chat",
+          include: [
+            {
+              model: User,
+              as: "users",
+              attributes: ["id"]
+            }
+          ]
+        }
+      ]
+    })
+    if (association) {
+      const chat = await Chat.findOne({
+        where: {
+          id: association.chatId
+        }
+      })
+      await chat.update({
+        name: req.body.name
+      })
+      association.chat.users.forEach((user) => {
+        io.to(user.id).emit("chatUpdated", {
+          ...chat.dataValues,
+          name: req.body.name
+        })
+      })
+      res.sendStatus(204)
+    } else {
+      throw Errors.chatNotFoundOrNotAdmin
+    }
+  } catch (err) {
+    next(err)
+  }
+})
+
 router.put("/:id/message/edit", auth, async (req, res, next) => {
   try {
     const io = req.app.get("io")

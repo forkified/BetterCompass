@@ -84,6 +84,9 @@
           </v-btn>
         </v-toolbar>
         <v-container>
+          <v-alert text type="info" v-if="settings.item.rank !== 'admin'">
+            You need to be an administrator of this group to change settings.
+          </v-alert>
           <v-card-title v-if="settings.item.rank === 'admin'"
             >General</v-card-title
           >
@@ -121,6 +124,17 @@
               </v-list-item-action>
             </v-list-item>
           </v-list>
+          <v-btn
+            v-if="
+              settings.item.chat.type === 'group' &&
+              settings.item.rank === 'admin'
+            "
+            text
+            color="primary"
+            @click="saveGroupSettings"
+          >
+            Save
+          </v-btn>
         </v-container>
       </v-card>
     </v-dialog>
@@ -459,6 +473,26 @@ export default {
     }
   },
   methods: {
+    saveGroupSettings() {
+      if (this.settings.item.chat.name.length < 1) {
+        this.$toast.error("Group name must be at least 1 character long.")
+        return
+      }
+      this.settings.item.loading = true
+      this.axios
+        .put("/api/v1/communications/" + this.settings.item.id, {
+          name: this.settings.item.chat.name
+        })
+        .then(() => {
+          this.settings.item.loading = false
+          this.$toast.success("Group settings saved.")
+          this.settings.dialog = false
+        })
+        .catch((e) => {
+          this.settings.item.loading = false
+          AjaxErrorHandler(this.$store)(e)
+        })
+    },
     viewport() {
       return window.innerHeight - 112
     },
@@ -618,6 +652,9 @@ export default {
   },
   mounted() {
     this.getChats()
+    this.$socket.on("chatUpdated", () => {
+      this.getChats()
+    })
     this.$socket.on("chatAdded", (chat) => {
       this.items.push(chat)
     })
