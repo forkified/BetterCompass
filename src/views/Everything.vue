@@ -974,7 +974,8 @@ export default {
     getLearningSchemes() {
       this.axios
         .get(
-          "/Services/ReferenceDataCache.svc/GetGradingSchemesForLearningTasks?page=1&start=0&limit=1000"
+          "/Services/ReferenceDataCache.svc/GetGradingSchemesForLearningTasks?page=1&start=0&limit=1000&compassInstance=" +
+            this.$store.state.school.instance
         )
         .then((res) => {
           this.gradingSchemes = res.data.d

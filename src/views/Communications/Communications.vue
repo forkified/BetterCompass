@@ -39,19 +39,15 @@
                 @click="data.select"
                 @click:close="remove(data.item)"
               >
-                <v-avatar left v-if="data.item.discussionsImage">
-                  <v-img :src="data.item.discussionsImage"></v-img>
+                <v-avatar left v-if="data.item.avatar">
+                  <v-img :src="'/usercontent/' + data.item.avatar"></v-img>
                 </v-avatar>
                 @{{ data.item.sussiId }}:{{ data.item.instance }}
               </v-chip>
             </template>
             <template v-slot:item="data">
-              <v-avatar
-                left
-                v-if="data.item.discussionsImage"
-                class="mr-3 mb-2 mt-2"
-              >
-                <v-img :src="data.item.discussionsImage"></v-img>
+              <v-avatar left v-if="data.item.avatar" class="mr-3 mb-2 mt-2">
+                <v-img :src="'/usercontent/' + data.item.avatar"></v-img>
               </v-avatar>
               <v-avatar left v-else class="mr-3 mb-2 mt-2">
                 <v-icon>mdi-account</v-icon>
@@ -188,19 +184,15 @@
                 @click="data.select"
                 @click:close="remove(data.item)"
               >
-                <v-avatar left v-if="data.item.discussionsImage">
-                  <v-img :src="data.item.discussionsImage"></v-img>
+                <v-avatar left v-if="data.item.avatar">
+                  <v-img :src="'/usercontent/' + data.item.avatar"></v-img>
                 </v-avatar>
                 @{{ data.item.sussiId }}:{{ data.item.instance }}
               </v-chip>
             </template>
             <template v-slot:item="data">
-              <v-avatar
-                left
-                v-if="data.item.discussionsImage"
-                class="mr-3 mb-2 mt-2"
-              >
-                <v-img :src="data.item.discussionsImage"></v-img>
+              <v-avatar left v-if="data.item.avatar" class="mr-3 mb-2 mt-2">
+                <v-img :src="'/usercontent/' + data.item.avatar"></v-img>
               </v-avatar>
               <v-avatar left v-else class="mr-3 mb-2 mt-2">
                 <v-icon>mdi-account</v-icon>
@@ -256,9 +248,9 @@
             color="grey"
           ></v-text-field>
           <v-toolbar color="card" class="rounded-xl">
-            <v-toolbar-subtitle>
+            <v-toolbar-title class="subtitle-1">
               CHATS ({{ items.length }})
-            </v-toolbar-subtitle>
+            </v-toolbar-title>
             <v-spacer></v-spacer>
             <v-btn icon @click="dialogs.new = true">
               <v-icon>mdi-plus</v-icon>
@@ -288,12 +280,14 @@
                         <v-icon v-if="item.chat.type === 'group'">
                           mdi-account-group
                         </v-icon>
-                        <img
+                        <v-img
                           v-else-if="
                             item.chat.type === 'direct' &&
-                            getDirectRecipient(item).discussionsImage
+                            getDirectRecipient(item).avatar
                           "
-                          :src="getDirectRecipient(item).discussionsImage"
+                          :src="
+                            '/usercontent/' + getDirectRecipient(item).avatar
+                          "
                         />
                         <v-icon v-else-if="item.chat.type === 'direct'">
                           mdi-account

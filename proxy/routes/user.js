@@ -3,7 +3,7 @@ const router = express.Router()
 const Errors = require("../lib/errors.js")
 const auth = require("../lib/authorize.js")
 const axios = require("axios")
-const { User, Session, Theme, Friend } = require("../models")
+const { User, Session, Theme, Friend, Attachment } = require("../models")
 const cryptoRandomString = require("crypto-random-string")
 const { Op } = require("sequelize")
 const speakeasy = require("speakeasy")
@@ -12,6 +12,40 @@ const UAParser = require("ua-parser-js")
 const fs = require("fs")
 const path = require("path")
 const semver = require("semver")
+const multer = require("multer")
+const FileType = require("file-type")
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "usercontent/")
+  },
+  filename: function (req, file, cb) {
+    cb(
+      null,
+      cryptoRandomString({ length: 32 }) + path.extname(file.originalname)
+    )
+  }
+})
+
+const whitelist = [
+  "image/png",
+  "image/jpeg",
+  "image/jpg",
+  "image/webp",
+  "image/gif"
+]
+
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 2 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    if (!whitelist.includes(file.mimetype)) {
+      throw Errors.fileTooLarge
+    }
+
+    cb(null, true)
+  }
+})
 
 router.post("/login", async (req, res, next) => {
   async function checkPassword(password, hash) {
@@ -360,6 +394,44 @@ router.post("/logout", (req, res, next) => {
   }
 })
 
+router.post(
+  "/settings/avatar",
+  auth,
+  upload.single("avatar"),
+  async (req, res, next) => {
+    try {
+      if (req.file) {
+        const meta = await FileType.fromFile(req.file.path)
+        if (!whitelist.includes(meta.mime)) {
+          throw Errors.invalidFileType
+        }
+        const attachment = await Attachment.create({
+          userId: req.user.id,
+          type: "avatar",
+          attachment: req.file.filename,
+          name: req.file.originalname,
+          extension: meta.ext,
+          size: req.file.size
+        })
+        await User.update(
+          {
+            avatar: attachment.attachment
+          },
+          {
+            where: {
+              id: req.user.id
+            }
+          }
+        )
+        res.json(attachment)
+      } else {
+        throw Errors.invalidParameter("avatar")
+      }
+    } catch (e) {
+      next(e)
+    }
+  }
+)
 router.put("/settings/:type", auth, async (req, res, next) => {
   async function checkPasswordArgon2(password, hash) {
     try {
@@ -418,7 +490,6 @@ router.put("/settings/:type", auth, async (req, res, next) => {
           hideIrrelevantTasks: req.body.hideIrrelevantTasks,
           rowsPerPage: req.body.rowsPerPage,
           homeGrids: req.body.homeGrids,
-          discussionsImage: req.body.discussionsImage,
           calendars: req.body.calendars,
           bookmarks: req.body.bookmarks,
           font: req.body.font,

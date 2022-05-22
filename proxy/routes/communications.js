@@ -38,6 +38,7 @@ router.get("/", auth, async (req, res, next) => {
                 "discussionsFirstName",
                 "discussionsLastName",
                 "discussionsImage",
+                "avatar",
                 "id",
                 "createdAt",
                 "updatedAt",
@@ -162,6 +163,7 @@ router.post("/association/:id", auth, async (req, res, next) => {
                     "discussionsFirstName",
                     "discussionsLastName",
                     "discussionsImage",
+                    "avatar",
                     "id",
                     "createdAt",
                     "updatedAt",
@@ -203,6 +205,7 @@ router.get("/friends", auth, async (req, res, next) => {
             "id",
             "sussiId",
             "discussionsImage",
+            "avatar",
             "createdAt",
             "updatedAt"
           ]
@@ -214,6 +217,7 @@ router.get("/friends", auth, async (req, res, next) => {
             "id",
             "sussiId",
             "discussionsImage",
+            "avatar",
             "createdAt",
             "updatedAt"
           ]
@@ -268,6 +272,7 @@ router.post("/friends", auth, async (req, res, next) => {
             user: {
               sussiId: req.user.sussiId,
               discussionsImage: req.user.discussionsImage,
+              avatar: req.user.avatar,
               id: req.user.id
             }
           })
@@ -390,6 +395,7 @@ router.get("/search", auth, async (req, res, next) => {
         "discussionsFirstName",
         "discussionsLastName",
         "discussionsImage",
+        "avatar",
         "id",
         "createdAt",
         "updatedAt",
@@ -427,6 +433,7 @@ router.get("/:id", auth, async (req, res, next) => {
                 "discussionsFirstName",
                 "discussionsLastName",
                 "discussionsImage",
+                "avatar",
                 "id",
                 "createdAt",
                 "updatedAt",
@@ -606,6 +613,7 @@ router.post("/:id/message", limiter, auth, async (req, res, next) => {
                 "discussionsFirstName",
                 "discussionsLastName",
                 "discussionsImage",
+                "avatar",
                 "id",
                 "createdAt",
                 "updatedAt",
@@ -622,6 +630,7 @@ router.post("/:id/message", limiter, auth, async (req, res, next) => {
             "discussionsFirstName",
             "discussionsLastName",
             "discussionsImage",
+            "avatar",
             "id",
             "createdAt",
             "updatedAt",
@@ -655,6 +664,7 @@ router.post("/:id/message", limiter, auth, async (req, res, next) => {
                   "discussionsFirstName",
                   "discussionsLastName",
                   "discussionsImage",
+                  "avatar",
                   "id",
                   "createdAt",
                   "updatedAt",
@@ -671,6 +681,7 @@ router.post("/:id/message", limiter, auth, async (req, res, next) => {
               "discussionsFirstName",
               "discussionsLastName",
               "discussionsImage",
+              "avatar",
               "id",
               "createdAt",
               "updatedAt",
@@ -679,13 +690,36 @@ router.post("/:id/message", limiter, auth, async (req, res, next) => {
           }
         ]
       })
-      const userIds = chat.chat.users.map((user) => user.id)
-      const userIdsWithoutCurrentUser = userIds.filter(
-        (userId) => userId !== req.user.id
-      )
-      userIdsWithoutCurrentUser.forEach((userId) => {
-        console.log(userId)
-        io.to(userId).emit("message", messageLookup)
+      const associations = await ChatAssociation.findAll({
+        where: {
+          chatId: chat.chat.id,
+          userId: {
+            [Op.ne]: req.user.id
+          }
+        },
+        include: [
+          {
+            model: User,
+            as: "user",
+            attributes: [
+              "sussiId",
+              "discussionsFirstName",
+              "discussionsLastName",
+              "discussionsImage",
+              "avatar",
+              "id",
+              "createdAt",
+              "updatedAt",
+              "instance"
+            ]
+          }
+        ]
+      })
+      associations.forEach((association) => {
+        io.to(association.userId).emit("message", {
+          ...messageLookup.dataValues,
+          associationId: association.id
+        })
       })
       res.json(messageLookup)
     } else {
@@ -716,6 +750,7 @@ router.get("/:id/messages", auth, async (req, res, next) => {
                 "discussionsFirstName",
                 "discussionsLastName",
                 "discussionsImage",
+                "avatar",
                 "id",
                 "createdAt",
                 "updatedAt",
@@ -745,6 +780,7 @@ router.get("/:id/messages", auth, async (req, res, next) => {
               "discussionsFirstName",
               "discussionsLastName",
               "discussionsImage",
+              "avatar",
               "id",
               "createdAt",
               "updatedAt",
@@ -792,6 +828,7 @@ router.put("/:id/typing", auth, async (req, res, next) => {
                 "discussionsFirstName",
                 "discussionsLastName",
                 "discussionsImage",
+                "avatar",
                 "id",
                 "createdAt",
                 "updatedAt",
@@ -910,6 +947,7 @@ router.post("/create", auth, async (req, res, next) => {
                   "discussionsFirstName",
                   "discussionsLastName",
                   "discussionsImage",
+                  "avatar",
                   "id",
                   "createdAt",
                   "updatedAt",

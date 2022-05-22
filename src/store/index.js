@@ -135,6 +135,26 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    getCommunicationsUnread(context) {
+      Vue.axios.get("/api/v1/communications").then((res) => {
+        context.state.communicationNotifications = 0
+        res.data.forEach((item) => {
+          const message = item.chat.lastMessages.find(
+            (message) => message.id === item.lastRead
+          )
+          const lastMessage = item.chat.lastMessages[0]
+          let count = 0
+          if (message) {
+            const index = item.chat.lastMessages.indexOf(message)
+            const indexLast = item.chat.lastMessages.indexOf(lastMessage)
+            count = index - indexLast
+          } else {
+            count = item.chat.lastMessages.length
+          }
+          context.state.communicationNotifications += count
+        })
+      })
+    },
     discardTheme(context) {
       context.state.themeEngine.theme = {
         id: 1,

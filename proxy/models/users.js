@@ -100,6 +100,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
         defaultValue: null
       },
+      // deprecated
       discussionsImage: {
         type: DataTypes.STRING,
         allowNull: true,
@@ -257,6 +258,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.JSON,
         allowNull: false,
         defaultValue: []
+      },
+      avatar: {
+        type: DataTypes.STRING,
+        allowNull: true
       }
     },
     {

@@ -331,7 +331,7 @@
                     color="card"
                     elevation="3"
                     class="ma-2 rounded-xl"
-                    v-if="selectedTask.gradingItems.length"
+                    v-if="selectedTask.gradingItems?.length"
                   >
                     <v-toolbar color="toolbar">
                       <v-toolbar-title> Grading Items </v-toolbar-title>
@@ -379,12 +379,14 @@
                               >
                                 {{ gradingItem.name }}
                               </td>
-                              <td>
+                              <td
+                                v-if="selectedTask.students[0].results[index]"
+                              >
                                 {{
                                   getGradingScheme(
                                     gradingItem,
                                     selectedTask.students[0].results[index]
-                                      .result
+                                      ?.result
                                   )
                                 }}
                                 <template
@@ -393,17 +395,18 @@
                                   "
                                 >
                                   {{
-                                    selectedTask.students[0].results[index]
-                                      .result
+                                    selectedTask.students[0]?.results[index]
+                                      ?.result
                                   }}
                                 </template>
                                 <template v-else>
                                   ({{
                                     selectedTask.students[0].results[index]
-                                      .result
+                                      ?.result
                                   }}/{{ getGradingSchemeLength(gradingItem) }})
                                 </template>
                               </td>
+                              <td v-else>Unavailable</td>
                             </tr>
                           </tbody>
                         </template>
@@ -1033,7 +1036,8 @@ export default {
     getLearningSchemes() {
       this.axios
         .get(
-          "/Services/ReferenceDataCache.svc/GetGradingSchemesForLearningTasks?page=1&start=0&limit=1000"
+          "/Services/ReferenceDataCache.svc/GetGradingSchemesForLearningTasks?page=1&start=0&limit=1000&compassInstance=" +
+            this.$store.state.school.instance
         )
         .then((res) => {
           this.gradingSchemes = res.data.d

@@ -577,7 +577,9 @@
                               >
                                 {{ gradingItem.name }}
                               </td>
-                              <td>
+                              <td
+                                v-if="selectedTask.students[0].results[index]"
+                              >
                                 {{
                                   getGradingScheme(
                                     gradingItem,
@@ -602,6 +604,7 @@
                                   }}/{{ getGradingSchemeLength(gradingItem) }})
                                 </template>
                               </td>
+                              <td v-else>Unavailable</td>
                             </tr>
                           </tbody>
                         </template>
@@ -2966,7 +2969,8 @@ export default {
     getLearningSchemes() {
       this.axios
         .get(
-          "/Services/ReferenceDataCache.svc/GetGradingSchemesForLearningTasks?page=1&start=0&limit=1000"
+          "/Services/ReferenceDataCache.svc/GetGradingSchemesForLearningTasks?page=1&start=0&limit=1000&compassInstance=" +
+            this.$store.state.school.instance
         )
         .then((res) => {
           this.gradingSchemes = res.data.d
@@ -3464,7 +3468,6 @@ export default {
     this.generateYears()
     this.score = this.computeCompassScore
     this.getCategories()
-    this.getLearningSchemes()
     this.getTasks()
     if (localStorage.getItem("debugModeEnabled")) {
       this.$store.state.site.release = "dev"
@@ -3476,6 +3479,7 @@ export default {
     this.tab = localStorage.getItem("calendarType") === "day" ? 0 : 1
     this.grids = this.$store.state.user.bcUser?.homeGrids
     this.$store.dispatch("getUserInfo").then((res) => {
+      this.getLearningSchemes()
       this.fetchEventsForCache()
       if (!this.$store.state.user.bcUser.bookmarks) {
         this.$store.state.user.bcUser.bookmarks = []

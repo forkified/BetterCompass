@@ -217,18 +217,14 @@
       >
         <template v-slot:activator="{ on, attrs }">
           <v-btn class="rounded-xl" icon v-bind="attrs" v-on="on">
-            <v-avatar
-              v-if="!$store.state.user.avatar"
-              align="center"
-              class="text-center"
-              size="38"
-            >
+            <v-avatar align="center" class="text-center" size="38">
               <img
                 :src="
-                  $store.state.user.bcUser.discussionsImage ||
-                  $store.state.school.fqdn +
-                    '/download/cdn/square/' +
-                    $store.state.user.idPhotoGuidVersioned
+                  $store.state.user.bcUser.avatar
+                    ? '/usercontent/' + $store.state.user.bcUser.avatar
+                    : $store.state.school.fqdn +
+                      '/download/cdn/square/' +
+                      $store.state.user.idPhotoGuidVersioned
                 "
               />
             </v-avatar>
@@ -607,8 +603,8 @@
                     v-bind="attrs"
                   >
                     <v-img
-                      v-if="$store.state.user.bcUser.discussionsImage"
-                      :src="$store.state.user.bcUser.discussionsImage"
+                      v-if="$store.state.user.bcUser.avatar"
+                      :src="'/usercontent/' + $store.state.user.bcUser.avatar"
                     />
                     <v-icon v-else> mdi-account </v-icon>
                   </v-list-item-avatar>

@@ -1,13 +1,39 @@
 <template>
   <div id="settings-site">
     <v-card-text>
-      <v-text-field
-        v-model="$store.state.user.bcUser.discussionsImage"
-        label="Avatar URL (override, only visible to you)"
-        append-outer-icon="mdi-content-save"
-        @click:append-outer="saveSettings"
-        @keyup.enter="saveSettings"
-      ></v-text-field>
+      <div class="d-flex">
+        <v-hover v-slot="{ hover }">
+          <v-avatar
+            :color="$vuetify.theme.themes.dark.primary"
+            size="62"
+            @click="handleUpload"
+          >
+            <v-fade-transition v-if="hover">
+              <v-overlay absolute>
+                <v-icon large>mdi-upload</v-icon>
+              </v-overlay>
+            </v-fade-transition>
+            <v-img
+              :src="'/usercontent/' + $store.state.user.bcUser.avatar"
+              v-if="$store.state.user.bcUser.avatar"
+              class="elevation-1"
+            />
+            <v-icon v-else-if="!hover" class="elevation-1">
+              mdi-account
+            </v-icon>
+          </v-avatar>
+        </v-hover>
+        <v-file-input
+          class="ml-3"
+          ref="avatarUpload"
+          accept="image/png, image/jpeg, image/jpg, image/gif, image/webp"
+          placeholder="Avatar"
+          prepend-icon=""
+          label="Avatar for local BetterCompass override & Communications"
+          v-model="avatar.file"
+          @change="doUpload"
+        ></v-file-input>
+      </div>
     </v-card-text>
     <v-card-text>
       <v-switch
@@ -85,6 +111,10 @@ export default {
   name: "SettingsSite",
   data() {
     return {
+      avatar: {
+        file: null,
+        loading: false
+      },
       loading: false,
       interval: null,
       slider: 300
@@ -100,6 +130,31 @@ export default {
     }
   },
   methods: {
+    doUpload() {
+      if (this.avatar.file) {
+        this.avatar.loading = true
+        let formData = new FormData()
+        formData.append("avatar", this.avatar.file)
+        this.axios
+          .post("/api/v1/user/settings/avatar", formData, {
+            headers: {
+              "Content-Type": "multipart/form-data"
+            }
+          })
+          .then(() => {
+            this.$store.dispatch("getUserInfo").then(() => {
+              this.avatar.loading = false
+            })
+          })
+          .catch((e) => {
+            this.avatar.loading = false
+            AjaxErrorHandler(this.$store)(e)
+          })
+      }
+    },
+    handleUpload() {
+      this.$refs.avatarUpload.$refs.input.click()
+    },
     stopColorTheme() {
       clearInterval(this.interval)
     },

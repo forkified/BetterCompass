@@ -995,8 +995,9 @@ export default {
       .dispatch("getUserInfo")
       .then(() => {
         this.communicationsIdleCheck()
+        this.$store.dispatch("getCommunicationsUnread")
         this.$socket.on("message", (message) => {
-          console.log(message)
+          this.$store.state.communicationNotifications += 1
           if (
             (this.$route.name !== "Communications" &&
               this.$store.state.user.bcUser.storedStatus !== "busy") ||
@@ -1019,7 +1020,12 @@ export default {
                 message.user.sussiId +
                 "\n" +
                 "Sent in: " +
-                message.chat.name
+                message.chat.name,
+              {
+                onClick: () => {
+                  this.$router.push("/communications/" + message.associationId)
+                }
+              }
             )
           }
         })

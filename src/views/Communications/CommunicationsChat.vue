@@ -31,9 +31,9 @@
                   :id="'message-' + index"
                 >
                   <v-avatar size="48" class="mr-2">
-                    <img
-                      :src="message.user.discussionsImage"
-                      v-if="message.user.discussionsImage"
+                    <v-img
+                      :src="'/usercontent/' + message.user.avatar"
+                      v-if="message.user.avatar"
                       class="elevation-1"
                     />
                     <v-icon v-else class="elevation-1"> mdi-account </v-icon>

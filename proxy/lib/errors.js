@@ -29,7 +29,16 @@ let Errors = {
     "The chat instance couldn't be found, or you are not an administrator of it.",
     400
   ],
-  experimentsOptIn: ["You are not opted into this experiment.", 401]
+  experimentsOptIn: ["You are not opted into this experiment.", 401],
+  attachmentNotFound: [
+    "The user content you are trying to access does not exist, or has been deleted.",
+    400
+  ],
+  invalidFileType: [
+    "The file you are trying to upload is not a valid file type.",
+    400
+  ],
+  fileTooLarge: ["The file you are trying to upload is too large.", 400]
 }
 
 function processErrors(errorName) {

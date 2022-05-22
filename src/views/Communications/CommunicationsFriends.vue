@@ -24,8 +24,8 @@
                     :color="$vuetify.theme.themes.dark.primary"
                   >
                     <img
-                      :src="friend.user2.discussionsImage"
-                      v-if="friend.user2.discussionsImage"
+                      :src="'/usercontent/' + friend.user2.avatar"
+                      v-if="friend.user2.avatar"
                     />
                     <v-icon v-else> mdi-account </v-icon>
                   </v-list-item-avatar>
@@ -67,8 +67,8 @@
                     :color="$vuetify.theme.themes.dark.primary"
                   >
                     <img
-                      :src="friend.user2.discussionsImage"
-                      v-if="friend.user2.discussionsImage"
+                      :src="'/usercontent/' + friend.user2.avatar"
+                      v-if="friend.user2.avatar"
                     />
                     <v-icon v-else> mdi-account </v-icon>
                   </v-list-item-avatar>
@@ -100,8 +100,8 @@
                     :color="$vuetify.theme.themes.dark.primary"
                   >
                     <img
-                      :src="friend.user2.discussionsImage"
-                      v-if="friend.user2.discussionsImage"
+                      :src="'/usercontent/' + friend.user2.avatar"
+                      v-if="friend.user2.avatar"
                     />
                     <v-icon v-else> mdi-account </v-icon>
                   </v-list-item-avatar>

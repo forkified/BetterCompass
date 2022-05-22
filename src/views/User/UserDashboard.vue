@@ -418,9 +418,9 @@ export default {
     getUserImage() {
       if (
         this.$store.state.user.userId === this.user.userId &&
-        this.$store.state.user.bcUser.discussionsImage
+        this.$store.state.user.bcUser.avatar
       ) {
-        return this.$store.state.user.bcUser.discussionsImage
+        return "/usercontent/" + this.$store.state.user.bcUser.avatar
       } else {
         return this.$store.state.school.fqdn + this.user.userPhotoPath
       }
