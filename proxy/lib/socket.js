@@ -16,6 +16,12 @@ module.exports = {
         }
       })
       socket.join(user.id)
+      socket.emit("siteState", {
+        release: process.env.RELEASE,
+        notification: process.env.NOTIFICATION,
+        notificationType: process.env.NOTIFICATION_TYPE,
+        latestVersion: require("../../package.json").version
+      })
       const friends = await Friend.findAll({
         where: {
           userId: user.id,
@@ -32,6 +38,9 @@ module.exports = {
           status:
             user.storedStatus === "invisible" ? "offline" : user.storedStatus
         })
+      })
+      socket.on("ping", () => {
+        socket.emit("pong")
       })
       socket.on("idle", async () => {
         const user = await User.findOne({

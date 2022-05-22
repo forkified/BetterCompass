@@ -574,7 +574,33 @@ div {
                   JSON.stringify(res.data.d.data)
                 )
               })
-              .catch(() => {})
+              .catch(() => {
+                // parent is assumed, for some idiotic reason GetStandardClassesOfUserInAcademicGroup doesn't work for parents, even when setting userId as the child, we can use /Services/Gpa.svc/GetActivitiesOverviewConfig as an alternative
+                Vue.axios
+                  .post("/Services/Gpa.svc/GetActivitiesOverviewConfig", {
+                    userId: context.state.user.children[0].userId
+                  })
+                  .then((res) => {
+                    // map activities
+                    const activities = res.data.d.Activities.map((activity) => {
+                      return {
+                        subjectLongName: activity.ActivityName.split("- ")[0],
+                        subjectId: activity.SubjectId,
+                        activityId: activity.ActivityId,
+                        importIdentifier: activity.ActivityName.split("- ")[1],
+                        name: activity.ActivityName.split("- ")[1]
+                      }
+                    })
+                    context.commit("setSubjects", activities)
+                    localStorage.setItem(
+                      "subjectsCache",
+                      JSON.stringify(activities)
+                    )
+                  })
+                  .catch(() => {
+                    // unfortunate
+                  })
+              })
             context.commit("setLoading", false)
             context.commit("setOnline", true)
             resolve(res.data)

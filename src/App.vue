@@ -595,7 +595,7 @@
         v-if="$store.state.site.notification && $store.state.user.bcUser"
         id="notification-banner"
       >
-        <v-alert text class="mx-4" type="info">
+        <v-alert text class="mx-4" :type="$store.state.site.notificationType">
           {{ $store.state.site.notification }}
         </v-alert>
       </v-container>
@@ -1042,6 +1042,14 @@ export default {
         this.$socket.on("connect", () => {
           this.$store.commit("setWSConnected", true)
         })
+        this.$socket.on("siteState", (state) => {
+          this.$store.state.site.latestVersion = state.latestVersion
+          this.$store.state.site.notification = state.notification
+          this.$store.state.site.notificationType = state.notificationType
+        })
+        setInterval(() => {
+          this.$socket.emit("ping")
+        }, 10000)
         // eslint-disable-next-line no-undef
         if (JSON.parse(process.env.VUE_APP_MATOMO_ENABLED)) {
           // eslint-disable-next-line no-undef

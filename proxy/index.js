@@ -176,6 +176,7 @@ app.get("/api/v1/state", async (req, res) => {
         release: process.env.RELEASE,
         loading: true,
         notification: process.env.NOTIFICATION,
+        notificationType: process.env.NOTIFICATION_TYPE,
         latestVersion: require("../package.json").version
       })
     }

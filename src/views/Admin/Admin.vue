@@ -25,6 +25,10 @@
             <v-icon>mdi-brush</v-icon>&nbsp;
             <span>Themes</span>
           </v-tab>
+          <v-tab to="/admin/state">
+            <v-icon>mdi-cog</v-icon>&nbsp;
+            <span>Config</span>
+          </v-tab>
         </v-tabs>
         <router-view :admin="admin" :metrics="metrics"></router-view>
       </v-card>
