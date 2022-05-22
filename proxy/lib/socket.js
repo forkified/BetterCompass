@@ -1,4 +1,3 @@
-const setStatus = require("../socket_routes/status.js")
 const auth = require("../lib/authorize_socket.js")
 const { User, Friend } = require("../models")
 module.exports = {
@@ -24,15 +23,60 @@ module.exports = {
         }
       })
       await user.update({
-        status: user.storedStatus
+        status:
+          user.storedStatus === "invisible" ? "offline" : user.storedStatus
       })
       friends.forEach((friend) => {
         io.to(friend.friendId).emit("userStatus", {
           userId: user.id,
-          status: user.storedStatus
+          status:
+            user.storedStatus === "invisible" ? "offline" : user.storedStatus
         })
       })
-      console.log("test, user " + socket.user.sussiId)
+      socket.on("idle", async () => {
+        const user = await User.findOne({
+          where: {
+            id: socket.user.id
+          }
+        })
+        if (user.storedStatus === "online") {
+          friends.forEach((friend) => {
+            io.to(friend.friendId).emit("userStatus", {
+              userId: user.id,
+              status: "away"
+            })
+          })
+          io.to(user.id).emit("userStatus", {
+            userId: user.id,
+            status: "away"
+          })
+          await user.update({
+            status: "away"
+          })
+        }
+      })
+      socket.on("online", async () => {
+        const user = await User.findOne({
+          where: {
+            id: socket.user.id
+          }
+        })
+        if (user.storedStatus === "online") {
+          friends.forEach((friend) => {
+            io.to(friend.friendId).emit("userStatus", {
+              userId: user.id,
+              status: "online"
+            })
+          })
+          io.to(user.id).emit("userStatus", {
+            userId: user.id,
+            status: "online"
+          })
+          await user.update({
+            status: "online"
+          })
+        }
+      })
       socket.on("disconnect", async function () {
         friends.forEach((friend) => {
           io.to(friend.friendId).emit("userStatus", {
@@ -40,7 +84,6 @@ module.exports = {
             status: "offline"
           })
         })
-        console.log("test, user " + socket.user.sussiId + " disconnected")
         await user.update({
           status: "offline"
         })

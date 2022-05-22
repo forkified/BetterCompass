@@ -449,17 +449,20 @@
                 "
                 :color="active('/communications')"
               >
-                <v-badge
-                  v-if="$store.state.communicationNotifications > 0"
-                  color="red"
-                  right
+                <v-list-item-icon
+                  v-if="$store.state.communicationNotifications === 0"
                 >
-                  <template v-slot:badge>
-                    {{ $store.state.communicationNotifications }}
-                  </template>
-                </v-badge>
-                <v-list-item-icon>
                   <v-icon>mdi-android-messages</v-icon>
+                </v-list-item-icon>
+                <v-list-item-icon v-else>
+                  <v-badge
+                    v-if="$store.state.communicationNotifications > 0"
+                    color="red"
+                    inline
+                    left
+                    :content="$store.state.communicationNotifications"
+                  >
+                  </v-badge>
                 </v-list-item-icon>
 
                 <v-list-item-title>Communications</v-list-item-title>
@@ -577,15 +580,99 @@
           </v-list>
         </v-list>
       </v-list>
+      <template
+        v-slot:append
+        v-if="$store.state.user?.bcUser?.privacy?.communications.enabled"
+      >
+        <v-card tile color="card" elevation="0">
+          <v-overlay :value="!$store.state.wsConnected" absolute>
+            <v-progress-circular indeterminate size="48"></v-progress-circular>
+          </v-overlay>
+          <v-list-item>
+            <v-menu top offset-y>
+              <template v-slot:activator="{ on, attrs }">
+                <v-badge
+                  bordered
+                  bottom
+                  :color="getStatus()"
+                  dot
+                  offset-x="26"
+                  offset-y="19"
+                  v-on="on"
+                  v-bind="attrs"
+                >
+                  <v-list-item-avatar
+                    :color="$vuetify.theme.themes.dark.primary"
+                    v-on="on"
+                    v-bind="attrs"
+                  >
+                    <v-img
+                      v-if="$store.state.user.bcUser.discussionsImage"
+                      :src="$store.state.user.bcUser.discussionsImage"
+                    />
+                    <v-icon v-else> mdi-account </v-icon>
+                  </v-list-item-avatar>
+                </v-badge>
+              </template>
+
+              <v-list>
+                <v-list-item @click="setStatus('online')">
+                  <v-list-item-title>Online</v-list-item-title>
+                </v-list-item>
+                <v-list-item @click="setStatus('away')">
+                  <v-list-item-title>Idle</v-list-item-title>
+                </v-list-item>
+                <v-list-item two-line @click="setStatus('busy')">
+                  <v-list-item-content>
+                    <v-list-item-title>Do not Disturb</v-list-item-title>
+                    <v-list-item-subtitle class="text-wrap"
+                      >You will not receive any
+                      notifications.</v-list-item-subtitle
+                    >
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item two-line @click="setStatus('invisible')">
+                  <v-list-item-content>
+                    <v-list-item-title>Invisible</v-list-item-title>
+                    <v-list-item-subtitle class="text-wrap"
+                      >You will appear as offline, and the typing indicator will
+                      be disabled.</v-list-item-subtitle
+                    >
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+            <v-tooltip v-model="copyTooltip" top>
+              <template v-slot:activator="{ attrs }">
+                <v-list-item-content
+                  @click="copyUsername"
+                  v-bind="attrs"
+                  style="cursor: pointer"
+                >
+                  <v-list-item-title>
+                    {{ $store.state.user.bcUser.sussiId }}
+                  </v-list-item-title>
+                  <v-list-item-subtitle>
+                    {{ $store.state.user.bcUser.instance }}
+                  </v-list-item-subtitle>
+                </v-list-item-content>
+              </template>
+              <span>Copied!</span>
+            </v-tooltip>
+          </v-list-item>
+        </v-card>
+      </template>
     </v-navigation-drawer>
   </div>
 </template>
 
 <script>
+import AjaxErrorHandler from "@/lib/errorHandler"
 export default {
   name: "Header",
   data() {
     return {
+      copyTooltip: false,
       route: {
         modal: false,
         value: ""
@@ -683,6 +770,58 @@ export default {
     }
   },
   methods: {
+    setStatus(status) {
+      const previousStatus = {
+        status: this.$store.state.user.bcUser.status,
+        storedStatus: this.$store.state.user.bcUser.storedStatus
+      }
+      this.$store.state.user.bcUser.status = status
+      this.$store.state.user.bcUser.storedStatus = status
+      this.axios
+        .put("/api/v1/user/settings/status", {
+          status: status
+        })
+        .then((res) => {
+          this.$store.state.user.bcUser.status = res.data.status
+          this.$store.state.user.bcUser.storedStatus = res.data.storedStatus
+        })
+        .catch((e) => {
+          if (e.response.data.status) {
+            this.$store.state.user.bcUser.status = e.response.data.status
+            this.$store.state.user.bcUser.storedStatus =
+              e.response.data.storedStatus
+          } else {
+            AjaxErrorHandler(this.$store)(e)
+            this.$store.state.user.bcUser.status = previousStatus.status
+            this.$store.state.user.bcUser.storedStatus =
+              previousStatus.storedStatus
+          }
+        })
+    },
+    copyUsername() {
+      navigator.clipboard.writeText(
+        this.$store.state.user.bcUser.sussiId +
+          ":" +
+          this.$store.state.user.bcUser.instance
+      )
+      this.copyTooltip = true
+      setTimeout(() => {
+        this.copyTooltip = false
+      }, 1000)
+    },
+    getStatus() {
+      if (this.$store.state.user.bcUser.storedStatus === "online") {
+        return "green"
+      } else if (this.$store.state.user.bcUser.storedStatus === "invisible") {
+        return "grey"
+      } else if (this.$store.state.user.bcUser.storedStatus === "busy") {
+        return "red"
+      } else if (this.$store.state.user.bcUser.storedStatus === "away") {
+        return "orange"
+      } else {
+        return "grey"
+      }
+    },
     navigate(type) {
       if (type === "back") {
         this.$router.back()

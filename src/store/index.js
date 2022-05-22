@@ -49,9 +49,13 @@ export default new Vuex.Store({
       autoCSS: false
     },
     compassEnvironment: "",
-    communicationNotifications: 0
+    communicationNotifications: 0,
+    wsConnected: false
   },
   mutations: {
+    setWSConnected(state, value) {
+      state.wsConnected = value
+    },
     setCommunicationNotifications(state, payload) {
       state.communicationNotifications = payload
     },

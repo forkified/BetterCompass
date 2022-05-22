@@ -3,7 +3,7 @@ const router = express.Router()
 const Errors = require("../lib/errors.js")
 const auth = require("../lib/authorize.js")
 const axios = require("axios")
-const { User, Session, Theme } = require("../models")
+const { User, Session, Theme, Friend } = require("../models")
 const cryptoRandomString = require("crypto-random-string")
 const { Op } = require("sequelize")
 const speakeasy = require("speakeasy")
@@ -404,6 +404,7 @@ router.put("/settings/:type", auth, async (req, res, next) => {
     })
   }
   try {
+    const io = req.app.get("io")
     if (req.params.type === "full") {
       await User.update(
         {
@@ -518,6 +519,7 @@ router.put("/settings/:type", auth, async (req, res, next) => {
         throw Errors.unknown
       }
     } else if (req.params.type === "bcSessionsEnable") {
+      /*
       const match = await checkPassword(req.body.password)
       if (match) {
         await User.update(
@@ -544,7 +546,8 @@ router.put("/settings/:type", auth, async (req, res, next) => {
         })
       } else {
         throw Errors.invalidCredentials
-      }
+      }*/
+      throw Errors.experimentsOptIn
     } else if (req.params.type === "password") {
       const user = await User.findOne({
         where: {
@@ -582,6 +585,49 @@ router.put("/settings/:type", auth, async (req, res, next) => {
         }
       })
       res.sendStatus(204)
+    } else if (req.params.type === "status") {
+      const user = await User.findOne({
+        where: {
+          id: req.user.id
+        }
+      })
+      if (!["online", "away", "busy", "invisible"].includes(req.body.status)) {
+        res.json({
+          status: user.status,
+          storedStatus: user.storedStatus
+        })
+      } else {
+        await user.update({
+          storedStatus: req.body.status,
+          status: req.body.status === "invisible" ? "offline" : req.body.status
+        })
+        const friends = await Friend.findAll({
+          where: {
+            userId: user.id,
+            status: "accepted"
+          }
+        })
+        friends.forEach((friend) => {
+          io.to(friend.friendId).emit("userStatus", {
+            userId: user.id,
+            status:
+              req.body.status === "invisible" ? "offline" : req.body.status
+          })
+        })
+        io.to(user.id).emit("userStatus", {
+          userId: user.id,
+          status: req.body.status === "invisible" ? "offline" : req.body.status
+        })
+        io.to(user.id).emit("userSettings", {
+          userId: user.id,
+          status: req.body.status === "invisible" ? "offline" : req.body.status,
+          storedStatus: req.body.status
+        })
+        res.json({
+          status: req.body.status === "invisible" ? "offline" : req.body.status,
+          storedStatus: req.body.status
+        })
+      }
     } else {
       throw Errors.invalidParameter("Settings type", "Invalid settings type")
     }

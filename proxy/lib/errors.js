@@ -28,7 +28,8 @@ let Errors = {
   chatNotFoundOrNotAdmin: [
     "The chat instance couldn't be found, or you are not an administrator of it.",
     400
-  ]
+  ],
+  experimentsOptIn: ["You are not opted into this experiment.", 401]
 }
 
 function processErrors(errorName) {

@@ -1,5 +1,8 @@
 <template>
   <div id="communications">
+    <v-overlay :value="!$store.state.wsConnected" absolute>
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
+    </v-overlay>
     <v-dialog
       v-model="settings.addMembers.dialog"
       max-width="400px"
@@ -262,7 +265,7 @@
             </v-btn>
           </v-toolbar>
 
-          <v-card :height="viewport - 204" color="bg" class="mt-2">
+          <v-card :height="viewport() - 204" color="bg" class="mt-2">
             <v-list two-line color="card">
               <v-list-item-group v-model="selected" class="rounded-xl">
                 <template v-for="(item, index) in items">
@@ -388,7 +391,7 @@
         class="d-flex align-center justify-center"
         flat
         color="bg"
-        :height="viewport"
+        :height="viewport()"
         tile
       >
         <v-card
@@ -459,13 +462,12 @@ export default {
       } catch {
         return null
       }
-    },
-    viewport() {
-      let height = window.innerHeight
-      return (height -= document.querySelector("#navbar").clientHeight + 26)
     }
   },
   methods: {
+    viewport() {
+      return window.innerHeight - 112
+    },
     addMembersToGroup() {
       this.axios
         .post(
@@ -523,6 +525,10 @@ export default {
         return "green"
       } else if (this.getDirectRecipient(item).status === "offline") {
         return "grey"
+      } else if (this.getDirectRecipient(item).status === "away") {
+        return "orange"
+      } else if (this.getDirectRecipient(item).status === "busy") {
+        return "red"
       } else {
         return "grey"
       }
@@ -608,6 +614,11 @@ export default {
       this.axios.get("/api/v1/communications").then((res) => {
         this.items = res.data
         this.loading = false
+        this.$store.state.communicationNotifications = 0
+        this.items.forEach((item) => {
+          this.$store.state.communicationNotifications +=
+            this.getLastRead(item).count
+        })
       })
     }
   },
@@ -640,6 +651,11 @@ export default {
         const index = this.items.indexOf(item)
         console.log(this.items[index].lastRead)
         this.items[index].lastRead = chat.lastRead
+        this.$store.state.communicationNotifications = 0
+        this.items.forEach((item) => {
+          this.$store.state.communicationNotifications +=
+            this.getLastRead(item).count
+        })
       }
     })
   },

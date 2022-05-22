@@ -736,6 +736,39 @@ export default {
     }
   },
   methods: {
+    communicationsIdleCheck() {
+      let time
+      let idle = false
+      window.onload = resetTimer
+      document.onmousemove = resetTimer
+      document.onkeydown = resetTimer
+      document.onmousedown = resetTimer
+      let self = this
+      function setIdle() {
+        if (!idle) {
+          self.$socket.emit("idle")
+          idle = true
+          console.log("idle")
+        } else {
+          self.$socket.emit("online")
+          idle = false
+          console.log("online")
+        }
+      }
+
+      function resetTimer() {
+        clearTimeout(time)
+        if (idle) {
+          setIdle()
+        }
+        time = setTimeout(
+          function () {
+            setIdle()
+          }.bind(this.$socket),
+          300000
+        )
+      }
+    },
     friendlyName(index) {
       if (index === "calendarNormalActivity") {
         return "Standard Class"
@@ -961,11 +994,15 @@ export default {
     this.$store
       .dispatch("getUserInfo")
       .then(() => {
+        this.communicationsIdleCheck()
         this.$socket.on("message", (message) => {
           console.log(message)
           if (
-            this.$route.name !== "Communications" ||
-            (this.$route.name === "Communications" && !document.hasFocus())
+            (this.$route.name !== "Communications" &&
+              this.$store.state.user.bcUser.storedStatus !== "busy") ||
+            (this.$route.name === "Communications" &&
+              !document.hasFocus() &&
+              this.$store.state.user.bcUser.storedStatus !== "busy")
           ) {
             if (localStorage.getItem("messageAudio")) {
               if (JSON.parse(localStorage.getItem("messageAudio"))) {
@@ -986,9 +1023,18 @@ export default {
             )
           }
         })
-        this.$socket.on("friendRequest", (message) => {
-          new Audio(require("@/assets/audio/message.wav")).play()
-          this.$toast.info("Friend request sent by " + message.user.sussiId)
+        if (this.$store.state.user.bcUser.storedStatus !== "busy") {
+          this.$socket.on("friendRequest", (message) => {
+            new Audio(require("@/assets/audio/message.wav")).play()
+            this.$toast.info("Friend request sent by " + message.user.sussiId)
+          })
+        }
+        this.$store.commit("setWSConnected", true)
+        this.$socket.on("disconnect", () => {
+          this.$store.commit("setWSConnected", false)
+        })
+        this.$socket.on("connect", () => {
+          this.$store.commit("setWSConnected", true)
         })
         // eslint-disable-next-line no-undef
         if (JSON.parse(process.env.VUE_APP_MATOMO_ENABLED)) {
