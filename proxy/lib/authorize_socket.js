@@ -95,6 +95,11 @@ module.exports = async function (socket, next) {
             }
           }
         })
+        .catch(() => {
+          console.log(
+            "Something went wrong while communicating to Compass' GraphQL API"
+          )
+        })
     }
   } catch (error) {
     //

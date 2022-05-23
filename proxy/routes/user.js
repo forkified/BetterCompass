@@ -223,9 +223,12 @@ router.post("/login", async (req, res, next) => {
                 })
               }
             })
-            .catch((e) => {
-              console.log(e)
+            .catch(() => {
+              throw Errors.unknown
             })
+        })
+        .catch(() => {
+          throw Errors.unknown
         })
     }
   } catch (err) {
@@ -305,6 +308,7 @@ router.get("/", auth, (req, res, next) => {
       })
       .catch((e) => {
         console.log(e.request)
+        throw Errors.unknown
       })
   } catch (e) {
     console.log(1)
@@ -707,7 +711,7 @@ router.put("/settings/:type", auth, async (req, res, next) => {
     next(e)
   }
 })
-
+/*
 router.post("/create", async (req, res, next) => {
   try {
     axios
@@ -813,5 +817,5 @@ router.post("/create/alternate", async (req, res, next) => {
     next(err)
   }
 })
-
+*/
 module.exports = router
