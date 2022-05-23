@@ -566,6 +566,7 @@
         @update:items-per-page="updateRows"
         :sort-by.sync="sortBy"
         class="elevation-3"
+        group-by="subjectName"
         @click:row="taskDialog"
         style="cursor: pointer"
         :style="
@@ -573,6 +574,23 @@
           $vuetify.theme.themes[$vuetify.theme.dark ? 'dark' : 'light'].card
         "
       >
+        <template v-slot:group.header="{ items, isOpen, toggle }">
+          <th
+            colspan="999"
+            @click="toggle"
+            :style="
+              'background-color: ' +
+              $vuetify.theme.themes[$vuetify.theme.dark ? 'dark' : 'light']
+                .toolbar
+            "
+            style="border-top: 0; border-bottom: 0"
+          >
+            <v-icon @click="toggle"
+              >{{ isOpen ? "mdi-minus" : "mdi-plus" }}
+            </v-icon>
+            {{ items[0].subjectName }}
+          </th>
+        </template>
         <template v-slot:item.tags="{ item }">
           <v-chip-group column>
             <v-chip color="red" v-if="item.important">
