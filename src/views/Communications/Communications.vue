@@ -654,6 +654,7 @@ export default {
   },
   mounted() {
     this.getChats()
+    this.searchUsers()
     this.$socket.on("chatUpdated", () => {
       this.getChats()
     })
