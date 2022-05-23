@@ -4,7 +4,7 @@
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
     <div v-if="headerImage">
-      <v-img :src="headerImage" aspect-ratio="16/9">
+      <v-img :src="headerImage" aspect-ratio="16/9" id="activity-header">
         <v-container fill-height fluid>
           <v-row align="center" justify="center">
             <v-col>

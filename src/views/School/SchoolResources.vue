@@ -8,31 +8,39 @@
         <v-container>
           <v-row class="pa-4" justify="space-between">
             <v-col cols="5">
-              <v-treeview
-                :active.sync="active"
-                :items="resources.children"
-                :open.sync="open"
-                activatable
-                open-on-click
-                transition
-                return-object
+              <v-card
+                color="transparent"
+                :max-height="viewport()"
+                :min-height="viewport()"
               >
-                <template v-slot:prepend="{ item, open }">
-                  <v-icon v-if="item.children.length">
-                    {{ open ? "mdi-folder-open" : "mdi-folder" }}
-                  </v-icon>
-                  <template v-else-if="item.content">
-                    <v-icon v-if="item.content.filename">
-                      {{
-                        files[item.content.filename.split(".").pop()] ||
-                        "mdi-file-outline"
-                      }}
+                <v-treeview
+                  :active.sync="active"
+                  :items="resources.children"
+                  :open.sync="open"
+                  activatable
+                  open-on-click
+                  transition
+                  return-object
+                  :max-height="viewport()"
+                  :min-height="viewport()"
+                >
+                  <template v-slot:prepend="{ item, open }">
+                    <v-icon v-if="item.children.length">
+                      {{ open ? "mdi-folder-open" : "mdi-folder" }}
                     </v-icon>
+                    <template v-else-if="item.content">
+                      <v-icon v-if="item.content.filename">
+                        {{
+                          files[item.content.filename.split(".").pop()] ||
+                          "mdi-file-outline"
+                        }}
+                      </v-icon>
+                      <v-icon v-else> mdi-file-outline </v-icon>
+                    </template>
                     <v-icon v-else> mdi-file-outline </v-icon>
                   </template>
-                  <v-icon v-else> mdi-file-outline </v-icon>
-                </template>
-              </v-treeview>
+                </v-treeview>
+              </v-card>
             </v-col>
 
             <v-divider vertical></v-divider>
@@ -50,7 +58,6 @@
                 v-else
                 :key="selected.id"
                 class="mx-auto"
-                :class="{ sticky: !$vuetify.breakpoint.mobile }"
                 flat
               >
                 <template v-if="selected.type === 2">
@@ -145,6 +152,16 @@ export default {
     selected() {
       if (!this.active.length) return undefined
       return this.active[0]
+    }
+  },
+  methods: {
+    viewport() {
+      return (
+        window.innerHeight -
+        document.getElementById("header").clientHeight -
+        document.getElementById("activity-header")?.clientHeight -
+        250
+      )
     }
   },
   watch: {
