@@ -1,3 +1,7 @@
+.sticky {
+  position: fixed;
+  max-width: 40%;
+}
 img.emoji {
   /* Since we are using SVGs, you have to change the width using CSS */
   height: 1.4em;

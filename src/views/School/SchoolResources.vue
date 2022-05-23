@@ -37,7 +37,7 @@
 
             <v-divider vertical></v-divider>
 
-            <v-col class="d-flex text-center">
+            <v-col class="text-center justify-center">
               <div
                 v-if="!selected"
                 class="text-h6 grey--text text--lighten-1 font-weight-light"
@@ -45,7 +45,14 @@
               >
                 Please select an item.
               </div>
-              <v-card v-else :key="selected.id" class="mx-auto" flat>
+              <v-card
+                color="card"
+                v-else
+                :key="selected.id"
+                class="mx-auto"
+                :class="{ sticky: !$vuetify.breakpoint.mobile }"
+                flat
+              >
                 <template v-if="selected.type === 2">
                   <v-card-title>
                     <div class="headline">

@@ -44,7 +44,7 @@
               </div>
               <v-card
                 v-else
-                :key="selected.id"
+                :class="{ sticky: !$vuetify.breakpoint.mobile }"
                 class="mx-auto"
                 color="card"
                 flat

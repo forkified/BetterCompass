@@ -585,7 +585,7 @@
         v-if="$store.state.site.latestVersion > $store.state.versioning.version"
         id="update-notify-banner"
       >
-        <v-alert class="mx-4" type="info" text>
+        <v-alert class="mx-4 rounded-xl" type="info" text dismissable>
           BetterCompass just got better. Please CTRL+R / ⌘+R to update. (You are
           on version {{ $store.state.versioning.version }}, and the latest
           version is {{ $store.state.site.latestVersion }})
@@ -595,7 +595,12 @@
         v-if="$store.state.site.notification && $store.state.user.bcUser"
         id="notification-banner"
       >
-        <v-alert text class="mx-4" :type="$store.state.site.notificationType">
+        <v-alert
+          text
+          class="mx-4 rounded-xl"
+          dismissable
+          :type="$store.state.site.notificationType"
+        >
           {{ $store.state.site.notification }}
         </v-alert>
       </v-container>
