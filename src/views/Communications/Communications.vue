@@ -250,16 +250,18 @@
             to="/communications/friends"
             dark
             block
-            class="mb-3"
+            class="mb-3 rounded-xl"
           >
             <v-icon left>mdi-account-multiple</v-icon>
             Friends
           </v-btn>
           <v-text-field
+            class="rounded-xl"
             filled
+            solo
             label="Search..."
             append-icon="mdi-magnify"
-            color="grey"
+            background-color="card"
           ></v-text-field>
           <v-toolbar color="card" class="rounded-xl">
             <v-toolbar-title class="subtitle-1">
@@ -271,7 +273,7 @@
             </v-btn>
           </v-toolbar>
 
-          <v-card :height="viewport() - 204" color="bg" class="mt-2">
+          <v-card :height="viewport() - 204" color="bg" class="mt-2 rounded-xl">
             <v-list two-line color="card">
               <v-list-item-group v-model="selected" class="rounded-xl">
                 <template v-for="(item, index) in items">

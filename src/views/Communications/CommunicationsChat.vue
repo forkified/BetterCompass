@@ -5,7 +5,7 @@
         <v-col cols="auto" class="flex-grow-1 flex-shrink-0" id="chat-col">
           <v-card
             flat
-            class="d-flex flex-column fill-height"
+            class="d-flex flex-column fill-height rounded-xl"
             :max-height="viewport()"
             :min-height="viewport()"
             color="card"
@@ -66,7 +66,11 @@
                         </span>
                       </v-tooltip>
                     </v-list-item-subtitle>
-                    <p v-if="edit.id !== message.id" v-markdown>
+                    <p
+                      v-if="edit.id !== message.id"
+                      v-markdown
+                      style="white-space: pre-line; overflow-wrap: anywhere"
+                    >
                       {{ message.content }}
                     </p>
                     <v-text-field
