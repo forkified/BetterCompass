@@ -12,6 +12,10 @@ module.exports = (sequelize, DataTypes) => {
         as: "themeObject",
         foreignKey: "themeId"
       })
+      User.hasMany(models.Friend, {
+        as: "friends",
+        foreignKey: "userId"
+      })
     }
   }
   User.init(

@@ -535,13 +535,29 @@ export default {
       const message = item.chat.lastMessages.find(
         (message) => message.id === item.lastRead
       )
-      const lastMessage = item.chat.lastMessages[0]
-      if (message) {
+      const lastMessage = item.chat.lastMessages.find(
+        (message) => message.userId !== this.$store.state.user.bcUser.id
+      )
+      if (message && lastMessage) {
         const index = item.chat.lastMessages.indexOf(message)
         const indexLast = item.chat.lastMessages.indexOf(lastMessage)
+        let value = index - indexLast
+        if (value < 0) {
+          value = 0
+        }
         return {
-          count: index - indexLast,
+          count: value,
           lastMessageTimestamp: lastMessage.createdAt
+        }
+      } else if (!message) {
+        return {
+          count: item.chat.lastMessages.length,
+          lastMessageTimestamp: lastMessage?.createdAt
+        }
+      } else if (!lastMessage) {
+        return {
+          count: 0,
+          lastMessageTimestamp: undefined
         }
       } else {
         return {

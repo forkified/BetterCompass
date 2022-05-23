@@ -142,14 +142,22 @@ export default new Vuex.Store({
           const message = item.chat.lastMessages.find(
             (message) => message.id === item.lastRead
           )
-          const lastMessage = item.chat.lastMessages[0]
+          const lastMessage = item.chat.lastMessages.find(
+            (message) => message.userId !== context.state.user.bcUser.id
+          )
           let count = 0
-          if (message) {
+          if (message && lastMessage) {
             const index = item.chat.lastMessages.indexOf(message)
             const indexLast = item.chat.lastMessages.indexOf(lastMessage)
-            count = index - indexLast
-          } else {
+            let value = index - indexLast
+            if (value < 0) {
+              value = 0
+            }
+            count = value
+          } else if (!message) {
             count = item.chat.lastMessages.length
+          } else {
+            count = 0
           }
           context.state.communicationNotifications += count
         })

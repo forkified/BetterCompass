@@ -28,7 +28,7 @@ router.get("/", auth, async (req, res, next) => {
               as: "lastMessages",
               limit: 50,
               order: [["id", "DESC"]],
-              attributes: ["id", "content", "createdAt", "updatedAt"]
+              attributes: ["id", "content", "createdAt", "updatedAt", "userId"]
             },
             {
               model: User,
@@ -230,6 +230,44 @@ router.get("/friends", auth, async (req, res, next) => {
   }
 })
 
+router.get("/users", auth, async (req, res, next) => {
+  try {
+    const users = await User.findAll({
+      attributes: [
+        "id",
+        "sussiId",
+        "discussionsFirstName",
+        "discussionsLastName",
+        "discussionsImage",
+        "avatar",
+        "createdAt",
+        "updatedAt",
+        "instance",
+        "status",
+        "admin"
+      ],
+      where: {
+        [Op.or]: [
+          {
+            instance: req.user.instance,
+            privacy: {
+              communications: {
+                enabled: true
+              }
+            }
+          },
+          {
+            admin: true
+          }
+        ]
+      }
+    })
+    res.json(users)
+  } catch (err) {
+    next(err)
+  }
+})
+
 router.post("/friends", auth, async (req, res, next) => {
   try {
     const io = req.app.get("io")
@@ -382,7 +420,6 @@ router.get("/search", auth, async (req, res, next) => {
         }
       ]
     })
-    console.log(friends)
     const users = await User.findAll({
       where: {
         id: friends.map((friend) => friend.friendId),
