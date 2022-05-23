@@ -60,7 +60,7 @@ module.exports = async function (socket, next) {
                 socket.handshake.query.compassInstance || "devices",
               Cookie: socket.handshake.headers["cookie"] || ""
             },
-            timeout: 2000
+            timeout: 5000
           }
         )
         .then(async (response) => {

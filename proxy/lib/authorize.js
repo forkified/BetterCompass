@@ -54,7 +54,7 @@ module.exports = async function (req, res, next) {
                 "devices",
               Cookie: req.header("Cookie") || ""
             },
-            timeout: 2000
+            timeout: 5000
           }
         )
         .then(async (response) => {
