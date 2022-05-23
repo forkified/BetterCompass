@@ -1,5 +1,56 @@
 <template>
   <div id="header">
+    <v-dialog v-model="shortcuts" width="700">
+      <v-card color="card" elevation="7">
+        <v-toolbar color="toolbar">
+          <v-toolbar-title> Shortcuts </v-toolbar-title>
+        </v-toolbar>
+        <v-card-text>
+          <v-container>
+            <v-layout row wrap>
+              <v-card class="mx-2 mt-2">
+                <v-card-title> QuickSwitcher </v-card-title>
+                <v-card-text class="text-center">
+                  <v-btn text outlined> CTRL </v-btn>
+                  <v-btn text outlined class="ml-2"> K </v-btn>
+                </v-card-text>
+              </v-card>
+              <v-card class="mx-2 mt-2">
+                <v-card-title> RouteSwitcher </v-card-title>
+                <v-card-text class="text-center">
+                  <v-btn text outlined> CTRL </v-btn>
+                  <v-btn text outlined class="ml-2"> B </v-btn>
+                </v-card-text>
+              </v-card>
+              <v-card class="mx-2 mt-2">
+                <v-card-title> Calendar Navigation </v-card-title>
+                <v-card-text class="text-center">
+                  <v-btn text outlined> ← </v-btn>
+                  <v-btn text outlined class="ml-2"> → </v-btn>
+                </v-card-text>
+              </v-card>
+              <v-card class="mx-2 mt-2">
+                <v-card-title> Toggle CSS </v-card-title>
+                <v-card-text class="text-center">
+                  <v-btn text outlined> F9 </v-btn>
+                  <span class="ml-2">or</span>
+                  <v-btn text outlined class="ml-2"> CTRL </v-btn>
+                  <v-btn text outlined class="ml-2"> ALT </v-btn>
+                  <v-btn text outlined class="ml-2"> D </v-btn>
+                </v-card-text>
+              </v-card>
+              <v-card class="mx-2 mt-2">
+                <v-card-title> Shortcuts </v-card-title>
+                <v-card-text class="text-center">
+                  <v-btn text outlined class="ml-2"> CTRL </v-btn>
+                  <v-btn text outlined class="ml-2"> / </v-btn>
+                </v-card-text>
+              </v-card>
+            </v-layout>
+          </v-container>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
     <v-dialog v-model="feedback.modal" width="700">
       <v-card color="card" elevation="7">
         <v-toolbar color="toolbar">
@@ -149,6 +200,20 @@
         style="display: none"
         v-shortkey="['ctrl', 'k']"
         @shortkey="$store.commit('setSearch', true)"
+      >
+        Debug
+      </button>
+      <button
+        style="display: none"
+        v-shortkey="['ctrl', 'b']"
+        @shortkey="route.modal = true"
+      >
+        Debug
+      </button>
+      <button
+        style="display: none"
+        v-shortkey="['ctrl', '/']"
+        @shortkey="shortcuts = true"
       >
         Debug
       </button>
@@ -668,6 +733,7 @@ export default {
   name: "Header",
   data() {
     return {
+      shortcuts: false,
       copyTooltip: false,
       route: {
         modal: false,
