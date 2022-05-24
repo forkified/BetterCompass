@@ -10,7 +10,8 @@ const limiter = rateLimit({
   max: 8,
   message: Errors.rateLimit,
   standardHeaders: true,
-  legacyHeaders: false
+  legacyHeaders: false,
+  keyGenerator: (req, res) => req.user.id || req.ip
 })
 router.get("/", auth, async (req, res, next) => {
   try {
@@ -667,7 +668,7 @@ router.delete("/association/:id", auth, async (req, res, next) => {
   }
 })
 
-router.post("/:id/message", limiter, auth, async (req, res, next) => {
+router.post("/:id/message", auth, limiter, async (req, res, next) => {
   try {
     const io = req.app.get("io")
     if (!req.body.message) {

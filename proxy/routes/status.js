@@ -4,16 +4,18 @@ const Errors = require("../lib/errors.js")
 const axios = require("axios")
 const os = require("os")
 const rateLimit = require("express-rate-limit")
+const auth = require("../lib/authorize.js")
 
 const limiter = rateLimit({
   windowMs: 2 * 60 * 1000,
   max: 10,
   message: Errors.rateLimit,
   standardHeaders: true,
-  legacyHeaders: false
+  legacyHeaders: false,
+  keyGenerator: (req, res) => req.user.id || req.ip
 })
 
-router.get("/", limiter, async (req, res, next) => {
+router.get("/", auth, limiter, async (req, res, next) => {
   try {
     let status = []
     axios.defaults.timeout = 1000
