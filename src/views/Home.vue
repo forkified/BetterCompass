@@ -1660,7 +1660,6 @@
                     >
                       mdi-alert-circle-outline
                     </v-icon>
-                    {{ getStatus(item).text }}
                   </template>
                 </v-data-table>
               </v-card>
@@ -3280,7 +3279,7 @@ export default {
                 ? this.$date(item.dueDateTimestamp).format(
                     "hh:mm A, dddd, MMMM Do YYYY"
                   )
-                : "No due date"
+                : "None"
             }
           })
           localStorage.setItem(

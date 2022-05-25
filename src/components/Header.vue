@@ -633,17 +633,32 @@
       >
         <template v-slot:activator="{ on, attrs }">
           <v-btn class="rounded-xl" icon v-bind="attrs" v-on="on">
-            <v-avatar align="center" class="text-center" size="38">
-              <img
-                :src="
-                  $store.state.user.bcUser.avatar
-                    ? '/usercontent/' + $store.state.user.bcUser.avatar
-                    : $store.state.school.fqdn +
-                      '/download/cdn/square/' +
-                      $store.state.user.idPhotoGuidVersioned
-                "
-              />
-            </v-avatar>
+            <v-badge
+              bordered
+              bottom
+              :color="getStatus()"
+              dot
+              offset-x="26"
+              offset-y="19"
+              v-on="on"
+              v-bind="attrs"
+            >
+              <v-list-item-avatar
+                :color="$vuetify.theme.themes.dark.primary"
+                v-on="on"
+                v-bind="attrs"
+              >
+                <v-img
+                  :src="
+                    $store.state.user.bcUser.avatar
+                      ? '/usercontent/' + $store.state.user.bcUser.avatar
+                      : $store.state.school.fqdn +
+                        '/download/cdn/square/' +
+                        $store.state.user.idPhotoGuidVersioned
+                  "
+                />
+              </v-list-item-avatar>
+            </v-badge>
           </v-btn>
         </template>
         <v-list>
@@ -657,30 +672,30 @@
           >
             <v-list-item-title>{{ item.name }}</v-list-item-title>
           </v-list-item>
-          <template v-if="$store.state.user.admin">
-            <v-list-item
-              v-for="(item, index) in menus.admin"
-              :key="item.id"
-              :disabled="item.disabled"
-              :to="item.path"
-              @click="handleClickDropdown(index)"
-            >
-              <v-list-item-title>{{ item.name }}</v-list-item-title>
-            </v-list-item>
-          </template>
-          <template
-            v-if="$store.state.user.moderator || $store.state.user.admin"
-          >
-            <v-list-item
-              v-for="(item, index) in menus.moderator"
-              :key="item.id"
-              :disabled="item.disabled"
-              :to="item.path"
-              @click="handleClickDropdown(index)"
-            >
-              <v-list-item-title>{{ item.name }}</v-list-item-title>
-            </v-list-item>
-          </template>
+          <v-divider></v-divider>
+          <v-list-item @click="setStatus('online')">
+            <v-list-item-title>Online</v-list-item-title>
+          </v-list-item>
+          <v-list-item @click="setStatus('away')">
+            <v-list-item-title>Idle</v-list-item-title>
+          </v-list-item>
+          <v-list-item two-line @click="setStatus('busy')">
+            <v-list-item-content>
+              <v-list-item-title>Do not Disturb</v-list-item-title>
+              <v-list-item-subtitle class="text-wrap"
+                >You will not receive any notifications.</v-list-item-subtitle
+              >
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item two-line @click="setStatus('invisible')">
+            <v-list-item-content>
+              <v-list-item-title>Invisible</v-list-item-title>
+              <v-list-item-subtitle class="text-wrap"
+                >You will appear as offline, and the typing indicator will be
+                disabled.</v-list-item-subtitle
+              >
+            </v-list-item-content>
+          </v-list-item>
         </v-list>
       </v-menu>
     </v-app-bar>
