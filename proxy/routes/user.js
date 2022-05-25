@@ -179,7 +179,7 @@ router.post("/login", async (req, res, next) => {
                   errors: [
                     {
                       name: "invalidUserOrPassword",
-                      message: "Invalid Invalid username or password.",
+                      message: "Invalid username or password.",
                       status: 401
                     }
                   ]
@@ -224,11 +224,31 @@ router.post("/login", async (req, res, next) => {
               }
             })
             .catch(() => {
-              throw Errors.unknown
+              res.status(500)
+              res.json({
+                errors: [
+                  {
+                    name: "customError",
+                    message:
+                      "Something went wrong while communicating with Compass' servers, ensure the school is correct.",
+                    status: 500
+                  }
+                ]
+              })
             })
         })
         .catch(() => {
-          throw Errors.unknown
+          res.status(500)
+          res.json({
+            errors: [
+              {
+                name: "customError",
+                message:
+                  "Something went wrong while communicating with Compass' servers, ensure the school is correct.",
+                status: 500
+              }
+            ]
+          })
         })
     }
   } catch (err) {
@@ -306,9 +326,18 @@ router.get("/", auth, (req, res, next) => {
           ...response.data.data.currentUser
         })
       })
-      .catch((e) => {
-        console.log(e.request)
-        throw Errors.unknown
+      .catch(() => {
+        res.status(500)
+        res.json({
+          errors: [
+            {
+              name: "customError",
+              message:
+                "Something went wrong while communicating with Compass' servers, please try again later.",
+              status: 500
+            }
+          ]
+        })
       })
   } catch (e) {
     console.log(1)

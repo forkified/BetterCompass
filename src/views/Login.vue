@@ -329,10 +329,7 @@ export default {
             totp: this.totp
           })
           .then(async (res) => {
-            if (!res.data.success) {
-              this.$toast.error("Invalid username or password.")
-              this.loading = false
-            } else {
+            if (res.data?.success) {
               this.totpDialog = false
               if (!res.data.bcSessions) {
                 localStorage.setItem("userId", res.data.userId)
@@ -353,6 +350,9 @@ export default {
                 this.$router.push("/")
                 this.loading = false
               }
+            } else {
+              this.$toast.error("Invalid username or password.")
+              this.loading = false
             }
           })
           .catch((e) => {
