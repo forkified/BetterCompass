@@ -1,6 +1,13 @@
 <template>
   <div id="settings">
-    <v-container v-if="$store.state.user?.bcUser">
+    <v-container
+      v-if="$store.state.user?.bcUser"
+      :fluid="
+        $store.state.user?.bcUser?.compact === 'enabled' ||
+        ($store.state.user?.bcUser?.compact === 'lowRes' &&
+          $vuetify.breakpoint.lgAndDown)
+      "
+    >
       <v-card color="card" elevation="7" class="rounded-xl">
         <v-toolbar color="toolbar">
           <v-toolbar-title

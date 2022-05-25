@@ -582,10 +582,31 @@
     <Header></Header>
     <v-main>
       <v-container
+        v-if="
+          $store.state.user?.bcUser?.compact === 'nagPending' &&
+          $vuetify.breakpoint.lgAndDown &&
+          !$vuetify.breakpoint.mobile
+        "
+      >
+        <v-alert dense text color="info" dismissible v-model="compactModeNag">
+          Introducing <strong>Compact Mode</strong>, a better experience for
+          lower resolution devices.
+          <v-btn
+            to="/settings/appearance"
+            text
+            color="primary"
+            outlined
+            class="ml-1"
+          >
+            Settings
+          </v-btn>
+        </v-alert>
+      </v-container>
+      <v-container
         v-if="$store.state.site.latestVersion > $store.state.versioning.version"
         id="update-notify-banner"
       >
-        <v-alert class="mx-4 rounded-xl" type="info" text dismissable>
+        <v-alert class="mx-4 rounded-xl" type="info" text dismissible>
           BetterCompass just got better. Please CTRL+R / ⌘+R to update. (You are
           on version {{ $store.state.versioning.version }}, and the latest
           version is {{ $store.state.site.latestVersion }})
@@ -598,7 +619,7 @@
         <v-alert
           text
           class="mx-4 rounded-xl"
-          dismissable
+          dismissible
           :type="$store.state.site.notificationType"
         >
           {{ $store.state.site.notification }}
@@ -643,6 +664,7 @@ export default {
     editor: require("vue2-ace-editor")
   },
   data: () => ({
+    compactModeNag: true,
     intendedFor: [
       { text: "All base themes", value: "all" },
       { text: "Dark theme", value: "dark" },
@@ -1090,6 +1112,12 @@ export default {
       })
   },
   watch: {
+    compactModeNag(val) {
+      if (!val) {
+        this.$store.state.user.bcUser.compact = "disabled"
+        this.$store.dispatch("saveOnlineSettings")
+      }
+    },
     cssTips(val) {
       localStorage.setItem("cssTipsDismissed", !val)
     },

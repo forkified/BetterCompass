@@ -497,7 +497,8 @@ router.put("/settings/:type", auth, async (req, res, next) => {
           calendars: req.body.calendars,
           bookmarks: req.body.bookmarks,
           font: req.body.font,
-          experiments: req.body.experiments
+          experiments: req.body.experiments,
+          compact: req.body.compact
         },
         {
           where: {

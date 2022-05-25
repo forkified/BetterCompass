@@ -148,7 +148,18 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-app-bar app v-if="$store.state.user.bcUser" color="dark" id="navbar">
+    <v-app-bar
+      app
+      v-if="
+        $store.state.user?.bcUser?.compact === 'nagPending' ||
+        $store.state.user?.bcUser?.compact === 'disabled' ||
+        ($store.state.user?.bcUser?.compact === 'lowRes' &&
+          !$vuetify.breakpoint.lgAndDown) ||
+        ($vuetify.breakpoint.mobile && $store.state.user.bcUser)
+      "
+      color="dark"
+      id="navbar"
+    >
       <v-app-bar-nav-icon
         @click.stop="drawer = !drawer"
         v-if="$vuetify.breakpoint.mobile"
@@ -334,9 +345,354 @@
         </v-list>
       </v-menu>
     </v-app-bar>
+    <v-app-bar
+      app
+      v-if="
+        ($store.state.user?.bcUser?.compact === 'enabled' &&
+          !$vuetify.breakpoint.mobile) ||
+        ($store.state.user?.bcUser?.compact === 'lowRes' &&
+          $vuetify.breakpoint.lgAndDown &&
+          !$vuetify.breakpoint.mobile)
+      "
+      color="dark"
+      id="navbar"
+    >
+      <v-app-bar-nav-icon
+        @click.stop="drawer = !drawer"
+        v-if="$vuetify.breakpoint.mobile"
+      ></v-app-bar-nav-icon>
+      <v-toolbar-title
+        v-if="!$vuetify.breakpoint.mobile"
+        id="bettercompass-title"
+        :style="
+          'color: ' +
+          $vuetify.theme.themes[$vuetify.theme.dark ? 'dark' : 'light'].primary
+        "
+        :class="{ 'troplo-title': !$store.state.user.bcUser.accentColor }"
+        @click="$router.push('/')"
+        style="cursor: pointer"
+        >BetterCompass</v-toolbar-title
+      ><v-app-bar-nav-icon
+        v-if="
+          !$vuetify.breakpoint.mobile && $store.state.site.release !== 'stable'
+        "
+        style="z-index: 1000"
+        disabled
+        >{{ $store.state.site.release }}</v-app-bar-nav-icon
+      >
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-btn v-on="on" icon to="/">
+            <v-icon>mdi-home</v-icon>
+          </v-btn>
+        </template>
+        <span>Home</span>
+      </v-tooltip>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-btn v-on="on" icon to="/user">
+            <v-icon>mdi-account</v-icon>
+          </v-btn>
+        </template>
+        <span>My Profile</span>
+      </v-tooltip>
+      <template
+        v-if="$store.state.user.baseRole !== 'STUDENT' && $store.state.online"
+      >
+        <v-tooltip
+          bottom
+          v-for="user in $store.state.user.children"
+          :key="user.userId"
+        >
+          <template v-slot:activator="{ on }">
+            <v-btn v-on="on" icon :to="'/user/' + user.userId">
+              <v-icon>mdi-account-child</v-icon>
+            </v-btn>
+          </template>
+          <span>{{ user.firstName }}'s Profile</span>
+        </v-tooltip>
+      </template>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-btn v-on="on" icon to="/settings">
+            <v-icon>mdi-cog</v-icon>
+          </v-btn>
+        </template>
+        <span>BetterCompass Settings</span>
+      </v-tooltip>
+      <v-menu open-on-hover offset-y>
+        <template v-slot:activator="{ on: menu, attrs }">
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on: tooltip }">
+              <v-btn v-on="{ ...tooltip, ...menu }" icon v-bind="attrs">
+                <v-icon>mdi-pen</v-icon>
+              </v-btn>
+            </template>
+            <span>Curriculum</span>
+          </v-tooltip>
+        </template>
+        <v-list>
+          <v-list-item
+            link
+            :to="'/user/' + $store.state.user.userId + '/tasks'"
+          >
+            <v-list-item-title>Learning Tasks</v-list-item-title>
+          </v-list-item>
+          <v-list-item link to="/school/resources">
+            <v-list-item-title>School Resources</v-list-item-title>
+          </v-list-item>
+          <v-list-item link to="/school/staff">
+            <v-list-item-title>School Staff</v-list-item-title>
+          </v-list-item>
+          <v-list-item link to="/school/subjects">
+            <v-list-item-title>School Subjects</v-list-item-title>
+          </v-list-item>
+          <v-list-item link to="/school/classes">
+            <v-list-item-title>School Classes</v-list-item-title>
+          </v-list-item>
+          <v-divider></v-divider>
+          <v-list-item
+            v-for="subject in $store.state.subjects"
+            :key="subject.id"
+            :to="'/activity/activity/' + subject.id"
+            link
+          >
+            <v-list-item-title>{{ subject.subjectLongName }}</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-btn v-on="on" icon to="/user/events">
+            <v-icon>mdi-swim</v-icon>
+          </v-btn>
+        </template>
+        <span>Events</span>
+      </v-tooltip>
+      <v-tooltip bottom v-if="$store.state.site.release === 'dev'">
+        <template v-slot:activator="{ on }">
+          <v-btn v-on="on" icon to="/tweaks">
+            <v-icon>mdi-storefront</v-icon>
+          </v-btn>
+        </template>
+        <span>BetterCompass Tweaks</span>
+      </v-tooltip>
+      <v-tooltip
+        bottom
+        v-if="
+          $store.state.site.release === 'dev' ||
+          $store.state.user.bcUser?.privacy?.communications?.enabled ||
+          $store.state.user.bcUser?.experiments.includes('communications')
+        "
+      >
+        <template v-slot:activator="{ on }">
+          <v-btn
+            v-on="on"
+            to="/communications"
+            icon
+            v-if="$store.state.communicationNotifications === 0"
+          >
+            <v-icon>mdi-android-messages</v-icon>
+          </v-btn>
+          <v-btn v-on="on" to="/communications" icon v-else>
+            <v-badge
+              v-if="$store.state.communicationNotifications > 0"
+              color="red"
+              inline
+              left
+              :content="$store.state.communicationNotifications"
+            >
+            </v-badge>
+          </v-btn>
+        </template>
+        <span>BetterCompass Communications</span>
+      </v-tooltip>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-btn v-on="on" icon @click="$store.commit('setSearch', true)">
+            <v-icon>mdi-magnify</v-icon>
+          </v-btn>
+        </template>
+        <span>Search BetterCompass... (CTRL + K)</span>
+      </v-tooltip>
+      <button
+        style="display: none"
+        v-shortkey="['ctrl', 'k']"
+        @shortkey="$store.commit('setSearch', true)"
+      >
+        Debug
+      </button>
+      <button
+        style="display: none"
+        v-shortkey="['ctrl', 'b']"
+        @shortkey="route.modal = true"
+      >
+        Debug
+      </button>
+      <button
+        style="display: none"
+        v-shortkey="['ctrl', '/']"
+        @shortkey="shortcuts = true"
+      >
+        Debug
+      </button>
+      <button
+        style="display: none"
+        v-shortkey="['meta', 'k']"
+        @shortkey="$store.commit('setSearch', true)"
+      >
+        Debug
+      </button>
+      <button
+        style="display: none"
+        v-shortkey="['ctrl', 'alt', 'd']"
+        @shortkey="$store.dispatch('toggleCSS')"
+      >
+        Style Toggle
+      </button>
+      <button
+        style="display: none"
+        v-shortkey="['f9']"
+        @shortkey="$store.dispatch('toggleCSS')"
+      >
+        Style Toggle
+      </button>
+      <button
+        style="display: none"
+        v-shortkey="['ctrl', 'alt', 's']"
+        @shortkey="enableCompassScore"
+      >
+        Enable CompassScore
+      </button>
+      <v-spacer></v-spacer>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-btn v-on="on" icon @click="feedback.modal = true">
+            <v-icon>mdi-bug</v-icon>
+          </v-btn>
+        </template>
+        <span>Provide Feedback</span>
+      </v-tooltip>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-btn v-on="on" icon to="/changelog">
+            <v-icon>mdi-git</v-icon>
+          </v-btn>
+        </template>
+        <span>Changelog</span>
+      </v-tooltip>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-btn v-on="on" icon to="/eap">
+            <v-icon>mdi-flask</v-icon>
+          </v-btn>
+        </template>
+        <span>Early Access</span>
+      </v-tooltip>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-btn v-on="on" icon to="/about">
+            <v-icon>mdi-information</v-icon>
+          </v-btn>
+        </template>
+        <span>About BetterCompass</span>
+      </v-tooltip>
+      <div class="text-end" v-if="$route.name === 'Dashboard'">
+        <v-btn
+          text
+          class="text-end mb-1"
+          @click="$store.commit('setEditMode', 'editing')"
+          v-if="
+            $store.state.editMode !== 'editing' && !$vuetify.breakpoint.mobile
+          "
+        >
+          <v-icon>mdi-pencil</v-icon>&nbsp;Edit
+        </v-btn>
+        <v-btn
+          text
+          class="text-end mb-1"
+          @click="$store.commit('setEditMode', 'save')"
+          v-if="$store.state.editMode === 'editing'"
+        >
+          <v-icon>mdi-check</v-icon>&nbsp;Save
+        </v-btn>
+        <v-btn
+          text
+          class="text-end mb-1"
+          @click="$store.commit('setEditMode', 'discard')"
+          v-if="$store.state.editMode === 'editing'"
+        >
+          <v-icon> mdi-close </v-icon>&nbsp;Discard
+        </v-btn>
+      </div>
+      <v-menu
+        v-if="$store.state.user.username"
+        offset-y
+        rounded
+        class="rounded-xxl"
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn class="rounded-xl" icon v-bind="attrs" v-on="on">
+            <v-avatar align="center" class="text-center" size="38">
+              <img
+                :src="
+                  $store.state.user.bcUser.avatar
+                    ? '/usercontent/' + $store.state.user.bcUser.avatar
+                    : $store.state.school.fqdn +
+                      '/download/cdn/square/' +
+                      $store.state.user.idPhotoGuidVersioned
+                "
+              />
+            </v-avatar>
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item
+            v-for="(item, index) in menus.dropdownAuthenticated"
+            :key="item.id"
+            :disabled="item.disabled"
+            :to="item.path"
+            :style="'color:' + item.color"
+            @click="handleClickDropdown(index)"
+          >
+            <v-list-item-title>{{ item.name }}</v-list-item-title>
+          </v-list-item>
+          <template v-if="$store.state.user.admin">
+            <v-list-item
+              v-for="(item, index) in menus.admin"
+              :key="item.id"
+              :disabled="item.disabled"
+              :to="item.path"
+              @click="handleClickDropdown(index)"
+            >
+              <v-list-item-title>{{ item.name }}</v-list-item-title>
+            </v-list-item>
+          </template>
+          <template
+            v-if="$store.state.user.moderator || $store.state.user.admin"
+          >
+            <v-list-item
+              v-for="(item, index) in menus.moderator"
+              :key="item.id"
+              :disabled="item.disabled"
+              :to="item.path"
+              @click="handleClickDropdown(index)"
+            >
+              <v-list-item-title>{{ item.name }}</v-list-item-title>
+            </v-list-item>
+          </template>
+        </v-list>
+      </v-menu>
+    </v-app-bar>
     <v-navigation-drawer
       v-model="drawer"
-      v-if="$store.state.user.bcUser"
+      v-if="
+        $store.state.user?.bcUser?.compact === 'nagPending' ||
+        $store.state.user?.bcUser?.compact === 'disabled' ||
+        ($store.state.user?.bcUser?.compact === 'lowRes' &&
+          !$vuetify.breakpoint.lgAndDown) ||
+        ($vuetify.breakpoint.mobile && $store.state.user.bcUser)
+      "
       app
       color="dark"
       floating

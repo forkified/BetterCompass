@@ -11,7 +11,14 @@
     <v-overlay :value="loading" absolute>
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
-    <v-container v-if="user">
+    <v-container
+      v-if="user"
+      :fluid="
+        $store.state.user?.bcUser?.compact === 'enabled' ||
+        ($store.state.user?.bcUser?.compact === 'lowRes' &&
+          $vuetify.breakpoint.lgAndDown)
+      "
+    >
       <v-card color="card" elevation="7" class="rounded-xl">
         <v-toolbar color="toolbar">
           <v-toolbar-title>
@@ -40,7 +47,13 @@
           <v-tab to="identity" v-if="!permissionError">Identity</v-tab>
           <v-tab to="score" v-if="compassScore"> Compass Score </v-tab>
         </v-tabs>
-        <v-container>
+        <v-container
+          :fluid="
+            $store.state.user?.bcUser?.compact === 'enabled' ||
+            ($store.state.user?.bcUser?.compact === 'lowRes' &&
+              $vuetify.breakpoint.lgAndDown)
+          "
+        >
           <router-view :user="user" :extendedUser="extendedUser"></router-view>
         </v-container>
       </v-card>

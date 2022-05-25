@@ -50,6 +50,20 @@
       ></v-select>
     </v-col>
     <v-card-text>
+      <v-radio-group
+        v-model="$store.state.user.bcUser.compact"
+        label="Compact Mode"
+        @change="saveSettings"
+      >
+        <v-radio
+          v-for="(mode, index) in compactOptions"
+          :key="index"
+          :label="mode.text"
+          :value="mode.value"
+        ></v-radio>
+      </v-radio-group>
+    </v-card-text>
+    <v-card-text>
       <v-card
         class="my-2"
         @click="setTheme(theme)"
@@ -145,6 +159,11 @@ export default {
   name: "SettingsAppearance",
   data() {
     return {
+      compactOptions: [
+        { text: "Enabled", value: "enabled" },
+        { text: "Enabled only on low resolution devices", value: "lowRes" },
+        { text: "Disabled", value: "disabled" }
+      ],
       defineAccent: false,
       accent: null,
       css: "",

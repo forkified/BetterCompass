@@ -266,6 +266,11 @@ module.exports = (sequelize, DataTypes) => {
       avatar: {
         type: DataTypes.STRING,
         allowNull: true
+      },
+      compact: {
+        type: DataTypes.ENUM(["enabled", "lowRes", "disabled", "nagPending"]),
+        allowNull: false,
+        defaultValue: "nagPending"
       }
     },
     {
