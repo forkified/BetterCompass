@@ -25,6 +25,31 @@ router.get("/", auth, async (req, res, next) => {
           as: "chat",
           include: [
             {
+              model: ChatAssociation,
+              as: "associations",
+              attributes: {
+                exclude: ["lastRead"]
+              },
+              include: [
+                {
+                  model: User,
+                  as: "user",
+                  attributes: [
+                    "sussiId",
+                    "discussionsFirstName",
+                    "discussionsLastName",
+                    "discussionsImage",
+                    "avatar",
+                    "id",
+                    "createdAt",
+                    "updatedAt",
+                    "instance",
+                    "status"
+                  ]
+                }
+              ]
+            },
+            {
               model: Message,
               as: "lastMessages",
               limit: 50,
@@ -69,6 +94,96 @@ router.get("/", auth, async (req, res, next) => {
         }
       })
     )
+  } catch (err) {
+    next(err)
+  }
+})
+
+router.delete(
+  "/association/:id/:associationId",
+  auth,
+  async (req, res, next) => {
+    try {
+      const chat = await ChatAssociation.findOne({
+        where: {
+          id: req.params.id,
+          userId: req.user.id,
+          rank: "admin"
+        },
+        include: [
+          {
+            model: Chat,
+            as: "chat",
+            include: [
+              {
+                model: User,
+                as: "users",
+                attributes: ["id", "sussiId", "createdAt", "updatedAt"]
+              }
+            ]
+          }
+        ]
+      })
+      const association = await ChatAssociation.findOne({
+        where: {
+          id: req.params.associationId,
+          chatId: chat.chat.id
+        }
+      })
+      if (!chat) {
+        throw Errors.chatNotFoundOrNotAdmin
+      }
+      if (!association) {
+        throw Errors.chatNotFoundOrNotAdmin
+      }
+      await association.destroy()
+      res.sendStatus(204)
+    } catch (err) {
+      next(err)
+    }
+  }
+)
+router.put("/association/:id/:associationId", auth, async (req, res, next) => {
+  try {
+    const chat = await ChatAssociation.findOne({
+      where: {
+        id: req.params.id,
+        userId: req.user.id,
+        rank: "admin"
+      },
+      include: [
+        {
+          model: Chat,
+          as: "chat",
+          include: [
+            {
+              model: User,
+              as: "users",
+              attributes: ["id", "sussiId", "createdAt", "updatedAt"]
+            }
+          ]
+        }
+      ]
+    })
+    const association = await ChatAssociation.findOne({
+      where: {
+        id: req.params.associationId,
+        chatId: chat.chat.id
+      }
+    })
+    if (!chat) {
+      throw Errors.chatNotFoundOrNotAdmin
+    }
+    if (!association) {
+      throw Errors.chatNotFoundOrNotAdmin
+    }
+    if (association.rank === "admin") {
+      throw Errors.chatNotFoundOrNotAdmin
+    }
+    await association.update({
+      rank: req.body.rank
+    })
+    res.sendStatus(204)
   } catch (err) {
     next(err)
   }

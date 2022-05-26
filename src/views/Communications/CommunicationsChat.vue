@@ -423,10 +423,12 @@ export default {
     this.$socket.on("editMessage", (message) => {
       if (message.chatId === this.chat.chatId) {
         const index = this.messages.findIndex((item) => item.id === message.id)
-        this.messages[index].content = message.content
-        this.messages[index].edited = message.edited
-        this.messages[index].editedAt = message.editedAt
-        this.messages[index].keyId = message.id + "-" + message.editedAt
+        if (index !== -1) {
+          this.messages[index].content = message.content
+          this.messages[index].edited = message.edited
+          this.messages[index].editedAt = message.editedAt
+          this.messages[index].keyId = message.id + "-" + message.editedAt
+        }
       }
     })
     this.$socket.on("typing", (event) => {
@@ -464,6 +466,7 @@ export default {
       this.$refs["message-input"].$refs.input.focus()
       this.message = ""
       this.messages = []
+      this.usersTyping = []
       this.getMessages()
       this.markRead()
     }

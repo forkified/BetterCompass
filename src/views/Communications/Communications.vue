@@ -110,15 +110,38 @@
           </v-card-title>
           <v-list>
             <v-list-item
-              v-for="user in settings.item.chat.users"
+              v-for="user in settings.item.chat.associations"
               :key="user.id"
             >
-              <v-list-item-avatar> </v-list-item-avatar>
+              <v-list-item-avatar :color="$vuetify.theme.themes.dark.primary">
+                <v-img
+                  :src="'/usercontent/' + user.user.avatar"
+                  v-if="user.user.avatar"
+                />
+                <v-icon v-else> mdi-account </v-icon>
+              </v-list-item-avatar>
               <v-list-item-content>
-                <v-list-item-title>{{ user.sussiId }}</v-list-item-title>
+                <v-list-item-title
+                  >{{ user.user.sussiId }}
+                  <v-btn text icon v-if="user.rank === 'admin'">
+                    <v-icon> mdi-gavel </v-icon>
+                  </v-btn>
+                </v-list-item-title>
               </v-list-item-content>
               <v-list-item-action v-if="settings.item.rank === 'admin'">
-                <v-btn icon @click.native="$toast.info('TODO')">
+                <v-tooltip top>
+                  <template v-slot:activator="{ on, attrs }">
+                    <div v-on="on" v-bind="attrs">
+                      <v-btn icon @click="giveUserAdmin(user)">
+                        <v-icon>mdi-account-arrow-up</v-icon>
+                      </v-btn>
+                    </div>
+                  </template>
+                  <span>Promote user to group admin (CANNOT BE UNDONE!)</span>
+                </v-tooltip>
+              </v-list-item-action>
+              <v-list-item-action v-if="settings.item.rank === 'admin'">
+                <v-btn icon @click="removeUserFromGroup(user)">
                   <v-icon>mdi-close</v-icon>
                 </v-btn>
               </v-list-item-action>
@@ -475,6 +498,39 @@ export default {
     }
   },
   methods: {
+    removeUserFromGroup(user) {
+      this.axios
+        .delete(
+          "/api/v1/communications/association/" +
+            this.settings.item.id +
+            "/" +
+            user.id
+        )
+        .then(() => {
+          this.$toast.success("User has been removed from the group.")
+        })
+        .catch((e) => {
+          AjaxErrorHandler(this.$store)(e)
+        })
+    },
+    giveUserAdmin(user) {
+      this.axios
+        .put(
+          "/api/v1/communications/association/" +
+            this.settings.item.id +
+            "/" +
+            user.id,
+          {
+            rank: "admin"
+          }
+        )
+        .then(() => {
+          this.$toast.success("User has been promoted to admin.")
+        })
+        .catch((e) => {
+          AjaxErrorHandler(this.$store)(e)
+        })
+    },
     saveGroupSettings() {
       if (this.settings.item.chat.name.length < 1) {
         this.$toast.error("Group name must be at least 1 character long.")
