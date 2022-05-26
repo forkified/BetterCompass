@@ -725,18 +725,54 @@ router.post("/:id/message", auth, limiter, async (req, res, next) => {
       ]
     })
     if (chat) {
+      let reply = {
+        id: null
+      }
+      if (req.body.replyId) {
+        reply = await Message.findOne({
+          where: {
+            id: req.body.replyId,
+            chatId: chat.chat.id
+          }
+        })
+        if (!reply) {
+          throw Errors.invalidParameter("reply id")
+        }
+      }
       const message = await Message.create({
         content: req.body.message,
         userId: req.user.id,
         chatId: chat.chat.id,
         attachments: [],
-        embeds: []
+        embeds: [],
+        replyId: reply.id
       })
       const messageLookup = await Message.findOne({
         where: {
           id: message.id
         },
         include: [
+          {
+            model: Message,
+            as: "reply",
+            include: [
+              {
+                model: User,
+                as: "user",
+                attributes: [
+                  "sussiId",
+                  "discussionsFirstName",
+                  "discussionsLastName",
+                  "discussionsImage",
+                  "avatar",
+                  "id",
+                  "createdAt",
+                  "updatedAt",
+                  "instance"
+                ]
+              }
+            ]
+          },
           {
             model: Chat,
             as: "chat",
@@ -803,10 +839,14 @@ router.post("/:id/message", auth, limiter, async (req, res, next) => {
       associations.forEach((association) => {
         io.to(association.userId).emit("message", {
           ...messageLookup.dataValues,
-          associationId: association.id
+          associationId: association.id,
+          keyId: `${message.id}-${message.updatedAt.toISOString()}`
         })
       })
-      res.json(messageLookup)
+      res.json({
+        ...messageLookup.dataValues,
+        keyId: `${message.id}-${message.updatedAt.toISOString()}`
+      })
     } else {
       throw Errors.invalidParameter("chat association id")
     }
@@ -870,6 +910,27 @@ router.get("/:id/messages", auth, async (req, res, next) => {
               "createdAt",
               "updatedAt",
               "instance"
+            ]
+          },
+          {
+            model: Message,
+            as: "reply",
+            include: [
+              {
+                model: User,
+                as: "user",
+                attributes: [
+                  "sussiId",
+                  "discussionsFirstName",
+                  "discussionsLastName",
+                  "discussionsImage",
+                  "avatar",
+                  "id",
+                  "createdAt",
+                  "updatedAt",
+                  "instance"
+                ]
+              }
             ]
           }
         ],

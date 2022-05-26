@@ -19,128 +19,184 @@
             </v-card-title>
             <v-card-text class="flex-grow-1 overflow-y-auto">
               <v-list two-line color="card">
-                <v-list-item
-                  v-for="(message, index) in messages"
-                  :key="message.keyId"
-                  :class="{
-                    'text-xs-right':
-                      message.userId === $store.state.user.bcUser.id,
-                    'text-xs-left':
-                      message.userId !== $store.state.user.bcUser.id
-                  }"
-                  :id="'message-' + index"
-                >
-                  <v-avatar size="48" class="mr-2">
-                    <v-img
-                      :src="'/usercontent/' + message.user.avatar"
-                      v-if="message.user.avatar"
-                      class="elevation-1"
-                    />
-                    <v-icon v-else class="elevation-1"> mdi-account </v-icon>
-                  </v-avatar>
-                  <v-list-item-content>
-                    <v-list-item-subtitle>
-                      {{ message.user.sussiId }}
-                      <v-tooltip top v-if="message.edited">
-                        <template v-slot:activator="{ on, attrs }">
-                          <span v-on="on" v-bind="attrs">
-                            <v-icon
-                              color="grey"
-                              small
-                              style="
-                                margin-bottom: 2px;
-                                margin-left: 4px;
-                                position: absolute;
-                              "
-                            >
-                              mdi-pencil
-                            </v-icon>
+                <template v-for="(message, index) in messages">
+                  <v-toolbar
+                    @click="jumpToMessage(message.replyId)"
+                    :key="message.keyId + '-reply-toolbar'"
+                    elevation="0"
+                    outlined
+                    height="40"
+                    color="card"
+                    v-if="message.reply"
+                    style="cursor: pointer"
+                  >
+                    <v-icon class="mr-2">mdi-reply</v-icon>
+                    <v-avatar size="24" class="mr-2">
+                      <v-img
+                        :src="'/usercontent/' + message.reply.user.avatar"
+                        v-if="message.reply.user.avatar"
+                        class="elevation-1"
+                      />
+                      <v-icon v-else class="elevation-1"> mdi-account </v-icon>
+                    </v-avatar>
+                    {{ message.reply.content.substring(0, 100) }}
+                  </v-toolbar>
+                  <v-list-item
+                    :key="message.keyId"
+                    :class="{
+                      'text-xs-right':
+                        message.userId === $store.state.user.bcUser.id,
+                      'text-xs-left':
+                        message.userId !== $store.state.user.bcUser.id
+                    }"
+                    :id="'message-' + index"
+                  >
+                    <v-avatar size="48" class="mr-2">
+                      <v-img
+                        :src="'/usercontent/' + message.user.avatar"
+                        v-if="message.user.avatar"
+                        class="elevation-1"
+                      />
+                      <v-icon v-else class="elevation-1"> mdi-account </v-icon>
+                    </v-avatar>
+                    <v-list-item-content>
+                      <v-list-item-subtitle>
+                        {{ message.user.sussiId }}
+                        <v-tooltip top v-if="message.edited">
+                          <template v-slot:activator="{ on, attrs }">
+                            <span v-on="on" v-bind="attrs">
+                              <v-icon
+                                color="grey"
+                                small
+                                style="
+                                  margin-bottom: 2px;
+                                  margin-left: 4px;
+                                  position: absolute;
+                                "
+                              >
+                                mdi-pencil
+                              </v-icon>
+                            </span>
+                          </template>
+                          <span>
+                            {{
+                              $date(message.editedAt).format(
+                                "DD/MM/YYYY hh:mm:ss A"
+                              )
+                            }}
                           </span>
-                        </template>
-                        <span>
-                          {{
-                            $date(message.editedAt).format(
-                              "DD/MM/YYYY hh:mm:ss A"
-                            )
-                          }}
-                        </span>
-                      </v-tooltip>
-                    </v-list-item-subtitle>
-                    <p
-                      v-if="edit.id !== message.id"
-                      v-markdown
-                      style="white-space: pre-line; overflow-wrap: anywhere"
-                    >
-                      {{ message.content }}
-                    </p>
-                    <v-text-field
-                      v-model="edit.content"
-                      v-if="edit.editing && edit.id === message.id"
-                      autofocus
-                      :value="message.content"
-                      label="Type a message"
-                      placeholder="Type a message"
-                      type="text"
-                      ref="edit-input"
-                      outlined
-                      append-outer-icon="mdi-send"
-                      @keyup.enter="editMessage(message)"
-                      @keydown.esc="
-                        edit.content = ''
-                        edit.editing = false
-                        edit.id = null
-                        focusInput()
-                      "
-                      @click:append-outer="editMessage(message)"
-                    />
-                  </v-list-item-content>
-                  <v-list-item-action>
-                    <v-list-item-subtitle>
-                      {{
-                        $date(message.createdAt).format("DD/MM/YYYY hh:mm A")
-                      }}
-                    </v-list-item-subtitle>
-                    <v-list-item-subtitle>
-                      <v-btn
-                        icon
-                        v-if="message.userId === $store.state.user.bcUser.id"
+                        </v-tooltip>
+                      </v-list-item-subtitle>
+                      <p
+                        v-if="edit.id !== message.id"
+                        v-markdown
+                        style="overflow-wrap: anywhere"
                       >
-                        <v-icon> mdi-delete </v-icon>
-                      </v-btn>
-                      <v-btn
-                        icon
-                        @click="
-                          edit.content = message.content
-                          edit.editing = true
-                          edit.id = message.id
-                        "
-                        v-if="
-                          message.userId === $store.state.user.bcUser.id &&
-                          edit.id !== message.id
-                        "
-                      >
-                        <v-icon> mdi-pencil </v-icon>
-                      </v-btn>
-                      <v-btn
-                        icon
-                        @click="
+                        {{ message.content }}
+                      </p>
+                      <v-text-field
+                        v-model="edit.content"
+                        v-if="edit.editing && edit.id === message.id"
+                        autofocus
+                        :value="message.content"
+                        label="Type a message"
+                        placeholder="Type a message"
+                        type="text"
+                        ref="edit-input"
+                        outlined
+                        append-outer-icon="mdi-send"
+                        @keyup.enter="editMessage(message)"
+                        @keydown.esc="
                           edit.content = ''
                           edit.editing = false
                           edit.id = null
+                          focusInput()
                         "
-                        v-if="
-                          message.userId === $store.state.user.bcUser.id &&
-                          edit.id === message.id
-                        "
-                      >
-                        <v-icon> mdi-close </v-icon>
-                      </v-btn>
-                    </v-list-item-subtitle>
-                  </v-list-item-action>
-                </v-list-item>
+                        @click:append-outer="editMessage(message)"
+                      />
+                    </v-list-item-content>
+                    <v-list-item-action>
+                      <v-list-item-subtitle>
+                        {{
+                          $date(message.createdAt).format("DD/MM/YYYY hh:mm A")
+                        }}
+                      </v-list-item-subtitle>
+                      <v-list-item-subtitle>
+                        <v-btn
+                          icon
+                          v-if="message.userId === $store.state.user.bcUser.id"
+                        >
+                          <v-icon> mdi-delete </v-icon>
+                        </v-btn>
+                        <v-btn
+                          icon
+                          @click="
+                            edit.content = message.content
+                            edit.editing = true
+                            edit.id = message.id
+                          "
+                          v-if="
+                            message.userId === $store.state.user.bcUser.id &&
+                            edit.id !== message.id
+                          "
+                        >
+                          <v-icon> mdi-pencil </v-icon>
+                        </v-btn>
+                        <v-btn
+                          icon
+                          @click="
+                            edit.content = ''
+                            edit.editing = false
+                            edit.id = null
+                          "
+                          v-if="
+                            message.userId === $store.state.user.bcUser.id &&
+                            edit.id === message.id
+                          "
+                        >
+                          <v-icon> mdi-close </v-icon>
+                        </v-btn>
+                        <v-btn
+                          icon
+                          @click="
+                            replying = message
+                            focusInput()
+                          "
+                        >
+                          <v-icon> mdi-reply </v-icon>
+                        </v-btn>
+                      </v-list-item-subtitle>
+                    </v-list-item-action>
+                  </v-list-item>
+                </template>
               </v-list>
             </v-card-text>
             <v-card-text>
+              <v-toolbar
+                @click="jumpToMessage(replying?.id)"
+                elevation="0"
+                outlined
+                height="40"
+                color="card"
+                v-if="replying"
+                style="cursor: pointer"
+                class="mb-2"
+              >
+                <v-icon class="mr-2">mdi-reply</v-icon>
+                <v-avatar size="24" class="mr-2">
+                  <v-img
+                    :src="'/usercontent/' + replying.user.avatar"
+                    v-if="replying.user.avatar"
+                    class="elevation-1"
+                  />
+                  <v-icon v-else class="elevation-1"> mdi-account </v-icon>
+                </v-avatar>
+                {{ replying.content.substring(0, 100) }}
+                <v-spacer></v-spacer>
+                <v-btn icon @click="replying = null" class="mr-2">
+                  <v-icon> mdi-close </v-icon>
+                </v-btn>
+              </v-toolbar>
               <v-text-field
                 v-model="message"
                 autofocus
@@ -153,6 +209,7 @@
                 auto-grow
                 @keyup.enter="sendMessage"
                 @keyup.up="editLastMessage"
+                @keyup.esc="handleEsc"
                 @click:append-outer="sendMessage"
               />
               <p
@@ -176,6 +233,7 @@ export default {
   name: "CommunicationsChat",
   props: ["chat", "loading", "items"],
   data: () => ({
+    replying: null,
     emojiPicker: false,
     messages: [],
     typingDate: null,
@@ -200,6 +258,31 @@ export default {
     }
   },
   methods: {
+    jumpToMessage(id) {
+      try {
+        console.log("Jumping to message", id)
+        const index = this.messages.findIndex((message) => message.id === id)
+        const lastMessage = document.querySelector(`#message-${index}`)
+        if (lastMessage) {
+          lastMessage.scrollIntoView({
+            behavior: "smooth"
+          })
+          // indicate message by changing background color to a blue
+          lastMessage.style.backgroundColor = "rgba(8,192,238,0.1)"
+          // set opacity of background color to 0.5
+          setTimeout(() => {
+            lastMessage.style.backgroundColor = ""
+          }, 1500)
+        }
+      } catch {
+        console.log("Could not auto scroll")
+      }
+    },
+    handleEsc() {
+      if (this.replying) {
+        this.replying = null
+      }
+    },
     viewport() {
       return window.innerHeight - 112
     },
@@ -300,13 +383,15 @@ export default {
           .post(
             "/api/v1/communications/" + this.$route.params.id + "/message",
             {
-              message: this.message
+              message: this.message,
+              replyId: this.replying?.id
             }
           )
           .then((res) => {
             this.messages.push(res.data)
             this.message = ""
             this.autoScroll()
+            this.replying = null
             const chat = this.items.find(
               (item) => item.chatId === this.chat.chatId
             )

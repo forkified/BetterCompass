@@ -15,6 +15,9 @@ module.exports = (sequelize, DataTypes) => {
       Message.belongsTo(models.Chat, {
         as: "chat"
       })
+      Message.belongsTo(models.Message, {
+        as: "reply"
+      })
     }
   }
   Message.init(
@@ -68,6 +71,10 @@ module.exports = (sequelize, DataTypes) => {
       updatedAt: {
         allowNull: false,
         type: DataTypes.DATE
+      },
+      replyId: {
+        type: DataTypes.BIGINT,
+        allowNull: true
       }
     },
     {
