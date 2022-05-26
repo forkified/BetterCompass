@@ -216,7 +216,7 @@
                 school.
               </p>
               <v-text-field
-                @keyup.enter="addFriend"
+                @keyup.enter="addFriend(null)"
                 label="Friend username"
                 :placeholder="'BTR0001:' + $store.state.school.instance"
                 v-model="friend"
@@ -225,7 +225,7 @@
             </v-container>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="primary" text @click="addFriend">
+              <v-btn color="primary" text @click="addFriend(null)">
                 Send Request
               </v-btn>
             </v-card-actions>
