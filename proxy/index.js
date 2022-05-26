@@ -16,6 +16,7 @@ const semver = require("semver")
 const path = require("path")
 const socket = require("./lib/socket")
 const server = require("http").createServer(app)
+const Errors = require("./lib/errors")
 
 const compassRouter = function (req) {
   const instance =
@@ -78,7 +79,7 @@ app.post(
           res.json(resp.data)
         })
         .catch((e) => {
-          res.status(500).json(e.response.data)
+          res.status(500).json(e?.response?.data || Errors.unknown)
         })
     } catch (e) {
       next(e)
@@ -103,7 +104,7 @@ app.post(
           res.json(resp.data)
         })
         .catch((e) => {
-          res.status(500).json(e.response.data)
+          res.status(500).json(e?.response?.data || Errors.unknown)
         })
     } catch (e) {
       next(e)
@@ -128,7 +129,7 @@ app.post(
           res.json(resp.data)
         })
         .catch((e) => {
-          res.status(500).json(e.response?.data)
+          res.status(500).json(e?.response?.data || Errors.unknown)
         })
     } catch (e) {
       next(e)

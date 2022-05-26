@@ -67,7 +67,7 @@
             >here</a
           >, and the license of this piece of software can be found
           <a
-            href="https://github.com/Troplo/BetterCompass/LICENSE"
+            href="https://github.com/Troplo/BetterCompass/blob/main/LICENSE"
             target="_blank"
             >here</a
           >.
