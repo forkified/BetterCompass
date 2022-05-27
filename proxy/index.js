@@ -147,11 +147,13 @@ app.use(
     router: compassRouter,
     changeOrigin: true,
     cookieDomainRewrite: process.env.HOSTNAME,
-    onProxyReq: (proxyReq) => {
+    onProxyReq: (proxyReq, req) => {
       proxyReq.removeHeader("compassUserId")
       proxyReq.removeHeader("compassSchoolId")
       proxyReq.removeHeader("compassInstance")
       proxyReq.removeHeader("Authorization")
+      proxyReq.setHeader("origin", compassRouter(req))
+      proxyReq.setHeader("referer", compassRouter(req))
     }
   })
 )
