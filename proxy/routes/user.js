@@ -401,6 +401,7 @@ router.get("/versions", async (req, res, next) => {
   }
 })
 
+/*
 router.post("/getToken", async (req, res, next) => {
   try {
     res.json({
@@ -410,7 +411,7 @@ router.post("/getToken", async (req, res, next) => {
   } catch (e) {
     next(e)
   }
-})
+})*/
 
 router.delete("/sessions/:id", auth, async (req, res, next) => {
   try {
