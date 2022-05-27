@@ -1202,7 +1202,11 @@
                           class="mr-3"
                         >
                           <img
-                            :src="$store.state.school.fqdn + item.UserImageUrl"
+                            :src="
+                              item.UserImageUrl +
+                              '?compassInstance=' +
+                              $store.state.school.instance
+                            "
                           />
                         </v-avatar>
                         <v-toolbar-title
@@ -1308,7 +1312,11 @@
                           class="mr-3"
                         >
                           <img
-                            :src="$store.state.school.fqdn + item.UserImageUrl"
+                            :src="
+                              item.UserImageUrl +
+                              '?compassInstance=' +
+                              $store.state.school.instance
+                            "
                           />
                         </v-avatar>
                         <v-toolbar-title

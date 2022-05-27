@@ -298,9 +298,10 @@
                 :src="
                   $store.state.user.bcUser.avatar
                     ? '/usercontent/' + $store.state.user.bcUser.avatar
-                    : $store.state.school.fqdn +
-                      '/download/cdn/square/' +
-                      $store.state.user.idPhotoGuidVersioned
+                    : '/download/cdn/square/' +
+                      $store.state.user.idPhotoGuidVersioned +
+                      '?compassInstance=' +
+                      $store.state.school.instance
                 "
               />
             </v-avatar>
@@ -652,9 +653,10 @@
                   :src="
                     $store.state.user.bcUser.avatar
                       ? '/usercontent/' + $store.state.user.bcUser.avatar
-                      : $store.state.school.fqdn +
-                        '/download/cdn/square/' +
-                        $store.state.user.idPhotoGuidVersioned
+                      : '/download/cdn/square/' +
+                        $store.state.user.idPhotoGuidVersioned +
+                        '?compassInstance=' +
+                        $store.state.school.instance
                   "
                 />
               </v-list-item-avatar>

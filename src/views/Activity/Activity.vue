@@ -231,8 +231,7 @@ export default {
               })
               .then((res) => {
                 this.headerImage =
-                  this.$store.state.school.fqdn +
-                  res.data.d.replace("assetPath", "Assets12.1.155.1")
+                  "/" + res.data.d.replace("assetPath", "Assets")
               })
           }
         })
