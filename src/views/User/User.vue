@@ -34,7 +34,9 @@
         <v-tabs background-color="transparent">
           <v-tab to="dashboard"> Dashboard </v-tab>
           <v-tab to="tasks" v-if="!permissionError"> Learning Tasks </v-tab>
-          <v-tab to="attendance"> Attendance </v-tab>
+          <v-tab to="attendance" v-if="!permissionError || debug">
+            Attendance
+          </v-tab>
           <v-tab to="reports" v-if="!permissionError || debug"> Reports </v-tab>
           <v-tab to="analytics" v-if="!permissionError"> Analytics </v-tab>
           <v-tab
@@ -217,6 +219,9 @@ export default {
           } else {
             this.loading = false
             this.user = res.data.d
+            if (this.user.userId !== this.$store.state.user.id) {
+              this.permissionError = true
+            }
           }
         })
     }
