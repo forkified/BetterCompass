@@ -145,7 +145,7 @@ router.post("/login", async (req, res, next) => {
             password: req.body.password
           },
           {
-            timeout: 5000,
+            timeout: 20000,
             headers: {
               compassInstance:
                 req.header("compassInstance") ||
@@ -165,7 +165,7 @@ router.post("/login", async (req, res, next) => {
                 sussiId: req.body.username
               },
               {
-                timeout: 5000,
+                timeout: 20000,
                 headers: {
                   compassInstance:
                     req.header("compassInstance") ||
