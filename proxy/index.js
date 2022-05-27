@@ -41,7 +41,6 @@ app.use(function (req, res, next) {
     })
       .then((session) => {
         if (session) {
-          req.headers.test = "test"
           req.headers.cookie = `ASP.NET_SessionId=${session.compassSession}`
         }
         next()
@@ -147,7 +146,13 @@ app.use(
     target: "devices.compass.education",
     router: compassRouter,
     changeOrigin: true,
-    cookieDomainRewrite: process.env.HOSTNAME
+    cookieDomainRewrite: process.env.HOSTNAME,
+    onProxyReq: (proxyReq) => {
+      proxyReq.removeHeader("compassUserId")
+      proxyReq.removeHeader("compassSchoolId")
+      proxyReq.removeHeader("compassInstance")
+      proxyReq.removeHeader("Authorization")
+    }
   })
 )
 
