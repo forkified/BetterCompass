@@ -223,7 +223,8 @@ router.post("/login", async (req, res, next) => {
                 })
               }
             })
-            .catch(() => {
+            .catch((e) => {
+              console.log(e?.response?.data || e)
               res.status(500)
               res.json({
                 errors: [
@@ -237,7 +238,8 @@ router.post("/login", async (req, res, next) => {
               })
             })
         })
-        .catch(() => {
+        .catch((e) => {
+          console.log(e?.response?.data || e)
           res.status(500)
           res.json({
             errors: [
@@ -394,6 +396,17 @@ router.get("/versions", async (req, res, next) => {
         }
       })
     res.json(versions)
+  } catch (e) {
+    next(e)
+  }
+})
+
+router.post("/getToken", async (req, res, next) => {
+  try {
+    res.json({
+      token: req.cookies["ASP.NET_SessionId"],
+      bcToken: req.cookies["bcSession"]
+    })
   } catch (e) {
     next(e)
   }

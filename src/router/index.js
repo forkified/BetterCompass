@@ -341,6 +341,12 @@ const routes = [
       import(/* webpackChunkName: "changelog" */ "../views/Changelog.vue")
   },
   {
+    path: "/debug",
+    name: "Debug",
+    component: () =>
+      import(/* webpackChunkName: "debug" */ "../views/Debug.vue")
+  },
+  {
     path: "/eap",
     name: "Early Access",
     component: () =>
