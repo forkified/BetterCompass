@@ -479,24 +479,33 @@ export default {
       if (user?.n) {
         return this.chronicle.users.find((staff) => staff.id === id)
       } else {
-        this.axios
-          .post("/Services/User.svc/GetUserDetailsBlobByUserId", {
-            userId: this.$store.state.user.userId,
-            targetUserId: id
-          })
-          .then((response) => {
-            this.chronicle.users.push({
-              id: response.data.d.userId,
-              n: response.data.d.userFullName,
-              pv:
-                response.data.d.userSquarePhotoPath.replace(
-                  "/download/cdn/square/",
-                  ""
-                ) || "nopic",
-              status: response.data.d.userStatus
+        if (id) {
+          this.axios
+            .post("/Services/User.svc/GetUserDetailsBlobByUserId", {
+              userId: this.$store.state.user.userId,
+              targetUserId: id
             })
-            return this.chronicle.users.find((staff) => staff.id === id)
+            .then((response) => {
+              this.chronicle.users.push({
+                id: response.data.d.userId,
+                n: response.data.d.userFullName,
+                pv:
+                  response.data.d.userSquarePhotoPath.replace(
+                    "/download/cdn/square/",
+                    ""
+                  ) || "nopic",
+                status: response.data.d.userStatus
+              })
+              return this.chronicle.users.find((staff) => staff.id === id)
+            })
+        } else {
+          this.chronicle.users.push({
+            id: null,
+            n: "Deleted User",
+            pv: "nopic",
+            status: "5"
           })
+        }
       }
     },
     getAllStaff() {
