@@ -783,6 +783,56 @@ router.delete("/association/:id", auth, async (req, res, next) => {
   }
 })
 
+router.delete("/:id/message/:mId", auth, async (req, res, next) => {
+  try {
+    const io = req.app.get("io")
+    const chat = await ChatAssociation.findOne({
+      where: {
+        userId: req.user.id,
+        id: req.params.id
+      },
+      include: [
+        {
+          model: Chat,
+          as: "chat",
+          include: [
+            {
+              model: User,
+              as: "users",
+              attributes: ["id"]
+            }
+          ]
+        }
+      ]
+    })
+    if (chat) {
+      const message = await Message.findOne({
+        where: {
+          id: req.params.mId,
+          chatId: chat.chat.id,
+          userId: req.user.id
+        }
+      })
+      if (message) {
+        await message.destroy()
+        chat.chat.users.forEach((user) => {
+          io.to(user.id).emit("deleteMessage", {
+            chatId: chat.chat.id,
+            id: message.id
+          })
+        })
+        res.sendStatus(204)
+      } else {
+        throw Errors.invalidParameter("message id")
+      }
+    } else {
+      throw Errors.invalidParameter("chat association id")
+    }
+  } catch (err) {
+    next(err)
+  }
+})
+
 router.post("/:id/message", auth, limiter, async (req, res, next) => {
   try {
     const io = req.app.get("io")

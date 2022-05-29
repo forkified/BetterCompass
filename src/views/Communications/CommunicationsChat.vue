@@ -125,6 +125,7 @@
                         <v-btn
                           icon
                           v-if="message.userId === $store.state.user.bcUser.id"
+                          @click="deleteMessage(message)"
                         >
                           <v-icon> mdi-delete </v-icon>
                         </v-btn>
@@ -258,6 +259,26 @@ export default {
     }
   },
   methods: {
+    deleteMessage(message) {
+      this.axios
+        .delete(
+          "/api/v1/communications/" +
+            this.$route.params.id +
+            "/message/" +
+            message.id
+        )
+        .then(() => {
+          const index = this.messages.findIndex(
+            (item) => item.id === message.id
+          )
+          if (index !== -1) {
+            this.messages.splice(index, 1)
+          }
+        })
+        .catch((e) => {
+          AjaxErrorHandler(this.$store)(e)
+        })
+    },
     jumpToMessage(id) {
       try {
         console.log("Jumping to message", id)
@@ -440,6 +461,14 @@ export default {
           this.usersTyping.splice(index, 1)
         }
         this.usersTyping.push(event)
+      }
+    })
+    this.$socket.on("deleteMessage", (message) => {
+      if (message.chatId === this.chat.chatId) {
+        const index = this.messages.findIndex((item) => item.id === message.id)
+        if (index !== -1) {
+          this.messages.splice(index, 1)
+        }
       }
     })
   },

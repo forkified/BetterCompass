@@ -212,7 +212,7 @@
                   <img
                     :src="
                       '/download/cdn/square/' +
-                      getStaff(item.chronicleEntries[0].userIdCreator).pv +
+                      getStaff(item.chronicleEntries[0].userIdCreator)?.pv +
                       '?compassInstance=' +
                       $store.state.school.instance
                     "
@@ -311,7 +311,7 @@
                   <img
                     :src="
                       '/download/cdn/square/' +
-                      getStaff(item.chronicleEntries[0].userIdCreator).pv +
+                      getStaff(item.chronicleEntries[0].userIdCreator)?.pv +
                       '?compassInstance=' +
                       $store.state.school.instance
                     "

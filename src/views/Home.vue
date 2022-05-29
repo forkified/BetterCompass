@@ -2287,9 +2287,13 @@ export default {
       }
     },
     hasThanatophobia() {
-      return this.grids.some((grid) =>
-        grid.items.some((item) => item.name === "home.thanatophobia")
-      )
+      if (this.grids?.length) {
+        return this.grids.some((grid) =>
+          grid.items.some((item) => item.name === "home.thanatophobia")
+        )
+      } else {
+        return false
+      }
     },
     cleanLessonPlan() {
       return this.$sanitize(this.selectedTask.description)
