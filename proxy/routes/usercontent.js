@@ -3,6 +3,7 @@ const router = express.Router()
 const Errors = require("../lib/errors.js")
 const { Attachment } = require("../models")
 const path = require("path")
+
 router.get("/:attachment", async (req, res, next) => {
   try {
     const attachment = await Attachment.findOne({

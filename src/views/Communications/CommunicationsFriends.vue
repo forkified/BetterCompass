@@ -19,7 +19,11 @@
             </v-toolbar>
             <v-card color="card">
               <v-list color="card">
-                <v-list-item v-for="user in users" :key="user.id">
+                <v-list-item
+                  v-for="user in users"
+                  :key="user.id"
+                  @click="userProfile(user)"
+                >
                   <v-list-item-avatar>
                     <v-list-item-avatar
                       :color="$vuetify.theme.themes.dark.primary"
@@ -89,6 +93,7 @@
                 <v-list-item
                   v-for="friend in computePendingIncoming"
                   :key="friend.id"
+                  @click="userProfile(friend.user2)"
                 >
                   <v-list-item-avatar>
                     <v-list-item-avatar
@@ -104,7 +109,7 @@
 
                   <v-list-item-content>
                     <v-list-item-title>
-                      {{ friend.user2.sussiId }}
+                      {{ friend.user2.sussiId }}:{{ friend.user2.instance }}
                     </v-list-item-title>
                   </v-list-item-content>
                   <v-list-item-action>
@@ -132,6 +137,7 @@
                 <v-list-item
                   v-for="friend in computePendingOutgoing"
                   :key="friend.id"
+                  @click="userProfile(friend.user2)"
                 >
                   <v-list-item-avatar>
                     <v-list-item-avatar
@@ -147,7 +153,7 @@
 
                   <v-list-item-content>
                     <v-list-item-title>
-                      {{ friend.user2.sussiId }}
+                      {{ friend.user2.sussiId }}:{{ friend.user2.instance }}
                     </v-list-item-title>
                   </v-list-item-content>
                   <v-list-item-action>
@@ -165,7 +171,11 @@
             </v-toolbar>
             <v-card color="card">
               <v-list color="card">
-                <v-list-item v-for="friend in computeAccepted" :key="friend.id">
+                <v-list-item
+                  v-for="friend in computeAccepted"
+                  :key="friend.id"
+                  @click="userProfile(friend.user2)"
+                >
                   <v-list-item-avatar>
                     <v-list-item-avatar
                       :color="$vuetify.theme.themes.dark.primary"
@@ -180,7 +190,7 @@
 
                   <v-list-item-content>
                     <v-list-item-title>
-                      {{ friend.user2.sussiId }}
+                      {{ friend.user2.sussiId }}:{{ friend.user2.instance }}
                     </v-list-item-title>
                   </v-list-item-content>
                   <v-list-item-action>
@@ -263,6 +273,15 @@ export default {
     }
   },
   methods: {
+    userProfile(user) {
+      if (user.instance === this.$store.state.school.instance) {
+        this.$router.push("/user/" + user.compassUserId)
+      } else {
+        this.$toast.error(
+          "You cannot view this user profile because they aren't in your school."
+        )
+      }
+    },
     viewport() {
       return window.innerHeight - 112
     },

@@ -323,7 +323,9 @@ router.get("/friends", auth, async (req, res, next) => {
             "discussionsImage",
             "avatar",
             "createdAt",
-            "updatedAt"
+            "updatedAt",
+            "compassUserId",
+            "instance"
           ]
         },
         {
@@ -335,7 +337,9 @@ router.get("/friends", auth, async (req, res, next) => {
             "discussionsImage",
             "avatar",
             "createdAt",
-            "updatedAt"
+            "updatedAt",
+            "compassUserId",
+            "instance"
           ]
         }
       ]
@@ -360,7 +364,8 @@ router.get("/users", auth, async (req, res, next) => {
         "updatedAt",
         "instance",
         "status",
-        "admin"
+        "admin",
+        "compassUserId"
       ],
       where: {
         [Op.or]: [

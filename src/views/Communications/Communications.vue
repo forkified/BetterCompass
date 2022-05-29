@@ -271,7 +271,6 @@
           <v-btn
             color="card"
             to="/communications/friends"
-            dark
             block
             class="mb-3 rounded-xl"
           >
