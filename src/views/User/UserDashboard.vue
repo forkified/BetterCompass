@@ -423,7 +423,6 @@ export default {
         return "/usercontent/" + this.$store.state.user.bcUser.avatar
       } else {
         return (
-          "/" +
           this.user.userPhotoPath +
           "?compassInstance=" +
           this.$store.state.school.instance
