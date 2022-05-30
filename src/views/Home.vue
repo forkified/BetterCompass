@@ -797,13 +797,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-container
-      :fluid="
-        $store.state.user?.bcUser?.compact === 'enabled' ||
-        ($store.state.user?.bcUser?.compact === 'lowRes' &&
-          $vuetify.breakpoint.lgAndDown)
-      "
-    >
+    <v-container :fluid="$vuetify.breakpoint.lgAndDown">
       <v-card
         color="card mb-3"
         class="rounded-xl"
